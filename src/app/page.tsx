@@ -1,32 +1,17 @@
-"use client";
+import { headers } from "next/headers";
+import { BoardClient } from "@/components/board/BoardClient";
+import { Projeto } from "@/types/projeto";
 
-import { useState } from "react";
-import { LayoutContainer } from "@/components/layout/LayoutContainer";
-import { KanbanBoard } from "@/components/board/KanbanBoard";
-import { DetailsDrawer } from "@/components/details/DetailsDrawer";
-import { Projeto, ProjetoDetalhado } from "@/types/projeto";
-
-// TODO: substituir por fetch em GET /api/projetos (ver Especificacao-API.md) na Fase 1.
-const PROJETOS_PLACEHOLDER: Projeto[] = [];
-
-function paraDetalhado(projeto: Projeto): ProjetoDetalhado {
-  return { ...projeto, especificacoesTecnicas: null, historicoTransicoes: [] };
+async function buscarProjetos(): Promise<Projeto[]> {
+  const h = await headers();
+  const host = h.get("host") ?? "localhost:3000";
+  const protocolo = h.get("x-forwarded-proto") ?? "http";
+  const resposta = await fetch(`${protocolo}://${host}/api/projetos`, { cache: "no-store" });
+  if (!resposta.ok) return [];
+  return resposta.json();
 }
 
-export default function Home() {
-  const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoDetalhado | null>(null);
-  const [drawerAberto, setDrawerAberto] = useState(false);
-
-  return (
-    <LayoutContainer>
-      <KanbanBoard
-        projetos={PROJETOS_PLACEHOLDER}
-        onSelectProjeto={(projeto) => {
-          setProjetoSelecionado(paraDetalhado(projeto));
-          setDrawerAberto(true);
-        }}
-      />
-      <DetailsDrawer projeto={projetoSelecionado} open={drawerAberto} onOpenChange={setDrawerAberto} />
-    </LayoutContainer>
-  );
+export default async function Home() {
+  const projetos = await buscarProjetos();
+  return <BoardClient projetosIniciais={projetos} />;
 }
