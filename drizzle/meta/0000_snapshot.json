@@ -1,0 +1,189 @@
+{
+  "id": "3fbbe4ed-5644-4b34-a683-0712ad9bf569",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.especificacoes_tecnicas": {
+      "name": "especificacoes_tecnicas",
+      "schema": "",
+      "columns": {
+        "id_especificacao": {
+          "name": "id_especificacao",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "id_projeto": {
+          "name": "id_projeto",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "link_esquema_eletrico": {
+          "name": "link_esquema_eletrico",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dados_motores": {
+          "name": "dados_motores",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dados_sensores": {
+          "name": "dados_sensores",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "especificacoes_tecnicas_id_projeto_projetos_id_projeto_fk": {
+          "name": "especificacoes_tecnicas_id_projeto_projetos_id_projeto_fk",
+          "tableFrom": "especificacoes_tecnicas",
+          "tableTo": "projetos",
+          "columnsFrom": [
+            "id_projeto"
+          ],
+          "columnsTo": [
+            "id_projeto"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.historico_transicoes": {
+      "name": "historico_transicoes",
+      "schema": "",
+      "columns": {
+        "id_transicao": {
+          "name": "id_transicao",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "id_projeto": {
+          "name": "id_projeto",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coluna_origem": {
+          "name": "coluna_origem",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coluna_destino": {
+          "name": "coluna_destino",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_movimentacao": {
+          "name": "data_movimentacao",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "historico_transicoes_id_projeto_projetos_id_projeto_fk": {
+          "name": "historico_transicoes_id_projeto_projetos_id_projeto_fk",
+          "tableFrom": "historico_transicoes",
+          "tableTo": "projetos",
+          "columnsFrom": [
+            "id_projeto"
+          ],
+          "columnsTo": [
+            "id_projeto"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.projetos": {
+      "name": "projetos",
+      "schema": "",
+      "columns": {
+        "id_projeto": {
+          "name": "id_projeto",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nome_maquina": {
+          "name": "nome_maquina",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_atual": {
+          "name": "status_atual",
+          "type": "status_projeto",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Esquema_Eletrico'"
+        },
+        "data_criacao": {
+          "name": "data_criacao",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.status_projeto": {
+      "name": "status_projeto",
+      "schema": "public",
+      "values": [
+        "Esquema_Eletrico",
+        "Offline",
+        "Montagem",
+        "Online",
+        "Concluido"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
