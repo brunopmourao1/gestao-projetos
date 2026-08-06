@@ -28,3 +28,4 @@ _(vazio)_
 - [x] HU-05 — Exibição de lead time por estágio na UI (seção "Tempo por Estágio" na Aba 1, atualiza junto com o histórico ao mover o card)
 - [x] HU-09 — Preview do relatório na Aba 3 + botão de exportação na `TopNavbar`, ligado ao projeto ativo do drawer. Corrigido bug de layout em `sheet.tsx` onde o painel do drawer cobria a `TopNavbar` inteira (`inset-y-0`), tornando o botão de exportar inacessível enquanto o drawer estava aberto — ajustado pra `top-14`, respeitando a altura da navbar.
 - [x] HU-03 — Busca global de projetos (filtro client-side por `nomeMaquina`, case-insensitive e parcial, campo na `TopNavbar` habilitado) — última história da Fase 1
+- [x] HU-10 — Criar novo projeto (descoberta em produção: `POST /api/projetos` nunca tinha sido exposta na UI). Botão "Novo Projeto" na `TopNavbar` abre `NovoProjetoDialog` (modal), único campo obrigatório é o nome da máquina.

@@ -25,6 +25,13 @@ Como **Gestor/Tech Lead**, quero buscar uma máquina pelo nome na barra de busca
 * Busca por `nome_maquina` (case-insensitive, busca parcial).
 * Resultado destaca ou filtra o(s) card(s) correspondente(s) no board.
 
+### HU-10 — Criar novo projeto
+Como **Gestor/Tech Lead**, quero cadastrar uma nova máquina no sistema a partir de qualquer tela do board, para começar a acompanhar seu comissionamento desde o início do fluxo.
+**Critérios de aceite:**
+* Botão "Novo Projeto" acessível a partir da `TopNavbar`, independente da coluna que a pessoa está vendo.
+* Formulário pede só o nome da máquina; status inicial sempre `Esquema_Eletrico`.
+* Projeto criado aparece imediatamente na coluna "Aguardando Esquema Elétrico" sem precisar recarregar a página.
+
 ## Épico 2 — Histórico e Métricas de Tempo (RF02)
 ### HU-04 — Registrar histórico de transições
 Como **Gestor/Tech Lead**, quero que toda mudança de coluna seja registrada com autor e data, para auditar o processo e calcular tempo de permanência por estágio.

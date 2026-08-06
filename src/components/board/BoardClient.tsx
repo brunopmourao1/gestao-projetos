@@ -114,6 +114,20 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     return { ok: true };
   }
 
+  async function handleCriarProjeto(nomeMaquina: string): Promise<ResultadoMover> {
+    const resposta = await fetch("/api/projetos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome_maquina: nomeMaquina }),
+    });
+    const dados = await resposta.json();
+    if (!resposta.ok) {
+      return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível criar o projeto." };
+    }
+    setProjetos((atual) => [...atual, dados]);
+    return { ok: true };
+  }
+
   function handleDrawerOpenChange(open: boolean) {
     setDrawerAberto(open);
     if (!open) setProjetoSelecionado(null);
@@ -151,6 +165,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       erroExportacao={erroExportacao}
       busca={busca}
       onBuscaChange={setBusca}
+      onCriarProjeto={handleCriarProjeto}
     >
       <KanbanBoard
         projetos={projetosFiltrados}

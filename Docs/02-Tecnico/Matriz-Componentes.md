@@ -3,7 +3,7 @@
 
 ## 1. Estrutura Base
 * **`LayoutContainer`**: O wrapper principal. Fixa o Header no topo e permite a rolagem horizontal da área de conteúdo (Board).
-* **`TopNavbar`**: Contém o título do sistema, barra de busca global de máquinas e o botão primário de exportação de relatórios.
+* **`TopNavbar`**: Contém o título do sistema, barra de busca global de máquinas, o botão "Novo Projeto" (abre `NovoProjetoDialog`, formulário mínimo só com nome da máquina) e o botão primário de exportação de relatórios.
 
 ## 2. Componentes de Fluxo (Board)
 * **`KanbanBoard`**: Componente pai que orquestra as listas.

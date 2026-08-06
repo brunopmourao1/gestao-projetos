@@ -2,6 +2,8 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { NovoProjetoDialog } from "@/components/board/NovoProjetoDialog";
+import { ResultadoMover } from "@/components/board/ProjectCard";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 1
 interface TopNavbarProps {
@@ -11,6 +13,7 @@ interface TopNavbarProps {
   erroExportacao: string | null;
   busca: string;
   onBuscaChange: (valor: string) => void;
+  onCriarProjeto: (nomeMaquina: string) => Promise<ResultadoMover>;
 }
 
 export function TopNavbar({
@@ -20,6 +23,7 @@ export function TopNavbar({
   erroExportacao,
   busca,
   onBuscaChange,
+  onCriarProjeto,
 }: TopNavbarProps) {
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b px-4">
@@ -30,6 +34,7 @@ export function TopNavbar({
         value={busca}
         onChange={(e) => onBuscaChange(e.target.value)}
       />
+      <NovoProjetoDialog onCriar={onCriarProjeto} />
       <div className="relative ml-auto">
         <Button
           disabled={!nomeMaquinaAtiva || exportando}
