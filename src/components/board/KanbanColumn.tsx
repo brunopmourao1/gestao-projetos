@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Projeto } from "@/types/projeto";
-import { ProjectCard } from "./ProjectCard";
+import { Projeto, StatusProjeto } from "@/types/projeto";
+import { ProjectCard, ResultadoMover } from "./ProjectCard";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 2
 // Cor de destaque no cabeçalho indicando criticidade do estágio.
@@ -17,9 +17,20 @@ interface KanbanColumnProps {
   titulo: string;
   projetos: Projeto[];
   onSelectProjeto?: (projeto: Projeto) => void;
+  statusAnterior?: StatusProjeto;
+  statusProxima?: StatusProjeto;
+  onMoverProjeto?: (projeto: Projeto, novoStatus: StatusProjeto) => Promise<ResultadoMover>;
 }
 
-export function KanbanColumn({ status, titulo, projetos, onSelectProjeto }: KanbanColumnProps) {
+export function KanbanColumn({
+  status,
+  titulo,
+  projetos,
+  onSelectProjeto,
+  statusAnterior,
+  statusProxima,
+  onMoverProjeto,
+}: KanbanColumnProps) {
   return (
     <div
       className={cn(
@@ -32,7 +43,14 @@ export function KanbanColumn({ status, titulo, projetos, onSelectProjeto }: Kanb
       </h2>
       <div className="flex flex-col gap-2">
         {projetos.map((projeto) => (
-          <ProjectCard key={projeto.idProjeto} projeto={projeto} onClick={onSelectProjeto} />
+          <ProjectCard
+            key={projeto.idProjeto}
+            projeto={projeto}
+            onClick={onSelectProjeto}
+            statusAnterior={statusAnterior}
+            statusProxima={statusProxima}
+            onMoverProjeto={onMoverProjeto}
+          />
         ))}
       </div>
     </div>
