@@ -9,6 +9,8 @@ interface ProjetoFormCamposProps {
   onNomeMaquinaChange: (valor: string) => void;
   descricao: string;
   onDescricaoChange: (valor: string) => void;
+  dataPrevistaConclusao: string;
+  onDataPrevistaConclusaoChange: (valor: string) => void;
   erro: string | null;
 }
 
@@ -20,6 +22,8 @@ export function ProjetoFormCampos({
   onNomeMaquinaChange,
   descricao,
   onDescricaoChange,
+  dataPrevistaConclusao,
+  onDataPrevistaConclusaoChange,
   erro,
 }: ProjetoFormCamposProps) {
   return (
@@ -50,6 +54,15 @@ export function ProjetoFormCampos({
           value={descricao}
           onChange={(e) => onDescricaoChange(e.target.value)}
           rows={3}
+        />
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="data-prevista">Data Prevista de Conclusão (opcional)</Label>
+        <Input
+          id="data-prevista"
+          type="date"
+          value={dataPrevistaConclusao}
+          onChange={(e) => onDataPrevistaConclusaoChange(e.target.value)}
         />
       </div>
       {erro && <p className="text-sm text-destructive">{erro}</p>}

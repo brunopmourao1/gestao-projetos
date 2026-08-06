@@ -9,6 +9,7 @@ const projeto: Projeto = {
   nomeMaquina: "Máquina de Teste",
   descricao: null,
   ordem: 1000,
+  dataPrevistaConclusao: null,
   statusAtual: "Offline",
   dataCriacao: new Date().toISOString(),
 };

@@ -15,6 +15,7 @@ export const projetos = pgTable("projetos", {
   nomeMaquina: varchar("nome_maquina", { length: 255 }),
   descricao: text("descricao"),
   ordem: doublePrecision("ordem").notNull(),
+  dataPrevistaConclusao: timestamp("data_prevista_conclusao"),
   statusAtual: statusProjetoEnum("status_atual").notNull().default("Esquema_Eletrico"),
   dataCriacao: timestamp("data_criacao").notNull().defaultNow(),
 });

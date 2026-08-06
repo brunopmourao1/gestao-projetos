@@ -51,6 +51,14 @@ export async function PATCH(
   if (descricao !== undefined && descricao !== null && typeof descricao !== "string") {
     return erroResponse(400, "VALIDACAO_CAMPO", "Campo descricao deve ser texto.");
   }
+  const dataPrevistaConclusao = dados?.data_prevista_conclusao;
+  if (
+    dataPrevistaConclusao !== undefined &&
+    dataPrevistaConclusao !== null &&
+    (typeof dataPrevistaConclusao !== "string" || Number.isNaN(new Date(dataPrevistaConclusao).getTime()))
+  ) {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo data_prevista_conclusao deve ser uma data válida.");
+  }
 
   try {
     const [atualizado] = await db
@@ -59,6 +67,7 @@ export async function PATCH(
         numero: numero.trim(),
         nomeMaquina: (nomeMaquina as string | null | undefined)?.trim() || null,
         descricao: (descricao as string | null | undefined)?.trim() || null,
+        dataPrevistaConclusao: dataPrevistaConclusao ? new Date(dataPrevistaConclusao as string) : null,
       })
       .where(eq(projetos.idProjeto, id))
       .returning();

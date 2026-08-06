@@ -18,6 +18,7 @@ export interface DadosEditarProjeto {
   numero: string;
   nomeMaquina: string;
   descricao: string;
+  dataPrevistaConclusao: string;
 }
 
 interface EditarProjetoDialogProps {
@@ -25,11 +26,18 @@ interface EditarProjetoDialogProps {
   onEditar: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
 }
 
+function paraInputDate(dataIso: string | null): string {
+  return dataIso ? dataIso.slice(0, 10) : "";
+}
+
 export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogProps) {
   const [open, setOpen] = useState(false);
   const [numero, setNumero] = useState(projeto.numero);
   const [nomeMaquina, setNomeMaquina] = useState(projeto.nomeMaquina ?? "");
   const [descricao, setDescricao] = useState(projeto.descricao ?? "");
+  const [dataPrevistaConclusao, setDataPrevistaConclusao] = useState(
+    paraInputDate(projeto.dataPrevistaConclusao)
+  );
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -37,6 +45,7 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
     setNumero(projeto.numero);
     setNomeMaquina(projeto.nomeMaquina ?? "");
     setDescricao(projeto.descricao ?? "");
+    setDataPrevistaConclusao(paraInputDate(projeto.dataPrevistaConclusao));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,6 +61,7 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
       numero: numeroLimpo,
       nomeMaquina: nomeMaquina.trim(),
       descricao: descricao.trim(),
+      dataPrevistaConclusao,
     });
     setSalvando(false);
     if (!resultado.ok) {
@@ -85,6 +95,8 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
             onNomeMaquinaChange={setNomeMaquina}
             descricao={descricao}
             onDescricaoChange={setDescricao}
+            dataPrevistaConclusao={dataPrevistaConclusao}
+            onDataPrevistaConclusaoChange={setDataPrevistaConclusao}
             erro={erro}
           />
           <DialogFooter>

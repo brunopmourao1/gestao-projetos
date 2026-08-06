@@ -13,6 +13,7 @@ export interface Projeto {
   nomeMaquina: string | null;
   descricao: string | null;
   ordem: number;
+  dataPrevistaConclusao: string | null;
   statusAtual: StatusProjeto;
   dataCriacao: string;
 }

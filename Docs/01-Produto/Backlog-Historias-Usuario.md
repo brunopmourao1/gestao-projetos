@@ -25,7 +25,7 @@ Como **Programador**, quero arrastar o card de projeto para a coluna seguinte do
 Como **Gestor/Tech Lead**, quero corrigir o número, nome da máquina ou descrição de um projeto já criado, para consertar erros de digitação sem precisar recriar o projeto.
 **Critérios de aceite:**
 * Botão "Editar" no cabeçalho do `DetailsDrawer`, abre um formulário pré-preenchido com os valores atuais.
-* Os 3 campos são editáveis, incluindo o número — com a mesma validação de unicidade da criação (HU-10).
+* Os campos (número, nome da máquina, descrição e data prevista de conclusão da etapa atual) são editáveis, incluindo o número — com a mesma validação de unicidade da criação (HU-10).
 * Card e drawer refletem a mudança imediatamente, sem recarregar a página.
 
 ### HU-12 — Priorizar projetos dentro da coluna
@@ -42,6 +42,13 @@ Como **Gestor/Tech Lead**, quero excluir um projeto cadastrado por engano ou que
 * Ação irreversível — exige confirmação explícita antes de efetivar.
 * Excluir um projeto remove também suas especificações técnicas e histórico de transições associados.
 
+### HU-14 — Definir e cobrar prazo da etapa atual
+Como **Gestor/Tech Lead**, quero atrelar uma data prevista de conclusão à etapa em que o projeto está agora, para conseguir cobrar e verificar na data se aquela etapa está realmente pronta para avançar.
+**Critérios de aceite:**
+* O formulário de criar projeto (HU-10) e o de editar (HU-11) têm um campo opcional "Data Prevista de Conclusão", referente à etapa atual do projeto — não uma data fixa do projeto inteiro.
+* Ao mover um card para uma coluna nova (HU-02), o movimento é efetivado na hora e, em seguida, abre automaticamente um diálogo pedindo a data prevista da etapa recém-iniciada; pode ser pulado sem preencher e editado depois.
+* Um card cuja data prevista já passou sem o projeto ter avançado de etapa é destacado visualmente (vermelho) no board e no `DetailsDrawer`.
+
 ### HU-03 — Buscar projeto pelo número ou nome
 Como **Gestor/Tech Lead**, quero buscar um projeto pelo número da OS (ou pelo nome da máquina) na barra de busca global, para localizar rapidamente um projeto específico sem navegar por todas as colunas.
 **Critérios de aceite:**
@@ -52,7 +59,7 @@ Como **Gestor/Tech Lead**, quero buscar um projeto pelo número da OS (ou pelo n
 Como **Gestor/Tech Lead**, quero cadastrar um novo projeto no sistema a partir de qualquer tela do board, para começar a acompanhar seu comissionamento desde o início do fluxo.
 **Critérios de aceite:**
 * Botão "Novo Projeto" acessível a partir da `TopNavbar`, independente da coluna que a pessoa está vendo.
-* Formulário pede o número da OS (obrigatório, único no sistema — ex: "OS 1800"), nome da máquina (opcional) e descrição (opcional); status inicial sempre `Esquema_Eletrico`.
+* Formulário pede o número da OS (obrigatório, único no sistema — ex: "OS 1800"), nome da máquina (opcional), descrição (opcional) e data prevista de conclusão da etapa inicial (opcional); status inicial sempre `Esquema_Eletrico`.
 * Tentar cadastrar um número já existente é bloqueado com mensagem clara.
 * Projeto criado aparece imediatamente na coluna "Aguardando Esquema Elétrico" sem precisar recarregar a página.
 

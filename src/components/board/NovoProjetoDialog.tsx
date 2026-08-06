@@ -17,6 +17,7 @@ export interface DadosNovoProjeto {
   numero: string;
   nomeMaquina: string;
   descricao: string;
+  dataPrevistaConclusao: string;
 }
 
 interface NovoProjetoDialogProps {
@@ -28,6 +29,7 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
   const [numero, setNumero] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [dataPrevistaConclusao, setDataPrevistaConclusao] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -35,6 +37,7 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
     setNumero("");
     setNomeMaquina("");
     setDescricao("");
+    setDataPrevistaConclusao("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -50,6 +53,7 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
       numero: numeroLimpo,
       nomeMaquina: nomeMaquina.trim(),
       descricao: descricao.trim(),
+      dataPrevistaConclusao,
     });
     setCriando(false);
     if (!resultado.ok) {
@@ -81,6 +85,8 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
             onNomeMaquinaChange={setNomeMaquina}
             descricao={descricao}
             onDescricaoChange={setDescricao}
+            dataPrevistaConclusao={dataPrevistaConclusao}
+            onDataPrevistaConclusaoChange={setDataPrevistaConclusao}
             erro={erro}
           />
           <DialogFooter>

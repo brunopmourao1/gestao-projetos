@@ -15,6 +15,7 @@ import type { RelatorioPayload } from "@/lib/relatorio";
 import { ResultadoMover } from "./ProjectCard";
 import { DadosNovoProjeto } from "./NovoProjetoDialog";
 import { DadosEditarProjeto } from "./EditarProjetoDialog";
+import { DataPrevistaDialog } from "./DataPrevistaDialog";
 
 interface BoardClientProps {
   projetosIniciais: Projeto[];
@@ -55,6 +56,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [erroExportacao, setErroExportacao] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [erroMovimento, setErroMovimento] = useState<string | null>(null);
+  const [projetoParaDefinirPrazo, setProjetoParaDefinirPrazo] = useState<Projeto | null>(null);
 
   const projetosFiltrados = projetos.filter((p) => {
     const buscaNormalizada = busca.trim().toLowerCase();
@@ -115,6 +117,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         p.idProjeto === projeto.idProjeto ? { ...p, statusAtual: dados.statusAtual, ordem: dados.ordem } : p
       )
     );
+    setProjetoParaDefinirPrazo({ ...projeto, statusAtual: dados.statusAtual, ordem: dados.ordem });
 
     if (projetoSelecionado?.idProjeto === projeto.idProjeto) {
       fetch(`/api/projetos/${projeto.idProjeto}`)
@@ -161,6 +164,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
           numero: dados.numero,
           nome_maquina: dados.nomeMaquina || undefined,
           descricao: dados.descricao || undefined,
+          data_prevista_conclusao: dados.dataPrevistaConclusao || null,
         }),
       });
       const atualizado = await resposta.json();
@@ -184,6 +188,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
           numero: dadosNovo.numero,
           nome_maquina: dadosNovo.nomeMaquina || undefined,
           descricao: dadosNovo.descricao || undefined,
+          data_prevista_conclusao: dadosNovo.dataPrevistaConclusao || undefined,
         }),
       });
       const dados = await resposta.json();
@@ -194,6 +199,25 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       return { ok: true };
     } catch {
       return { ok: false, mensagem: "Falha de rede ao criar o projeto." };
+    }
+  }
+
+  async function handleSalvarPrazo(id: string, dataPrevistaConclusao: string): Promise<ResultadoMover> {
+    try {
+      const resposta = await fetch(`/api/projetos/${id}/data-prevista`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data_prevista_conclusao: dataPrevistaConclusao || null }),
+      });
+      const atualizado = await resposta.json();
+      if (!resposta.ok) {
+        return { ok: false, mensagem: atualizado?.erro?.mensagem ?? "Não foi possível salvar a data prevista." };
+      }
+      setProjetos((atual) => atual.map((p) => (p.idProjeto === id ? { ...p, ...atualizado } : p)));
+      setProjetoSelecionado((atual) => (atual && atual.idProjeto === id ? { ...atual, ...atualizado } : atual));
+      return { ok: true };
+    } catch {
+      return { ok: false, mensagem: "Falha de rede ao salvar a data prevista." };
     }
   }
 
@@ -275,6 +299,11 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
         onEditarProjeto={handleEditarProjeto}
         onExcluirProjeto={handleExcluirProjeto}
+      />
+      <DataPrevistaDialog
+        projeto={projetoParaDefinirPrazo}
+        onSalvar={handleSalvarPrazo}
+        onFechar={() => setProjetoParaDefinirPrazo(null)}
       />
     </LayoutContainer>
   );

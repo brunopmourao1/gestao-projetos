@@ -16,6 +16,7 @@ Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o bo
     "nome_maquina": "string | null",
     "descricao": "string | null",
     "ordem": "number",
+    "data_prevista_conclusao": "date | null",
     "status_atual": "Esquema_Eletrico | Offline | Montagem | Online | Concluido",
     "data_criacao": "timestamp"
   }
@@ -24,12 +25,12 @@ Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o bo
 
 ### `POST /api/projetos`
 Cria um novo projeto. Status inicial sempre `Esquema_Eletrico`. `ordem` é calculada automaticamente (fim da coluna `Esquema_Eletrico`) — não é um campo de entrada.
-**Body:** `{ "numero": "string (obrigatório, único)", "nome_maquina": "string (opcional)", "descricao": "string (opcional)" }`
+**Body:** `{ "numero": "string (obrigatório, único)", "nome_maquina": "string (opcional)", "descricao": "string (opcional)", "data_prevista_conclusao": "date (opcional)" }` — `data_prevista_conclusao` é a data prevista de conclusão da etapa inicial (Esquema Elétrico).
 **Resposta 201:** objeto do projeto criado.
 **Resposta 409** (`VALIDACAO_CAMPO`): já existe um projeto com o mesmo `numero`.
 
 ### `PATCH /api/projetos/:id`
-Edita `numero`/`nome_maquina`/`descricao` de um projeto existente.
+Edita `numero`/`nome_maquina`/`descricao`/`data_prevista_conclusao` de um projeto existente. Todos os campos são substituição total (omitir `data_prevista_conclusao` limpa o valor, igual aos demais campos deste endpoint).
 **Body:** igual ao `POST` (mesma validação, incluindo unicidade de `numero`).
 **Resposta 200:** objeto do projeto atualizado.
 **Resposta 409** (`VALIDACAO_CAMPO`): já existe outro projeto com o `numero` informado.
@@ -66,6 +67,11 @@ Move o projeto para uma coluna adjacente (arrastar o card, ver HU-02). Aciona `C
 ### `PATCH /api/projetos/:id/ordem`
 Reordena o projeto dentro da mesma coluna (prioridade manual). Não altera `status_atual` nem grava histórico — reordenar não é uma transição de estado.
 **Body:** `{ "ordem": "number" }`
+**Resposta 200:** projeto atualizado.
+
+### `PATCH /api/projetos/:id/data-prevista`
+Define ou limpa a data prevista de conclusão da **etapa atual** do projeto, sem precisar reenviar `numero`/`nome_maquina`/`descricao`. Aberto automaticamente pela UI logo após mover um card para uma coluna nova (drag-and-drop) — o preenchimento é opcional e pode ser feito depois.
+**Body:** `{ "data_prevista_conclusao": "date | null" }`
 **Resposta 200:** projeto atualizado.
 
 ## Especificações Técnicas

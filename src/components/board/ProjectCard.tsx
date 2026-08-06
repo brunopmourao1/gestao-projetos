@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Projeto } from "@/types/projeto";
+import { estaAtrasado, formatarData } from "@/lib/prazo";
 
 export type ResultadoMover = { ok: true } | { ok: false; mensagem: string };
 
@@ -26,6 +27,8 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
     opacity: isDragging ? 0.4 : 1,
   };
 
+  const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
+
   return (
     <div
       ref={setNodeRef}
@@ -35,11 +38,16 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
       onClick={() => onClick?.(projeto)}
       className="cursor-grab active:cursor-grabbing"
     >
-      <Card className="transition-shadow hover:shadow-md">
+      <Card className={`transition-shadow hover:shadow-md ${atrasado ? "border-destructive" : ""}`}>
         <CardHeader>
           <CardTitle className="text-sm font-medium">{projeto.numero}</CardTitle>
           {projeto.nomeMaquina && (
             <p className="text-xs text-muted-foreground">{projeto.nomeMaquina}</p>
+          )}
+          {projeto.dataPrevistaConclusao && (
+            <p className={`text-xs ${atrasado ? "font-medium text-destructive" : "text-muted-foreground"}`}>
+              Prazo: {formatarData(projeto.dataPrevistaConclusao)}
+            </p>
           )}
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-2">
