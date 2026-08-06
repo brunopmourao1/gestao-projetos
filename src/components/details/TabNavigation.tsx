@@ -1,12 +1,14 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProjetoDetalhado } from "@/types/projeto";
+import { EspecificacoesTecnicas, ProjetoDetalhado } from "@/types/projeto";
+import { ParametrosForm } from "./ParametrosForm";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 3
 interface TabNavigationProps {
   projeto: ProjetoDetalhado;
+  onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
 }
 
-export function TabNavigation({ projeto }: TabNavigationProps) {
+export function TabNavigation({ projeto, onEspecificacoesAtualizadas }: TabNavigationProps) {
   return (
     <Tabs defaultValue="visao-geral" className="mt-4">
       <TabsList className="w-full">
@@ -31,8 +33,8 @@ export function TabNavigation({ projeto }: TabNavigationProps) {
       </TabsContent>
 
       {/* HU-06/HU-07: inputs numéricos para dados de comissionamento físico */}
-      <TabsContent value="parametros" className="text-sm text-muted-foreground">
-        <p>TODO: formulário de dados_motores e dados_sensores (ver Especificacao-API.md).</p>
+      <TabsContent value="parametros">
+        <ParametrosForm projeto={projeto} onSalvo={onEspecificacoesAtualizadas} />
       </TabsContent>
 
       {/* HU-09: preview visual dos dados enviados ao MotorApresentacao */}

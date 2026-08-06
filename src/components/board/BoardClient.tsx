@@ -4,7 +4,7 @@ import { useState } from "react";
 import { LayoutContainer } from "@/components/layout/LayoutContainer";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { DetailsDrawer } from "@/components/details/DetailsDrawer";
-import { Projeto, ProjetoDetalhado } from "@/types/projeto";
+import { EspecificacoesTecnicas, Projeto, ProjetoDetalhado } from "@/types/projeto";
 
 interface BoardClientProps {
   projetosIniciais: Projeto[];
@@ -31,10 +31,19 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     }
   }
 
+  function handleEspecificacoesAtualizadas(espec: EspecificacoesTecnicas) {
+    setProjetoSelecionado((atual) => (atual ? { ...atual, especificacoesTecnicas: espec } : atual));
+  }
+
   return (
     <LayoutContainer>
       <KanbanBoard projetos={projetosIniciais} onSelectProjeto={handleSelectProjeto} />
-      <DetailsDrawer projeto={projetoSelecionado} open={drawerAberto} onOpenChange={setDrawerAberto} />
+      <DetailsDrawer
+        projeto={projetoSelecionado}
+        open={drawerAberto}
+        onOpenChange={setDrawerAberto}
+        onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
+      />
     </LayoutContainer>
   );
 }
