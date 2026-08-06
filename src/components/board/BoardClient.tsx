@@ -11,6 +11,7 @@ import {
   ProjetoDetalhado,
   StatusProjeto,
 } from "@/types/projeto";
+import type { RelatorioPayload } from "@/lib/relatorio";
 import { ResultadoMover } from "./ProjectCard";
 
 interface BoardClientProps {
@@ -32,25 +33,41 @@ async function buscarMetricas(idProjeto: string): Promise<MetricaTempoEstagio[] 
   }
 }
 
+async function buscarRelatorio(idProjeto: string): Promise<RelatorioPayload | null> {
+  try {
+    const resposta = await fetch(`/api/projetos/${idProjeto}/relatorio`);
+    if (!resposta.ok) return null;
+    return await resposta.json();
+  } catch {
+    return null;
+  }
+}
+
 export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [projetos, setProjetos] = useState<Projeto[]>(projetosIniciais);
   const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoDetalhado | null>(null);
   const [metricas, setMetricas] = useState<MetricaTempoEstagio[] | null>(null);
+  const [relatorio, setRelatorio] = useState<RelatorioPayload | null>(null);
   const [drawerAberto, setDrawerAberto] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [erroExportacao, setErroExportacao] = useState<string | null>(null);
 
   async function handleSelectProjeto(projeto: Projeto) {
     setProjetoSelecionado(paraDetalhado(projeto));
     setMetricas(null);
+    setRelatorio(null);
     setDrawerAberto(true);
     try {
-      const [resposta, metricasBuscadas] = await Promise.all([
+      const [resposta, metricasBuscadas, relatorioBuscado] = await Promise.all([
         fetch(`/api/projetos/${projeto.idProjeto}`),
         buscarMetricas(projeto.idProjeto),
+        buscarRelatorio(projeto.idProjeto),
       ]);
       if (resposta.ok) {
         setProjetoSelecionado(await resposta.json());
       }
       setMetricas(metricasBuscadas);
+      setRelatorio(relatorioBuscado);
     } catch {
       // mantém o placeholder em caso de falha de rede
     }
@@ -86,13 +103,48 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => d && setProjetoSelecionado(d));
       buscarMetricas(projeto.idProjeto).then((m) => m && setMetricas(m));
+      buscarRelatorio(projeto.idProjeto).then((r) => r && setRelatorio(r));
     }
 
     return { ok: true };
   }
 
+  function handleDrawerOpenChange(open: boolean) {
+    setDrawerAberto(open);
+    if (!open) setProjetoSelecionado(null);
+  }
+
+  async function handleExportarRelatorio() {
+    if (!projetoSelecionado) return;
+    setExportando(true);
+    setErroExportacao(null);
+    try {
+      const resposta = await fetch(`/api/projetos/${projetoSelecionado.idProjeto}/relatorio/exportar`, {
+        method: "POST",
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok) {
+        setErroExportacao(dados?.erro?.mensagem ?? "Não foi possível exportar o relatório.");
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = dados.urlDownload;
+      link.download = `relatorio-${projetoSelecionado.nomeMaquina.replace(/\s+/g, "-").toLowerCase()}.md`;
+      link.click();
+    } catch {
+      setErroExportacao("Falha de rede ao exportar o relatório.");
+    } finally {
+      setExportando(false);
+    }
+  }
+
   return (
-    <LayoutContainer>
+    <LayoutContainer
+      nomeMaquinaAtiva={projetoSelecionado?.nomeMaquina ?? null}
+      onExportarRelatorio={handleExportarRelatorio}
+      exportando={exportando}
+      erroExportacao={erroExportacao}
+    >
       <KanbanBoard
         projetos={projetos}
         onSelectProjeto={handleSelectProjeto}
@@ -101,8 +153,9 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       <DetailsDrawer
         projeto={projetoSelecionado}
         metricas={metricas}
+        relatorio={relatorio}
         open={drawerAberto}
-        onOpenChange={setDrawerAberto}
+        onOpenChange={handleDrawerOpenChange}
         onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
       />
     </LayoutContainer>

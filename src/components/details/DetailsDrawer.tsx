@@ -1,5 +1,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { EspecificacoesTecnicas, MetricaTempoEstagio, ProjetoDetalhado } from "@/types/projeto";
+import type { RelatorioPayload } from "@/lib/relatorio";
 import { TabNavigation } from "./TabNavigation";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 3
@@ -7,6 +8,7 @@ import { TabNavigation } from "./TabNavigation";
 interface DetailsDrawerProps {
   projeto: ProjetoDetalhado | null;
   metricas: MetricaTempoEstagio[] | null;
+  relatorio: RelatorioPayload | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
@@ -15,6 +17,7 @@ interface DetailsDrawerProps {
 export function DetailsDrawer({
   projeto,
   metricas,
+  relatorio,
   open,
   onOpenChange,
   onEspecificacoesAtualizadas,
@@ -29,6 +32,7 @@ export function DetailsDrawer({
           <TabNavigation
             projeto={projeto}
             metricas={metricas}
+            relatorio={relatorio}
             onEspecificacoesAtualizadas={onEspecificacoesAtualizadas}
           />
         )}
