@@ -11,6 +11,7 @@ Como **Gestor/Tech Lead**, quero visualizar todos os projetos organizados em col
 * O board exibe as 5 colunas do fluxo: Aguardando Esquema Elétrico, Projeto Offline, Aguardando Montagem, Projeto Online, Operação Concluída.
 * Cada coluna exibe todos os `ProjectCard` cujo `status_atual` corresponde à coluna.
 * A coluna tem cor de destaque no cabeçalho conforme criticidade (ver `Matriz-Componentes.md`).
+* Cada `ProjectCard` mostra o `numero` (ex: "OS 1800") como identificador principal — é como o time sempre se refere ao projeto na prática — com `nome_maquina` como informação secundária, se preenchido.
 
 ### HU-02 — Mover projeto entre colunas
 Como **Programador**, quero mover um card de projeto para a próxima coluna do fluxo, para refletir o avanço real do comissionamento.
@@ -19,17 +20,18 @@ Como **Programador**, quero mover um card de projeto para a próxima coluna do f
 * Toda movimentação dispara o registro de histórico (ver HU-03).
 * Movimentação para "Operação Concluída" só é permitida se `ValidacaoParametrosFisicos` passar (ver HU-08).
 
-### HU-03 — Buscar projeto pelo nome
-Como **Gestor/Tech Lead**, quero buscar uma máquina pelo nome na barra de busca global, para localizar rapidamente um projeto específico sem navegar por todas as colunas.
+### HU-03 — Buscar projeto pelo número ou nome
+Como **Gestor/Tech Lead**, quero buscar um projeto pelo número da OS (ou pelo nome da máquina) na barra de busca global, para localizar rapidamente um projeto específico sem navegar por todas as colunas.
 **Critérios de aceite:**
-* Busca por `nome_maquina` (case-insensitive, busca parcial).
+* Busca por `numero` OU `nome_maquina` (case-insensitive, busca parcial) — como projetos são sempre identificados pelo número na prática (ex: "OS 1800"), a busca precisa cobrir esse campo.
 * Resultado destaca ou filtra o(s) card(s) correspondente(s) no board.
 
 ### HU-10 — Criar novo projeto
-Como **Gestor/Tech Lead**, quero cadastrar uma nova máquina no sistema a partir de qualquer tela do board, para começar a acompanhar seu comissionamento desde o início do fluxo.
+Como **Gestor/Tech Lead**, quero cadastrar um novo projeto no sistema a partir de qualquer tela do board, para começar a acompanhar seu comissionamento desde o início do fluxo.
 **Critérios de aceite:**
 * Botão "Novo Projeto" acessível a partir da `TopNavbar`, independente da coluna que a pessoa está vendo.
-* Formulário pede só o nome da máquina; status inicial sempre `Esquema_Eletrico`.
+* Formulário pede o número da OS (obrigatório, único no sistema — ex: "OS 1800"), nome da máquina (opcional) e descrição (opcional); status inicial sempre `Esquema_Eletrico`.
+* Tentar cadastrar um número já existente é bloqueado com mensagem clara.
 * Projeto criado aparece imediatamente na coluna "Aguardando Esquema Elétrico" sem precisar recarregar a página.
 
 ## Épico 2 — Histórico e Métricas de Tempo (RF02)

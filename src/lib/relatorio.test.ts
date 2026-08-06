@@ -4,7 +4,9 @@ import { ProjetoDetalhado } from "@/types/projeto";
 
 const projetoBase: ProjetoDetalhado = {
   idProjeto: "1",
+  numero: "OS 1800",
   nomeMaquina: "Torno CNC 01",
+  descricao: null,
   statusAtual: "Offline",
   dataCriacao: "2024-01-01T00:00:00.000Z",
   especificacoesTecnicas: null,
@@ -40,6 +42,16 @@ describe("compilarRelatorio", () => {
       diametroEngrenagem: "30",
     });
     expect(payload.especificacoesTecnicas.dadosSensores.partNumbers).toBe("não informado");
+  });
+
+  it("mantém numero e usa 'não informado' quando nome_maquina/descricao são null", () => {
+    const payload = compilarRelatorio(projetoBase);
+    expect(payload.projeto.numero).toBe("OS 1800");
+    expect(payload.projeto.nomeMaquina).toBe("Torno CNC 01");
+    expect(payload.projeto.descricao).toBe("não informado");
+
+    const semNome: ProjetoDetalhado = { ...projetoBase, nomeMaquina: null };
+    expect(compilarRelatorio(semNome).projeto.nomeMaquina).toBe("não informado");
   });
 });
 

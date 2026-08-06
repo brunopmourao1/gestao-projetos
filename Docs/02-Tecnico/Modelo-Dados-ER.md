@@ -10,7 +10,9 @@ erDiagram
 
     PROJETOS {
         uuid id_projeto PK
-        string nome_maquina
+        string numero UK "obrigatório, único — ex: OS 1800"
+        string nome_maquina "opcional"
+        string descricao "opcional"
         enum status_atual "Esquema_Eletrico, Offline, Montagem, Online, Concluido"
         timestamp data_criacao
     }
@@ -40,3 +42,4 @@ erDiagram
 * `status_atual` só pode assumir um dos 5 valores do enum, na ordem sequencial definida no fluxo de estados (`PRD.md`, seção 3).
 * Um novo `Historico_Transicoes` é criado em toda mudança de `status_atual` — nunca há mudança de status sem registro de histórico correspondente (RF02).
 * A transição de `status_atual` para `Concluido` exige que `Especificacoes_Tecnicas.dados_motores` e `dados_sensores` estejam preenchidos (regra aplicada por `ValidacaoParametrosFisicos`, não uma constraint de banco).
+* `Projetos.numero` é obrigatório e único (constraint de banco) — é o identificador primário usado na prática para localizar um projeto (ex: "OS 1800"). `nome_maquina` é opcional, informação secundária sobre a máquina física.

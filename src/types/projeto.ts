@@ -9,7 +9,9 @@ export type StatusProjeto =
 
 export interface Projeto {
   idProjeto: string;
-  nomeMaquina: string;
+  numero: string;
+  nomeMaquina: string | null;
+  descricao: string | null;
   statusAtual: StatusProjeto;
   dataCriacao: string;
 }

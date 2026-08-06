@@ -6,13 +6,15 @@
 
 ### `GET /api/projetos`
 Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o board.
-**Query params opcionais:** `status` (filtra por `status_atual`), `busca` (busca parcial em `nome_maquina`).
+**Query params opcionais:** `status` (filtra por `status_atual`), `busca` (busca parcial em `numero` OU `nome_maquina` — na prática, projetos são sempre identificados pelo número, ex: "OS 1800").
 **Resposta 200:**
 ```json
 [
   {
     "id_projeto": "uuid",
-    "nome_maquina": "string",
+    "numero": "string",
+    "nome_maquina": "string | null",
+    "descricao": "string | null",
     "status_atual": "Esquema_Eletrico | Offline | Montagem | Online | Concluido",
     "data_criacao": "timestamp"
   }
@@ -21,8 +23,9 @@ Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o bo
 
 ### `POST /api/projetos`
 Cria um novo projeto. Status inicial sempre `Esquema_Eletrico`.
-**Body:** `{ "nome_maquina": "string" }`
+**Body:** `{ "numero": "string (obrigatório, único)", "nome_maquina": "string (opcional)", "descricao": "string (opcional)" }`
 **Resposta 201:** objeto do projeto criado.
+**Resposta 409** (`VALIDACAO_CAMPO`): já existe um projeto com o mesmo `numero`.
 
 ### `GET /api/projetos/:id`
 Retorna detalhes de um projeto, incluindo especificações técnicas associadas (usado ao abrir o `DetailsDrawer`).
@@ -30,7 +33,9 @@ Retorna detalhes de um projeto, incluindo especificações técnicas associadas 
 ```json
 {
   "id_projeto": "uuid",
-  "nome_maquina": "string",
+  "numero": "string",
+  "nome_maquina": "string | null",
+  "descricao": "string | null",
   "status_atual": "string",
   "data_criacao": "timestamp",
   "especificacoes_tecnicas": { "...": "ver Especificacoes_Tecnicas" },

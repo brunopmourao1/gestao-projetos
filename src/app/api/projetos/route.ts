@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { projetos } from "@/db/schema";
 import { erroResponse } from "@/lib/api-error";
@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
 
   const condicoes = [];
   if (statusValido(status)) condicoes.push(eq(projetos.statusAtual, status));
-  if (busca) condicoes.push(ilike(projetos.nomeMaquina, `%${busca}%`));
+  if (busca) {
+    condicoes.push(
+      or(ilike(projetos.numero, `%${busca}%`), ilike(projetos.nomeMaquina, `%${busca}%`))
+    );
+  }
 
   const db = getDb();
   const resultado = condicoes.length
@@ -29,6 +33,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/projetos — cria projeto novo (status inicial: Esquema_Eletrico).
+// numero é obrigatório e único; nome_maquina e descricao são opcionais.
 export async function POST(request: NextRequest) {
   let body: unknown;
   try {
@@ -37,16 +42,40 @@ export async function POST(request: NextRequest) {
     return erroResponse(400, "VALIDACAO_CAMPO", "Corpo da requisição inválido (JSON esperado).");
   }
 
-  const nomeMaquina = (body as Record<string, unknown>)?.nome_maquina;
-  if (typeof nomeMaquina !== "string" || nomeMaquina.trim().length === 0) {
-    return erroResponse(400, "VALIDACAO_CAMPO", "Campo nome_maquina é obrigatório.");
+  const dados = body as Record<string, unknown>;
+  const numero = dados?.numero;
+  if (typeof numero !== "string" || numero.trim().length === 0) {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo numero é obrigatório.");
+  }
+  const nomeMaquina = dados?.nome_maquina;
+  if (nomeMaquina !== undefined && nomeMaquina !== null && typeof nomeMaquina !== "string") {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo nome_maquina deve ser texto.");
+  }
+  const descricao = dados?.descricao;
+  if (descricao !== undefined && descricao !== null && typeof descricao !== "string") {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo descricao deve ser texto.");
   }
 
   const db = getDb();
-  const [criado] = await db
-    .insert(projetos)
-    .values({ nomeMaquina, statusAtual: "Esquema_Eletrico" })
-    .returning();
+  try {
+    const [criado] = await db
+      .insert(projetos)
+      .values({
+        numero: numero.trim(),
+        nomeMaquina: (nomeMaquina as string | null | undefined)?.trim() || null,
+        descricao: (descricao as string | null | undefined)?.trim() || null,
+        statusAtual: "Esquema_Eletrico",
+      })
+      .returning();
 
-  return NextResponse.json(criado, { status: 201 });
+    return NextResponse.json(criado, { status: 201 });
+  } catch (e) {
+    // drizzle-orm envolve o erro original do driver em DrizzleQueryError,
+    // preservando o erro real (com .code) em .cause.
+    const causa = (e as { cause?: { code?: string } })?.cause;
+    if (causa?.code === "23505") {
+      return erroResponse(409, "VALIDACAO_CAMPO", `Já existe um projeto com o número "${numero.trim()}".`);
+    }
+    throw e;
+  }
 }

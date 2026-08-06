@@ -4,6 +4,7 @@
 ## Termos de Domínio Industrial
 | Termo | Definição |
 |---|---|
+| **OS (Ordem de Serviço)** | Número que identifica unicamente um projeto de comissionamento no sistema (ex: "OS 1800"). É como o time sempre se refere a um projeto na prática — o identificador principal, não o nome da máquina. |
 | **Comissionamento** | Processo de colocar uma máquina em operação, validando funcionamento, segurança e parâmetros dinâmicos após a instalação física. |
 | **Esquema Elétrico** | Documento técnico produzido pela engenharia elétrica que define a fiação, componentes e ligações da máquina; pré-requisito para iniciar a programação offline. |
 | **Mapeamento de I/O** | Processo de definir quais entradas (sensores, botões) e saídas (motores, atuadores) físicas correspondem a quais variáveis no código de controle da máquina. |

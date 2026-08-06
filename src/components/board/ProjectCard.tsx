@@ -48,7 +48,10 @@ export function ProjectCard({
       className="cursor-pointer transition-shadow hover:shadow-md"
     >
       <CardHeader>
-        <CardTitle className="text-sm font-medium">{projeto.nomeMaquina}</CardTitle>
+        <CardTitle className="text-sm font-medium">{projeto.numero}</CardTitle>
+        {projeto.nomeMaquina && (
+          <p className="text-xs text-muted-foreground">{projeto.nomeMaquina}</p>
+        )}
       </CardHeader>
       <CardContent className="flex items-center justify-between gap-2">
         <div className="flex flex-wrap gap-1">

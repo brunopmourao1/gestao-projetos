@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum, json } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, json } from "drizzle-orm/pg-core";
 
 export const statusProjetoEnum = pgEnum("status_projeto", [
   "Esquema_Eletrico",
@@ -11,7 +11,9 @@ export const statusProjetoEnum = pgEnum("status_projeto", [
 // Ver Docs/02-Tecnico/Modelo-Dados-ER.md
 export const projetos = pgTable("projetos", {
   idProjeto: uuid("id_projeto").primaryKey().defaultRandom(),
-  nomeMaquina: varchar("nome_maquina", { length: 255 }).notNull(),
+  numero: varchar("numero", { length: 50 }).notNull().unique(),
+  nomeMaquina: varchar("nome_maquina", { length: 255 }),
+  descricao: text("descricao"),
   statusAtual: statusProjetoEnum("status_atual").notNull().default("Esquema_Eletrico"),
   dataCriacao: timestamp("data_criacao").notNull().defaultNow(),
 });

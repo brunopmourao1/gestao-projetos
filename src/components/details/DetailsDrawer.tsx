@@ -26,7 +26,9 @@ export function DetailsDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-[40vw] min-w-[320px] sm:max-w-none px-4">
         <SheetHeader>
-          <SheetTitle>{projeto?.nomeMaquina ?? "Projeto"}</SheetTitle>
+          <SheetTitle>
+            {projeto ? (projeto.nomeMaquina ? `${projeto.numero} — ${projeto.nomeMaquina}` : projeto.numero) : "Projeto"}
+          </SheetTitle>
         </SheetHeader>
         {projeto && (
           <TabNavigation

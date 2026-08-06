@@ -34,6 +34,10 @@ export function TabNavigation({
       {/* HU-04: histórico e anexos de PDFs / HU-05: lead time por estágio */}
       <TabsContent value="visao-geral" className="text-sm text-muted-foreground">
         <div className="mb-3 space-y-1">
+          <h4 className="text-xs font-semibold text-foreground">Descrição</h4>
+          <p>{projeto.descricao || "Nenhuma descrição informada."}</p>
+        </div>
+        <div className="mb-3 space-y-1">
           <h4 className="text-xs font-semibold text-foreground">Tempo por Estágio</h4>
           {metricas === null ? (
             <p>Carregando...</p>

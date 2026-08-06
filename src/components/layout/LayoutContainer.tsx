@@ -1,22 +1,23 @@
 import { ReactNode } from "react";
 import { TopNavbar } from "./TopNavbar";
 import { ResultadoMover } from "@/components/board/ProjectCard";
+import { DadosNovoProjeto } from "@/components/board/NovoProjetoDialog";
 
 // Ver Docs/03-Tecnico/Matriz-Componentes.md, seção 1
 interface LayoutContainerProps {
   children: ReactNode;
-  nomeMaquinaAtiva: string | null;
+  numeroAtivo: string | null;
   onExportarRelatorio: () => void;
   exportando: boolean;
   erroExportacao: string | null;
   busca: string;
   onBuscaChange: (valor: string) => void;
-  onCriarProjeto: (nomeMaquina: string) => Promise<ResultadoMover>;
+  onCriarProjeto: (dados: DadosNovoProjeto) => Promise<ResultadoMover>;
 }
 
 export function LayoutContainer({
   children,
-  nomeMaquinaAtiva,
+  numeroAtivo,
   onExportarRelatorio,
   exportando,
   erroExportacao,
@@ -27,7 +28,7 @@ export function LayoutContainer({
   return (
     <div className="flex h-screen flex-col">
       <TopNavbar
-        nomeMaquinaAtiva={nomeMaquinaAtiva}
+        numeroAtivo={numeroAtivo}
         onExportarRelatorio={onExportarRelatorio}
         exportando={exportando}
         erroExportacao={erroExportacao}

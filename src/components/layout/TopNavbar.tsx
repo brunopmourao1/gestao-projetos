@@ -2,22 +2,22 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NovoProjetoDialog } from "@/components/board/NovoProjetoDialog";
+import { NovoProjetoDialog, DadosNovoProjeto } from "@/components/board/NovoProjetoDialog";
 import { ResultadoMover } from "@/components/board/ProjectCard";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 1
 interface TopNavbarProps {
-  nomeMaquinaAtiva: string | null;
+  numeroAtivo: string | null;
   onExportarRelatorio: () => void;
   exportando: boolean;
   erroExportacao: string | null;
   busca: string;
   onBuscaChange: (valor: string) => void;
-  onCriarProjeto: (nomeMaquina: string) => Promise<ResultadoMover>;
+  onCriarProjeto: (dados: DadosNovoProjeto) => Promise<ResultadoMover>;
 }
 
 export function TopNavbar({
-  nomeMaquinaAtiva,
+  numeroAtivo,
   onExportarRelatorio,
   exportando,
   erroExportacao,
@@ -37,7 +37,7 @@ export function TopNavbar({
       <NovoProjetoDialog onCriar={onCriarProjeto} />
       <div className="relative ml-auto">
         <Button
-          disabled={!nomeMaquinaAtiva || exportando}
+          disabled={!numeroAtivo || exportando}
           onClick={onExportarRelatorio}
         >
           {exportando ? "Exportando..." : "Exportar relatório"}

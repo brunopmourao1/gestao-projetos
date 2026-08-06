@@ -13,6 +13,7 @@ import {
 } from "@/types/projeto";
 import type { RelatorioPayload } from "@/lib/relatorio";
 import { ResultadoMover } from "./ProjectCard";
+import { DadosNovoProjeto } from "./NovoProjetoDialog";
 
 interface BoardClientProps {
   projetosIniciais: Projeto[];
@@ -53,9 +54,13 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [erroExportacao, setErroExportacao] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
 
-  const projetosFiltrados = projetos.filter((p) =>
-    p.nomeMaquina.toLowerCase().includes(busca.trim().toLowerCase())
-  );
+  const projetosFiltrados = projetos.filter((p) => {
+    const buscaNormalizada = busca.trim().toLowerCase();
+    return (
+      p.numero.toLowerCase().includes(buscaNormalizada) ||
+      (p.nomeMaquina?.toLowerCase().includes(buscaNormalizada) ?? false)
+    );
+  });
 
   async function handleSelectProjeto(projeto: Projeto) {
     setProjetoSelecionado(paraDetalhado(projeto));
@@ -114,18 +119,26 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     return { ok: true };
   }
 
-  async function handleCriarProjeto(nomeMaquina: string): Promise<ResultadoMover> {
-    const resposta = await fetch("/api/projetos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome_maquina: nomeMaquina }),
-    });
-    const dados = await resposta.json();
-    if (!resposta.ok) {
-      return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível criar o projeto." };
+  async function handleCriarProjeto(dadosNovo: DadosNovoProjeto): Promise<ResultadoMover> {
+    try {
+      const resposta = await fetch("/api/projetos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          numero: dadosNovo.numero,
+          nome_maquina: dadosNovo.nomeMaquina || undefined,
+          descricao: dadosNovo.descricao || undefined,
+        }),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok) {
+        return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível criar o projeto." };
+      }
+      setProjetos((atual) => [...atual, dados]);
+      return { ok: true };
+    } catch {
+      return { ok: false, mensagem: "Falha de rede ao criar o projeto." };
     }
-    setProjetos((atual) => [...atual, dados]);
-    return { ok: true };
   }
 
   function handleDrawerOpenChange(open: boolean) {
@@ -148,7 +161,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       }
       const link = document.createElement("a");
       link.href = dados.urlDownload;
-      link.download = `relatorio-${projetoSelecionado.nomeMaquina.replace(/\s+/g, "-").toLowerCase()}.md`;
+      link.download = `relatorio-${projetoSelecionado.numero.replace(/\s+/g, "-").toLowerCase()}.md`;
       link.click();
     } catch {
       setErroExportacao("Falha de rede ao exportar o relatório.");
@@ -159,7 +172,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
 
   return (
     <LayoutContainer
-      nomeMaquinaAtiva={projetoSelecionado?.nomeMaquina ?? null}
+      numeroAtivo={projetoSelecionado?.numero ?? null}
       onExportarRelatorio={handleExportarRelatorio}
       exportando={exportando}
       erroExportacao={erroExportacao}

@@ -6,7 +6,9 @@ const NAO_INFORMADO = "não informado";
 export interface RelatorioPayload {
   projeto: {
     idProjeto: string;
+    numero: string;
     nomeMaquina: string;
+    descricao: string;
     statusAtual: string;
     dataCriacao: string;
   };
@@ -42,7 +44,9 @@ export function compilarRelatorio(projeto: ProjetoDetalhado): RelatorioPayload {
   return {
     projeto: {
       idProjeto: projeto.idProjeto,
-      nomeMaquina: projeto.nomeMaquina,
+      numero: projeto.numero,
+      nomeMaquina: projeto.nomeMaquina ?? NAO_INFORMADO,
+      descricao: projeto.descricao ?? NAO_INFORMADO,
       statusAtual: projeto.statusAtual,
       dataCriacao: projeto.dataCriacao,
     },
@@ -81,8 +85,10 @@ export function compilarRelatorio(projeto: ProjetoDetalhado): RelatorioPayload {
 
 export function compilarRelatorioMarkdown(payload: RelatorioPayload): string {
   const linhas: string[] = [];
-  linhas.push(`# Relatório de Comissionamento — ${payload.projeto.nomeMaquina}`);
+  linhas.push(`# Relatório de Comissionamento — ${payload.projeto.numero}`);
   linhas.push("");
+  linhas.push(`**Nome da máquina:** ${payload.projeto.nomeMaquina}`);
+  linhas.push(`**Descrição:** ${payload.projeto.descricao}`);
   linhas.push(`**Status atual:** ${payload.projeto.statusAtual}`);
   linhas.push(`**Data de criação:** ${payload.projeto.dataCriacao}`);
   linhas.push("");
