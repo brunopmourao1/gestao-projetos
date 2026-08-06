@@ -1,11 +1,12 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { EspecificacoesTecnicas, ProjetoDetalhado } from "@/types/projeto";
+import { EspecificacoesTecnicas, MetricaTempoEstagio, ProjetoDetalhado } from "@/types/projeto";
 import { TabNavigation } from "./TabNavigation";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 3
 // Modal lateral (40% da tela) que não perde o contexto do Kanban ao fundo.
 interface DetailsDrawerProps {
   projeto: ProjetoDetalhado | null;
+  metricas: MetricaTempoEstagio[] | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
@@ -13,6 +14,7 @@ interface DetailsDrawerProps {
 
 export function DetailsDrawer({
   projeto,
+  metricas,
   open,
   onOpenChange,
   onEspecificacoesAtualizadas,
@@ -24,7 +26,11 @@ export function DetailsDrawer({
           <SheetTitle>{projeto?.nomeMaquina ?? "Projeto"}</SheetTitle>
         </SheetHeader>
         {projeto && (
-          <TabNavigation projeto={projeto} onEspecificacoesAtualizadas={onEspecificacoesAtualizadas} />
+          <TabNavigation
+            projeto={projeto}
+            metricas={metricas}
+            onEspecificacoesAtualizadas={onEspecificacoesAtualizadas}
+          />
         )}
       </SheetContent>
     </Sheet>

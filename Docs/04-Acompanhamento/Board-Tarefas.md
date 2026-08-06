@@ -4,7 +4,6 @@
 ## Backlog
 Tarefas técnicas derivadas de `01-Produto/Backlog-Historias-Usuario.md`, na ordem de priorização sugerida (Fase 1 do cronograma primeiro):
 
-- [ ] HU-05 — Exibição de lead time por estágio na UI (cálculo já disponível via `GET .../metricas-tempo`)
 - [ ] HU-09 — Preview do relatório na Aba 3 + botão de exportação na `TopNavbar` (dados já disponíveis via `GET .../relatorio` e `POST .../relatorio/exportar`)
 - [ ] HU-03 — Busca global de projetos (UI — API já suporta via `?busca=`)
 
@@ -29,3 +28,4 @@ _(vazio)_
 - [x] HU-06 — Formulário de dados de motores (Aba 2 do Drawer)
 - [x] HU-07 — Formulário de dados de sensores (Aba 2 do Drawer) — incluindo fix de merge parcial em `PUT .../especificacoes` (salvar uma seção não apaga mais a outra)
 - [x] HU-02 — Ação de mover `ProjectCard` entre colunas adjacentes (botões "← Voltar"/"Avançar →" no card, erro inline com campos faltantes quando bloqueado)
+- [x] HU-05 — Exibição de lead time por estágio na UI (seção "Tempo por Estágio" na Aba 1, atualiza junto com o histórico ao mover o card)
