@@ -38,6 +38,7 @@ export async function montarProjetoDetalhado(db: Db, id: string): Promise<Projet
     numero: projeto.numero,
     nomeMaquina: projeto.nomeMaquina,
     descricao: projeto.descricao,
+    ordem: projeto.ordem,
     statusAtual: projeto.statusAtual,
     dataCriacao: projeto.dataCriacao.toISOString(),
     especificacoesTecnicas: espec ?? null,

@@ -24,13 +24,18 @@ export async function PATCH(
     return erroResponse(400, "VALIDACAO_CAMPO", "Corpo da requisição inválido (JSON esperado).");
   }
 
-  const novoStatus = (body as Record<string, unknown>)?.novo_status;
+  const dados = body as Record<string, unknown>;
+  const novoStatus = dados?.novo_status;
   if (!statusValido(novoStatus)) {
     return erroResponse(
       400,
       "VALIDACAO_CAMPO",
       "Campo novo_status é obrigatório e deve ser um status válido."
     );
+  }
+  const ordem = dados?.ordem;
+  if (ordem !== undefined && typeof ordem !== "number") {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo ordem deve ser número.");
   }
 
   const db = getDb();
@@ -70,7 +75,10 @@ export async function PATCH(
   const [updateResult] = await db.batch([
     db
       .update(projetos)
-      .set({ statusAtual: novoStatus as StatusProjeto })
+      .set({
+        statusAtual: novoStatus as StatusProjeto,
+        ...(ordem !== undefined ? { ordem: ordem as number } : {}),
+      })
       .where(eq(projetos.idProjeto, id))
       .returning(),
     db.insert(historicoTransicoes).values({

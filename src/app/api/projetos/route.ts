@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, eq, ilike, or } from "drizzle-orm";
+import { and, eq, ilike, max, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { projetos } from "@/db/schema";
 import { erroResponse } from "@/lib/api-error";
 import { statusValido } from "@/lib/fluxo";
+import { calcularOrdem } from "@/lib/ordenacao";
 
 // GET /api/projetos — lista projetos (usado por GerenciadorEstadoBoard).
 // Ver Docs/02-Tecnico/Especificacao-API.md
@@ -58,12 +59,19 @@ export async function POST(request: NextRequest) {
 
   const db = getDb();
   try {
+    const [{ maxOrdem }] = await db
+      .select({ maxOrdem: max(projetos.ordem) })
+      .from(projetos)
+      .where(eq(projetos.statusAtual, "Esquema_Eletrico"));
+    const ordem = calcularOrdem(maxOrdem != null ? [maxOrdem] : [], 1);
+
     const [criado] = await db
       .insert(projetos)
       .values({
         numero: numero.trim(),
         nomeMaquina: (nomeMaquina as string | null | undefined)?.trim() || null,
         descricao: (descricao as string | null | undefined)?.trim() || null,
+        ordem,
         statusAtual: "Esquema_Eletrico",
       })
       .returning();

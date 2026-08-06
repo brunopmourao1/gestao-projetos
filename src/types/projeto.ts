@@ -12,6 +12,7 @@ export interface Projeto {
   numero: string;
   nomeMaquina: string | null;
   descricao: string | null;
+  ordem: number;
   statusAtual: StatusProjeto;
   dataCriacao: string;
 }

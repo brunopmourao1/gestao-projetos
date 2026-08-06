@@ -13,6 +13,7 @@ erDiagram
         string numero UK "obrigatório, único — ex: OS 1800"
         string nome_maquina "opcional"
         string descricao "opcional"
+        double ordem "obrigatório — prioridade manual dentro da coluna (menor = mais crítico/topo)"
         enum status_atual "Esquema_Eletrico, Offline, Montagem, Online, Concluido"
         timestamp data_criacao
     }
@@ -43,3 +44,4 @@ erDiagram
 * Um novo `Historico_Transicoes` é criado em toda mudança de `status_atual` — nunca há mudança de status sem registro de histórico correspondente (RF02).
 * A transição de `status_atual` para `Concluido` exige que `Especificacoes_Tecnicas.dados_motores` e `dados_sensores` estejam preenchidos (regra aplicada por `ValidacaoParametrosFisicos`, não uma constraint de banco).
 * `Projetos.numero` é obrigatório e único (constraint de banco) — é o identificador primário usado na prática para localizar um projeto (ex: "OS 1800"). `nome_maquina` é opcional, informação secundária sobre a máquina física.
+* `Projetos.ordem` usa fractional indexing (número de ponto flutuante, não um índice inteiro sequencial) — inserir um card entre dois outros é a média dos dois vizinhos, sem precisar reescrever a coluna inteira a cada reordenação manual de prioridade. Limitação aceita: reordenações repetidas exatamente no mesmo ponto podem, em teoria, fazer os valores convergirem ao longo de muito tempo de uso — não implementado nenhum rebalanceamento automático, considerado risco desprezível para o volume de uso esperado.

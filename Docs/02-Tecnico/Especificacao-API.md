@@ -15,6 +15,7 @@ Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o bo
     "numero": "string",
     "nome_maquina": "string | null",
     "descricao": "string | null",
+    "ordem": "number",
     "status_atual": "Esquema_Eletrico | Offline | Montagem | Online | Concluido",
     "data_criacao": "timestamp"
   }
@@ -22,10 +23,21 @@ Lista todos os projetos, usado por `GerenciadorEstadoBoard` para renderizar o bo
 ```
 
 ### `POST /api/projetos`
-Cria um novo projeto. Status inicial sempre `Esquema_Eletrico`.
+Cria um novo projeto. Status inicial sempre `Esquema_Eletrico`. `ordem` é calculada automaticamente (fim da coluna `Esquema_Eletrico`) — não é um campo de entrada.
 **Body:** `{ "numero": "string (obrigatório, único)", "nome_maquina": "string (opcional)", "descricao": "string (opcional)" }`
 **Resposta 201:** objeto do projeto criado.
 **Resposta 409** (`VALIDACAO_CAMPO`): já existe um projeto com o mesmo `numero`.
+
+### `PATCH /api/projetos/:id`
+Edita `numero`/`nome_maquina`/`descricao` de um projeto existente.
+**Body:** igual ao `POST` (mesma validação, incluindo unicidade de `numero`).
+**Resposta 200:** objeto do projeto atualizado.
+**Resposta 409** (`VALIDACAO_CAMPO`): já existe outro projeto com o `numero` informado.
+
+### `DELETE /api/projetos/:id`
+Exclui o projeto permanentemente. Especificações técnicas e histórico de transições são removidos em cascata (FK `ON DELETE CASCADE`).
+**Resposta 200:** `{ "ok": true }`
+**Resposta 404** (`PROJETO_NAO_ENCONTRADO`).
 
 ### `GET /api/projetos/:id`
 Retorna detalhes de um projeto, incluindo especificações técnicas associadas (usado ao abrir o `DetailsDrawer`).
@@ -36,6 +48,7 @@ Retorna detalhes de um projeto, incluindo especificações técnicas associadas 
   "numero": "string",
   "nome_maquina": "string | null",
   "descricao": "string | null",
+  "ordem": "number",
   "status_atual": "string",
   "data_criacao": "timestamp",
   "especificacoes_tecnicas": { "...": "ver Especificacoes_Tecnicas" },
@@ -44,11 +57,16 @@ Retorna detalhes de um projeto, incluindo especificações técnicas associadas 
 ```
 
 ### `PATCH /api/projetos/:id/status`
-Move o projeto para a próxima coluna. Aciona `CalculoMetricasTempo` e grava em `Historico_Transicoes`. Se o destino for `Concluido`, aciona `ValidacaoParametrosFisicos` antes de efetivar.
-**Body:** `{ "novo_status": "string" }`
+Move o projeto para uma coluna adjacente (arrastar o card, ver HU-02). Aciona `CalculoMetricasTempo` e grava em `Historico_Transicoes`. Se o destino for `Concluido`, aciona `ValidacaoParametrosFisicos` antes de efetivar.
+**Body:** `{ "novo_status": "string", "ordem": "number (opcional)" }` — `ordem` posiciona o card no ponto exato onde foi solto na coluna de destino; se omitido, mantém a `ordem` atual.
 **Resposta 200:** projeto atualizado.
 **Resposta 422** (`PARAMETROS_INCOMPLETOS`): quando a transição para `Concluido` é bloqueada por dados obrigatórios ausentes. O corpo do erro lista os campos faltantes.
 **Resposta 400** (`TRANSICAO_INVALIDA`): quando o `novo_status` não é adjacente ao `status_atual` no fluxo sequencial.
+
+### `PATCH /api/projetos/:id/ordem`
+Reordena o projeto dentro da mesma coluna (prioridade manual). Não altera `status_atual` nem grava histórico — reordenar não é uma transição de estado.
+**Body:** `{ "ordem": "number" }`
+**Resposta 200:** projeto atualizado.
 
 ## Especificações Técnicas
 

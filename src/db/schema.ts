@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, pgEnum, json } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, json, doublePrecision } from "drizzle-orm/pg-core";
 
 export const statusProjetoEnum = pgEnum("status_projeto", [
   "Esquema_Eletrico",
@@ -14,6 +14,7 @@ export const projetos = pgTable("projetos", {
   numero: varchar("numero", { length: 50 }).notNull().unique(),
   nomeMaquina: varchar("nome_maquina", { length: 255 }),
   descricao: text("descricao"),
+  ordem: doublePrecision("ordem").notNull(),
   statusAtual: statusProjetoEnum("status_atual").notNull().default("Esquema_Eletrico"),
   dataCriacao: timestamp("data_criacao").notNull().defaultNow(),
 });

@@ -14,6 +14,7 @@ import {
 import type { RelatorioPayload } from "@/lib/relatorio";
 import { ResultadoMover } from "./ProjectCard";
 import { DadosNovoProjeto } from "./NovoProjetoDialog";
+import { DadosEditarProjeto } from "./EditarProjetoDialog";
 
 interface BoardClientProps {
   projetosIniciais: Projeto[];
@@ -53,6 +54,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [exportando, setExportando] = useState(false);
   const [erroExportacao, setErroExportacao] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
+  const [erroMovimento, setErroMovimento] = useState<string | null>(null);
 
   const projetosFiltrados = projetos.filter((p) => {
     const buscaNormalizada = busca.trim().toLowerCase();
@@ -87,25 +89,31 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     setProjetoSelecionado((atual) => (atual ? { ...atual, especificacoesTecnicas: espec } : atual));
   }
 
-  async function handleMoverProjeto(projeto: Projeto, novoStatus: StatusProjeto): Promise<ResultadoMover> {
+  async function handleMoverProjeto(
+    projeto: Projeto,
+    novoStatus: StatusProjeto,
+    ordem: number
+  ): Promise<ResultadoMover> {
+    setErroMovimento(null);
     const resposta = await fetch(`/api/projetos/${projeto.idProjeto}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ novo_status: novoStatus }),
+      body: JSON.stringify({ novo_status: novoStatus, ordem }),
     });
     const dados = await resposta.json();
     if (!resposta.ok) {
       const camposFaltantes = dados?.erro?.camposFaltantes as string[] | undefined;
-      return {
-        ok: false,
-        mensagem: camposFaltantes?.length
-          ? `${dados.erro.mensagem} (${camposFaltantes.join(", ")})`
-          : dados?.erro?.mensagem ?? "Não foi possível mover o projeto.",
-      };
+      const mensagem = camposFaltantes?.length
+        ? `${dados.erro.mensagem} (${camposFaltantes.join(", ")})`
+        : dados?.erro?.mensagem ?? "Não foi possível mover o projeto.";
+      setErroMovimento(`${projeto.numero}: ${mensagem}`);
+      return { ok: false, mensagem };
     }
 
     setProjetos((atual) =>
-      atual.map((p) => (p.idProjeto === projeto.idProjeto ? { ...p, statusAtual: dados.statusAtual } : p))
+      atual.map((p) =>
+        p.idProjeto === projeto.idProjeto ? { ...p, statusAtual: dados.statusAtual, ordem: dados.ordem } : p
+      )
     );
 
     if (projetoSelecionado?.idProjeto === projeto.idProjeto) {
@@ -117,6 +125,54 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     }
 
     return { ok: true };
+  }
+
+  async function handleReordenarProjeto(projeto: Projeto, novaOrdem: number): Promise<ResultadoMover> {
+    setErroMovimento(null);
+    try {
+      const resposta = await fetch(`/api/projetos/${projeto.idProjeto}/ordem`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ordem: novaOrdem }),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok) {
+        const mensagem = dados?.erro?.mensagem ?? "Não foi possível reordenar o projeto.";
+        setErroMovimento(`${projeto.numero}: ${mensagem}`);
+        return { ok: false, mensagem };
+      }
+      setProjetos((atual) =>
+        atual.map((p) => (p.idProjeto === projeto.idProjeto ? { ...p, ordem: dados.ordem } : p))
+      );
+      return { ok: true };
+    } catch {
+      const mensagem = "Falha de rede ao reordenar o projeto.";
+      setErroMovimento(`${projeto.numero}: ${mensagem}`);
+      return { ok: false, mensagem };
+    }
+  }
+
+  async function handleEditarProjeto(id: string, dados: DadosEditarProjeto): Promise<ResultadoMover> {
+    try {
+      const resposta = await fetch(`/api/projetos/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          numero: dados.numero,
+          nome_maquina: dados.nomeMaquina || undefined,
+          descricao: dados.descricao || undefined,
+        }),
+      });
+      const atualizado = await resposta.json();
+      if (!resposta.ok) {
+        return { ok: false, mensagem: atualizado?.erro?.mensagem ?? "Não foi possível editar o projeto." };
+      }
+      setProjetos((atual) => atual.map((p) => (p.idProjeto === id ? { ...p, ...atualizado } : p)));
+      setProjetoSelecionado((atual) => (atual && atual.idProjeto === id ? { ...atual, ...atualizado } : atual));
+      return { ok: true };
+    } catch {
+      return { ok: false, mensagem: "Falha de rede ao editar o projeto." };
+    }
   }
 
   async function handleCriarProjeto(dadosNovo: DadosNovoProjeto): Promise<ResultadoMover> {
@@ -144,6 +200,22 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   function handleDrawerOpenChange(open: boolean) {
     setDrawerAberto(open);
     if (!open) setProjetoSelecionado(null);
+  }
+
+  async function handleExcluirProjeto(id: string): Promise<ResultadoMover> {
+    try {
+      const resposta = await fetch(`/api/projetos/${id}`, { method: "DELETE" });
+      if (!resposta.ok) {
+        const dados = await resposta.json();
+        return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível excluir o projeto." };
+      }
+      setProjetos((atual) => atual.filter((p) => p.idProjeto !== id));
+      setDrawerAberto(false);
+      setProjetoSelecionado(null);
+      return { ok: true };
+    } catch {
+      return { ok: false, mensagem: "Falha de rede ao excluir o projeto." };
+    }
   }
 
   async function handleExportarRelatorio() {
@@ -180,10 +252,19 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       onBuscaChange={setBusca}
       onCriarProjeto={handleCriarProjeto}
     >
+      {erroMovimento && (
+        <div className="mx-4 mt-2 flex items-center justify-between rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <span>{erroMovimento}</span>
+          <button type="button" onClick={() => setErroMovimento(null)} className="ml-2 font-medium">
+            ×
+          </button>
+        </div>
+      )}
       <KanbanBoard
         projetos={projetosFiltrados}
         onSelectProjeto={handleSelectProjeto}
         onMoverProjeto={handleMoverProjeto}
+        onReordenarProjeto={handleReordenarProjeto}
       />
       <DetailsDrawer
         projeto={projetoSelecionado}
@@ -192,6 +273,8 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         open={drawerAberto}
         onOpenChange={handleDrawerOpenChange}
         onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
+        onEditarProjeto={handleEditarProjeto}
+        onExcluirProjeto={handleExcluirProjeto}
       />
     </LayoutContainer>
   );

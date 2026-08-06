@@ -14,11 +14,33 @@ Como **Gestor/Tech Lead**, quero visualizar todos os projetos organizados em col
 * Cada `ProjectCard` mostra o `numero` (ex: "OS 1800") como identificador principal — é como o time sempre se refere ao projeto na prática — com `nome_maquina` como informação secundária, se preenchido.
 
 ### HU-02 — Mover projeto entre colunas
-Como **Programador**, quero mover um card de projeto para a próxima coluna do fluxo, para refletir o avanço real do comissionamento.
+Como **Programador**, quero arrastar o card de projeto para a coluna seguinte do fluxo, para refletir o avanço real do comissionamento.
 **Critérios de aceite:**
-* A movimentação só é permitida entre colunas adjacentes do fluxo sequencial (não é possível pular etapas).
-* Toda movimentação dispara o registro de histórico (ver HU-03).
+* Interação por arrastar-e-soltar (drag-and-drop) — arrastar pra fora de uma coluna adjacente é bloqueado, o card volta pro lugar com mensagem de erro.
+* A movimentação só é permitida entre colunas adjacentes do fluxo sequencial (não é possível pular etapas arrastando).
+* Toda movimentação dispara o registro de histórico (ver HU-04).
 * Movimentação para "Operação Concluída" só é permitida se `ValidacaoParametrosFisicos` passar (ver HU-08).
+
+### HU-11 — Editar projeto
+Como **Gestor/Tech Lead**, quero corrigir o número, nome da máquina ou descrição de um projeto já criado, para consertar erros de digitação sem precisar recriar o projeto.
+**Critérios de aceite:**
+* Botão "Editar" no cabeçalho do `DetailsDrawer`, abre um formulário pré-preenchido com os valores atuais.
+* Os 3 campos são editáveis, incluindo o número — com a mesma validação de unicidade da criação (HU-10).
+* Card e drawer refletem a mudança imediatamente, sem recarregar a página.
+
+### HU-12 — Priorizar projetos dentro da coluna
+Como **Gestor/Tech Lead**, quero reordenar os cards dentro de uma mesma coluna arrastando, para indicar qual projeto é mais crítico e deve sair primeiro daquele estágio.
+**Critérios de aceite:**
+* Arrastar um card pra qualquer posição dentro da mesma coluna reordena a lista — o card mais acima é o mais crítico/prioritário.
+* A ordem é persistida (salva no banco) — todo mundo que abrir o board vê a mesma prioridade, mesmo depois de recarregar.
+* Um projeto novo sempre entra no fim da coluna "Aguardando Esquema Elétrico" (menor prioridade até alguém reordenar manualmente).
+
+### HU-13 — Excluir projeto
+Como **Gestor/Tech Lead**, quero excluir um projeto cadastrado por engano ou que não faz mais sentido acompanhar, para manter o board limpo.
+**Critérios de aceite:**
+* Botão "Excluir" no cabeçalho do `DetailsDrawer`, ao lado de "Editar".
+* Ação irreversível — exige confirmação explícita antes de efetivar.
+* Excluir um projeto remove também suas especificações técnicas e histórico de transições associados.
 
 ### HU-03 — Buscar projeto pelo número ou nome
 Como **Gestor/Tech Lead**, quero buscar um projeto pelo número da OS (ou pelo nome da máquina) na barra de busca global, para localizar rapidamente um projeto específico sem navegar por todas as colunas.

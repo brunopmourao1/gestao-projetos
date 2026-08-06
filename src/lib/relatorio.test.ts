@@ -7,6 +7,7 @@ const projetoBase: ProjetoDetalhado = {
   numero: "OS 1800",
   nomeMaquina: "Torno CNC 01",
   descricao: null,
+  ordem: 1000,
   statusAtual: "Offline",
   dataCriacao: "2024-01-01T00:00:00.000Z",
   especificacoesTecnicas: null,

@@ -12,29 +12,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { ProjetoFormCampos } from "./ProjetoFormCampos";
 import { ResultadoMover } from "./ProjectCard";
+import { Projeto } from "@/types/projeto";
 
-export interface DadosNovoProjeto {
+export interface DadosEditarProjeto {
   numero: string;
   nomeMaquina: string;
   descricao: string;
 }
 
-interface NovoProjetoDialogProps {
-  onCriar: (dados: DadosNovoProjeto) => Promise<ResultadoMover>;
+interface EditarProjetoDialogProps {
+  projeto: Projeto;
+  onEditar: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
 }
 
-export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
+export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogProps) {
   const [open, setOpen] = useState(false);
-  const [numero, setNumero] = useState("");
-  const [nomeMaquina, setNomeMaquina] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [criando, setCriando] = useState(false);
+  const [numero, setNumero] = useState(projeto.numero);
+  const [nomeMaquina, setNomeMaquina] = useState(projeto.nomeMaquina ?? "");
+  const [descricao, setDescricao] = useState(projeto.descricao ?? "");
+  const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  function limparFormulario() {
-    setNumero("");
-    setNomeMaquina("");
-    setDescricao("");
+  function restaurarValores() {
+    setNumero(projeto.numero);
+    setNomeMaquina(projeto.nomeMaquina ?? "");
+    setDescricao(projeto.descricao ?? "");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -44,19 +46,18 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
       setErro("Informe o número da OS.");
       return;
     }
-    setCriando(true);
+    setSalvando(true);
     setErro(null);
-    const resultado = await onCriar({
+    const resultado = await onEditar(projeto.idProjeto, {
       numero: numeroLimpo,
       nomeMaquina: nomeMaquina.trim(),
       descricao: descricao.trim(),
     });
-    setCriando(false);
+    setSalvando(false);
     if (!resultado.ok) {
       setErro(resultado.mensagem);
       return;
     }
-    limparFormulario();
     setOpen(false);
   }
 
@@ -65,14 +66,17 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
       open={open}
       onOpenChange={(novoOpen) => {
         setOpen(novoOpen);
-        if (novoOpen) setErro(null);
+        if (novoOpen) {
+          restaurarValores();
+          setErro(null);
+        }
       }}
     >
-      <DialogTrigger render={<Button />}>Novo Projeto</DialogTrigger>
+      <DialogTrigger render={<Button variant="outline" size="sm" />}>Editar</DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Novo Projeto</DialogTitle>
+            <DialogTitle>Editar Projeto</DialogTitle>
           </DialogHeader>
           <ProjetoFormCampos
             numero={numero}
@@ -84,8 +88,8 @@ export function NovoProjetoDialog({ onCriar }: NovoProjetoDialogProps) {
             erro={erro}
           />
           <DialogFooter>
-            <Button type="submit" disabled={criando}>
-              {criando ? "Criando..." : "Criar"}
+            <Button type="submit" disabled={salvando}>
+              {salvando ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>
         </form>
