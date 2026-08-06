@@ -4,12 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 1
-// TODO: busca global (HU-03) ainda não implementada.
 interface TopNavbarProps {
   nomeMaquinaAtiva: string | null;
   onExportarRelatorio: () => void;
   exportando: boolean;
   erroExportacao: string | null;
+  busca: string;
+  onBuscaChange: (valor: string) => void;
 }
 
 export function TopNavbar({
@@ -17,6 +18,8 @@ export function TopNavbar({
   onExportarRelatorio,
   exportando,
   erroExportacao,
+  busca,
+  onBuscaChange,
 }: TopNavbarProps) {
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b px-4">
@@ -24,7 +27,8 @@ export function TopNavbar({
       <Input
         placeholder="Buscar máquina..."
         className="max-w-xs"
-        disabled
+        value={busca}
+        onChange={(e) => onBuscaChange(e.target.value)}
       />
       <div className="relative ml-auto">
         <Button

@@ -2,9 +2,7 @@
 **Metodologia:** Kanban simples (ver `03-Processos/Metodologia-Trabalho.md`). Este documento é vivo — atualizar a cada sessão de trabalho movendo as tarefas entre as colunas.
 
 ## Backlog
-Tarefas técnicas derivadas de `01-Produto/Backlog-Historias-Usuario.md`, na ordem de priorização sugerida (Fase 1 do cronograma primeiro):
-
-- [ ] HU-03 — Busca global de projetos (UI — API já suporta via `?busca=`)
+_(vazio — todas as histórias de usuário da Fase 1, `01-Produto/Backlog-Historias-Usuario.md`, foram concluídas. Próximos itens vêm do backlog de produto para fases futuras, ainda não detalhados aqui.)_
 
 ## Em Progresso
 _(vazio)_
@@ -29,3 +27,4 @@ _(vazio)_
 - [x] HU-02 — Ação de mover `ProjectCard` entre colunas adjacentes (botões "← Voltar"/"Avançar →" no card, erro inline com campos faltantes quando bloqueado)
 - [x] HU-05 — Exibição de lead time por estágio na UI (seção "Tempo por Estágio" na Aba 1, atualiza junto com o histórico ao mover o card)
 - [x] HU-09 — Preview do relatório na Aba 3 + botão de exportação na `TopNavbar`, ligado ao projeto ativo do drawer. Corrigido bug de layout em `sheet.tsx` onde o painel do drawer cobria a `TopNavbar` inteira (`inset-y-0`), tornando o botão de exportar inacessível enquanto o drawer estava aberto — ajustado pra `top-14`, respeitando a altura da navbar.
+- [x] HU-03 — Busca global de projetos (filtro client-side por `nomeMaquina`, case-insensitive e parcial, campo na `TopNavbar` habilitado) — última história da Fase 1

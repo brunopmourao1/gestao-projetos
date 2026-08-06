@@ -51,6 +51,11 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [drawerAberto, setDrawerAberto] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [erroExportacao, setErroExportacao] = useState<string | null>(null);
+  const [busca, setBusca] = useState("");
+
+  const projetosFiltrados = projetos.filter((p) =>
+    p.nomeMaquina.toLowerCase().includes(busca.trim().toLowerCase())
+  );
 
   async function handleSelectProjeto(projeto: Projeto) {
     setProjetoSelecionado(paraDetalhado(projeto));
@@ -144,9 +149,11 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       onExportarRelatorio={handleExportarRelatorio}
       exportando={exportando}
       erroExportacao={erroExportacao}
+      busca={busca}
+      onBuscaChange={setBusca}
     >
       <KanbanBoard
-        projetos={projetos}
+        projetos={projetosFiltrados}
         onSelectProjeto={handleSelectProjeto}
         onMoverProjeto={handleMoverProjeto}
       />
