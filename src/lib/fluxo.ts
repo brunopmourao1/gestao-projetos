@@ -1,4 +1,10 @@
-import { COLUNAS_FLUXO, EspecificacoesTecnicas, StatusProjeto } from "@/types/projeto";
+import {
+  ChecklistOffline,
+  COLUNAS_FLUXO,
+  EspecificacoesTecnicas,
+  ITENS_CHECKLIST_OFFLINE,
+  StatusProjeto,
+} from "@/types/projeto";
 
 const ORDEM: StatusProjeto[] = COLUNAS_FLUXO.map((c) => c.status);
 
@@ -38,4 +44,20 @@ export function validarParametrosFisicos(
   }
 
   return { valido: faltantes.length === 0, camposFaltantes: faltantes };
+}
+
+export interface ResultadoValidacaoChecklistOffline {
+  valido: boolean;
+  itensFaltantes: string[];
+}
+
+// Checada antes de permitir transição de "Offline" para "Montagem" — as 4
+// sub-etapas (Hardware, Lógica FC/FB, IHM, Segurança) precisam estar 100%.
+export function validarChecklistOffline(
+  checklist: ChecklistOffline
+): ResultadoValidacaoChecklistOffline {
+  const itensFaltantes = ITENS_CHECKLIST_OFFLINE.filter((item) => !checklist[item.chave]).map(
+    (item) => item.rotulo
+  );
+  return { valido: itensFaltantes.length === 0, itensFaltantes };
 }

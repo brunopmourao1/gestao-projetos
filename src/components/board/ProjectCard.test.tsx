@@ -12,6 +12,8 @@ const projeto: Projeto = {
   dataPrevistaConclusao: null,
   statusAtual: "Offline",
   dataCriacao: new Date().toISOString(),
+  checklistOffline: { hardware: false, logicaFcFb: false, ihm: false, seguranca: false },
+  observacoes: null,
 };
 
 describe("ProjectCard", () => {
@@ -32,5 +34,22 @@ describe("ProjectCard", () => {
     render(<ProjectCard projeto={projeto} onClick={onClick} />);
     fireEvent.click(screen.getByText("OS 1800"));
     expect(onClick).toHaveBeenCalledWith(projeto);
+  });
+
+  it("mostra o percentual do checklist offline quando o projeto está na fase Offline", () => {
+    render(
+      <ProjectCard
+        projeto={{
+          ...projeto,
+          checklistOffline: { hardware: true, logicaFcFb: true, ihm: false, seguranca: false },
+        }}
+      />
+    );
+    expect(screen.getByText("50% concluído (2/4)")).toBeInTheDocument();
+  });
+
+  it("não mostra percentual quando o projeto não está na fase Offline", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem" }} />);
+    expect(screen.queryByText(/% concluído/)).not.toBeInTheDocument();
   });
 });

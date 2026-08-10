@@ -20,6 +20,7 @@ Como **Programador**, quero arrastar o card de projeto para a coluna seguinte do
 * A movimentação só é permitida entre colunas adjacentes do fluxo sequencial (não é possível pular etapas arrastando).
 * Toda movimentação dispara o registro de histórico (ver HU-04).
 * Movimentação para "Operação Concluída" só é permitida se `ValidacaoParametrosFisicos` passar (ver HU-08).
+* Movimentação de "Projeto Offline" para "Aguardando Montagem" só é permitida se o `ChecklistOffline` estiver 100% concluído (ver HU-15).
 
 ### HU-11 — Editar projeto
 Como **Gestor/Tech Lead**, quero corrigir o número, nome da máquina ou descrição de um projeto já criado, para consertar erros de digitação sem precisar recriar o projeto.
@@ -93,6 +94,21 @@ Como **Gestor/Tech Lead**, quero que o sistema impeça a conclusão de um projet
 **Critérios de aceite:**
 * `ValidacaoParametrosFisicos` verifica campos obrigatórios (configuração de hardware, ajustes de sensores) antes de permitir transição para "Operação Concluída".
 * Se a validação falhar, o sistema bloqueia a transição e indica quais campos faltam.
+
+### HU-15 — Checklist de sub-etapas da fase Offline
+Como **Programador**, quero marcar quais sub-etapas do trabalho offline já concluí (Hardware, Lógica das FC's e FB's, IHM, Segurança), para saber quanto falta e não avançar o projeto incompleto para a montagem física.
+**Critérios de aceite:**
+* Aba "Checklist" no `DetailsDrawer` com 4 itens, sempre na mesma ordem: Hardware → Lógica (FC's e FB's) → IHM → Segurança (tipicamente um PLC de segurança separado do PLC principal, geralmente Siemens).
+* Cada item é um checkbox binário (feito/não feito); cada um vale 25% do total. Marcar/desmarcar salva imediatamente.
+* O `ProjectCard` mostra uma barra de progresso com o percentual quando o projeto está na coluna "Projeto Offline".
+* Tentar mover o card de "Projeto Offline" para "Aguardando Montagem" com menos de 100% é bloqueado, com mensagem indicando quais sub-etapas faltam (mesmo padrão de bloqueio de HU-08).
+
+### HU-16 — Observações gerais do projeto
+Como **Gestor/Tech Lead** ou **Programador**, quero registrar observações livres sobre o projeto (pendências, definições em aberto, algo faltando), para não perder esse contexto entre uma fase e outra.
+**Critérios de aceite:**
+* Campo de texto livre "Observações" na Aba 1 (Visão Geral) do `DetailsDrawer`, com botão de salvar próprio.
+* É uma nota única e editável (não um log com histórico) — sobrescreve o valor anterior ao salvar.
+* Visível e editável em qualquer fase do projeto, não só na "Projeto Offline".
 
 ## Épico 4 — Relatórios Executivos (RF04)
 ### HU-09 — Gerar relatório de apresentação

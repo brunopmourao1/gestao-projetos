@@ -52,16 +52,19 @@ Retorna detalhes de um projeto, incluindo especificações técnicas associadas 
   "ordem": "number",
   "status_atual": "string",
   "data_criacao": "timestamp",
+  "checklist_offline": { "hardware": "boolean", "logica_fc_fb": "boolean", "ihm": "boolean", "seguranca": "boolean" },
+  "observacoes": "string | null",
   "especificacoes_tecnicas": { "...": "ver Especificacoes_Tecnicas" },
   "historico_transicoes": [ "...ver Historico_Transicoes" ]
 }
 ```
 
 ### `PATCH /api/projetos/:id/status`
-Move o projeto para uma coluna adjacente (arrastar o card, ver HU-02). Aciona `CalculoMetricasTempo` e grava em `Historico_Transicoes`. Se o destino for `Concluido`, aciona `ValidacaoParametrosFisicos` antes de efetivar.
+Move o projeto para uma coluna adjacente (arrastar o card, ver HU-02). Aciona `CalculoMetricasTempo` e grava em `Historico_Transicoes`. Se o destino for `Montagem` (vindo de `Offline`), aciona `validarChecklistOffline`. Se o destino for `Concluido`, aciona `ValidacaoParametrosFisicos` antes de efetivar.
 **Body:** `{ "novo_status": "string", "ordem": "number (opcional)" }` — `ordem` posiciona o card no ponto exato onde foi solto na coluna de destino; se omitido, mantém a `ordem` atual.
 **Resposta 200:** projeto atualizado.
 **Resposta 422** (`PARAMETROS_INCOMPLETOS`): quando a transição para `Concluido` é bloqueada por dados obrigatórios ausentes. O corpo do erro lista os campos faltantes.
+**Resposta 422** (`CHECKLIST_OFFLINE_INCOMPLETO`): quando a transição de `Offline` para `Montagem` é bloqueada por sub-etapas do checklist não concluídas. O corpo do erro lista `itens_faltantes` (ver HU-15).
 **Resposta 400** (`TRANSICAO_INVALIDA`): quando o `novo_status` não é adjacente ao `status_atual` no fluxo sequencial.
 
 ### `PATCH /api/projetos/:id/ordem`
@@ -72,6 +75,17 @@ Reordena o projeto dentro da mesma coluna (prioridade manual). Não altera `stat
 ### `PATCH /api/projetos/:id/data-prevista`
 Define ou limpa a data prevista de conclusão da **etapa atual** do projeto, sem precisar reenviar `numero`/`nome_maquina`/`descricao`. Aberto automaticamente pela UI logo após mover um card para uma coluna nova (drag-and-drop) — o preenchimento é opcional e pode ser feito depois.
 **Body:** `{ "data_prevista_conclusao": "date | null" }`
+**Resposta 200:** projeto atualizado.
+
+### `PATCH /api/projetos/:id/checklist-offline`
+Atualiza uma ou mais sub-etapas do checklist da fase Offline (ver HU-15). Merge parcial — uma chave ausente do body preserva o valor já salvo, mesmo espírito de `PUT .../especificacoes`.
+**Body:** `{ "hardware": "boolean (opcional)", "logica_fc_fb": "boolean (opcional)", "ihm": "boolean (opcional)", "seguranca": "boolean (opcional)" }`
+**Resposta 200:** projeto atualizado.
+**Resposta 400** (`VALIDACAO_CAMPO`): quando algum campo presente não é booleano.
+
+### `PATCH /api/projetos/:id/observacoes`
+Define ou limpa a nota única de observações gerais do projeto (ver HU-16), sem precisar reenviar `numero`/`nome_maquina`/`descricao`.
+**Body:** `{ "observacoes": "string | null" }`
 **Resposta 200:** projeto atualizado.
 
 ## Especificações Técnicas

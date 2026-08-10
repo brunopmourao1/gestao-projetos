@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isTransicaoValida, statusValido, validarParametrosFisicos } from "./fluxo";
+import {
+  isTransicaoValida,
+  statusValido,
+  validarChecklistOffline,
+  validarParametrosFisicos,
+} from "./fluxo";
 
 describe("statusValido", () => {
   it("aceita cada status válido do fluxo", () => {
@@ -86,5 +91,43 @@ describe("validarParametrosFisicos", () => {
     });
     expect(resultado.valido).toBe(false);
     expect(resultado.camposFaltantes).toEqual(["dados_sensores.part_numbers"]);
+  });
+});
+
+describe("validarChecklistOffline", () => {
+  it("aponta todos os itens quando nada está marcado", () => {
+    const resultado = validarChecklistOffline({
+      hardware: false,
+      logicaFcFb: false,
+      ihm: false,
+      seguranca: false,
+    });
+    expect(resultado.valido).toBe(false);
+    expect(resultado.itensFaltantes).toEqual([
+      "Hardware",
+      "Lógica (FC's e FB's)",
+      "IHM",
+      "Segurança (PLC de segurança)",
+    ]);
+  });
+
+  it("aprova quando as 4 sub-etapas estão concluídas", () => {
+    const resultado = validarChecklistOffline({
+      hardware: true,
+      logicaFcFb: true,
+      ihm: true,
+      seguranca: true,
+    });
+    expect(resultado).toEqual({ valido: true, itensFaltantes: [] });
+  });
+
+  it("aponta apenas os itens faltantes", () => {
+    const resultado = validarChecklistOffline({
+      hardware: true,
+      logicaFcFb: true,
+      ihm: false,
+      seguranca: false,
+    });
+    expect(resultado.itensFaltantes).toEqual(["IHM", "Segurança (PLC de segurança)"]);
   });
 });

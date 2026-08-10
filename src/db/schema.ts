@@ -8,6 +8,20 @@ export const statusProjetoEnum = pgEnum("status_projeto", [
   "Concluido",
 ]);
 
+export type ChecklistOffline = {
+  hardware: boolean;
+  logicaFcFb: boolean;
+  ihm: boolean;
+  seguranca: boolean;
+};
+
+const CHECKLIST_OFFLINE_PADRAO: ChecklistOffline = {
+  hardware: false,
+  logicaFcFb: false,
+  ihm: false,
+  seguranca: false,
+};
+
 // Ver Docs/02-Tecnico/Modelo-Dados-ER.md
 export const projetos = pgTable("projetos", {
   idProjeto: uuid("id_projeto").primaryKey().defaultRandom(),
@@ -18,6 +32,13 @@ export const projetos = pgTable("projetos", {
   dataPrevistaConclusao: timestamp("data_prevista_conclusao"),
   statusAtual: statusProjetoEnum("status_atual").notNull().default("Esquema_Eletrico"),
   dataCriacao: timestamp("data_criacao").notNull().defaultNow(),
+  // Sub-etapas da fase "Offline" (Hardware -> Lógica FC/FB -> IHM -> Segurança).
+  // Ver Docs/01-Produto/Backlog-Historias-Usuario.md
+  checklistOffline: json("checklist_offline")
+    .$type<ChecklistOffline>()
+    .notNull()
+    .default(CHECKLIST_OFFLINE_PADRAO),
+  observacoes: text("observacoes"),
 });
 
 type DadosMotores = {

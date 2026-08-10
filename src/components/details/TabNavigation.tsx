@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  ChecklistOffline,
   COLUNAS_FLUXO,
   EspecificacoesTecnicas,
   MetricaTempoEstagio,
@@ -7,6 +8,8 @@ import {
 } from "@/types/projeto";
 import type { RelatorioPayload } from "@/lib/relatorio";
 import { ParametrosForm } from "./ParametrosForm";
+import { ChecklistOfflineForm } from "./ChecklistOfflineForm";
+import { ObservacoesForm } from "./ObservacoesForm";
 import { formatarDuracao } from "@/lib/formatacao";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
 
@@ -16,6 +19,8 @@ interface TabNavigationProps {
   metricas: MetricaTempoEstagio[] | null;
   relatorio: RelatorioPayload | null;
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
+  onChecklistAtualizado: (checklist: ChecklistOffline) => void;
+  onObservacoesAtualizadas: (observacoes: string | null) => void;
 }
 
 export function TabNavigation({
@@ -23,11 +28,14 @@ export function TabNavigation({
   metricas,
   relatorio,
   onEspecificacoesAtualizadas,
+  onChecklistAtualizado,
+  onObservacoesAtualizadas,
 }: TabNavigationProps) {
   return (
     <Tabs defaultValue="visao-geral" className="mt-4">
       <TabsList className="w-full">
         <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
+        <TabsTrigger value="checklist">Checklist</TabsTrigger>
         <TabsTrigger value="parametros">Parâmetros</TabsTrigger>
         <TabsTrigger value="relatorio">Relatório</TabsTrigger>
       </TabsList>
@@ -37,6 +45,9 @@ export function TabNavigation({
         <div className="mb-3 space-y-1">
           <h4 className="text-xs font-semibold text-foreground">Descrição</h4>
           <p>{projeto.descricao || "Nenhuma descrição informada."}</p>
+        </div>
+        <div className="mb-3">
+          <ObservacoesForm projeto={projeto} onSalvo={onObservacoesAtualizadas} />
         </div>
         <div className="mb-3 space-y-1">
           <h4 className="text-xs font-semibold text-foreground">Data Prevista de Conclusão (etapa atual)</h4>
@@ -75,6 +86,10 @@ export function TabNavigation({
             ))}
           </ul>
         )}
+      </TabsContent>
+
+      <TabsContent value="checklist">
+        <ChecklistOfflineForm projeto={projeto} onChecklistAtualizado={onChecklistAtualizado} />
       </TabsContent>
 
       {/* HU-06/HU-07: inputs numéricos para dados de comissionamento físico */}

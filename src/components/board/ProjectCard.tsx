@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Projeto } from "@/types/projeto";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
+import { percentualChecklistOffline } from "@/lib/checklist-offline";
 
 export type ResultadoMover = { ok: true } | { ok: false; mensagem: string };
 
@@ -28,6 +29,8 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
   };
 
   const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
+  const percentualOffline =
+    projeto.statusAtual === "Offline" ? percentualChecklistOffline(projeto.checklistOffline) : null;
 
   return (
     <div
@@ -48,6 +51,19 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
             <p className={`text-xs ${atrasado ? "font-medium text-destructive" : "text-muted-foreground"}`}>
               Prazo: {formatarData(projeto.dataPrevistaConclusao)}
             </p>
+          )}
+          {percentualOffline !== null && (
+            <div className="space-y-0.5 pt-1">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className={`h-full rounded-full ${percentualOffline === 100 ? "bg-emerald-500" : "bg-primary"}`}
+                  style={{ width: `${percentualOffline}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {percentualOffline}% concluído ({percentualOffline / 25}/4)
+              </p>
+            </div>
           )}
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-2">

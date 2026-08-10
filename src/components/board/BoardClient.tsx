@@ -5,6 +5,7 @@ import { LayoutContainer } from "@/components/layout/LayoutContainer";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { DetailsDrawer } from "@/components/details/DetailsDrawer";
 import {
+  ChecklistOffline,
   EspecificacoesTecnicas,
   MetricaTempoEstagio,
   Projeto,
@@ -91,6 +92,19 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     setProjetoSelecionado((atual) => (atual ? { ...atual, especificacoesTecnicas: espec } : atual));
   }
 
+  function handleChecklistAtualizado(checklist: ChecklistOffline) {
+    setProjetoSelecionado((atual) => (atual ? { ...atual, checklistOffline: checklist } : atual));
+    setProjetos((atual) =>
+      atual.map((p) =>
+        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, checklistOffline: checklist } : p
+      )
+    );
+  }
+
+  function handleObservacoesAtualizadas(observacoes: string | null) {
+    setProjetoSelecionado((atual) => (atual ? { ...atual, observacoes } : atual));
+  }
+
   async function handleMoverProjeto(
     projeto: Projeto,
     novoStatus: StatusProjeto,
@@ -104,9 +118,11 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     });
     const dados = await resposta.json();
     if (!resposta.ok) {
-      const camposFaltantes = dados?.erro?.camposFaltantes as string[] | undefined;
-      const mensagem = camposFaltantes?.length
-        ? `${dados.erro.mensagem} (${camposFaltantes.join(", ")})`
+      const detalhesFaltantes = (dados?.erro?.camposFaltantes ?? dados?.erro?.itensFaltantes) as
+        | string[]
+        | undefined;
+      const mensagem = detalhesFaltantes?.length
+        ? `${dados.erro.mensagem} (${detalhesFaltantes.join(", ")})`
         : dados?.erro?.mensagem ?? "Não foi possível mover o projeto.";
       setErroMovimento(`${projeto.numero}: ${mensagem}`);
       return { ok: false, mensagem };
@@ -297,6 +313,8 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         open={drawerAberto}
         onOpenChange={handleDrawerOpenChange}
         onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
+        onChecklistAtualizado={handleChecklistAtualizado}
+        onObservacoesAtualizadas={handleObservacoesAtualizadas}
         onEditarProjeto={handleEditarProjeto}
         onExcluirProjeto={handleExcluirProjeto}
       />

@@ -42,6 +42,8 @@ export async function montarProjetoDetalhado(db: Db, id: string): Promise<Projet
     dataPrevistaConclusao: projeto.dataPrevistaConclusao?.toISOString() ?? null,
     statusAtual: projeto.statusAtual,
     dataCriacao: projeto.dataCriacao.toISOString(),
+    checklistOffline: projeto.checklistOffline,
+    observacoes: projeto.observacoes,
     especificacoesTecnicas: espec ?? null,
     historicoTransicoes: historico.map((h) => ({
       ...h,

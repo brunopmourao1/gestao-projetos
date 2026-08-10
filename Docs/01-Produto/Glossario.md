@@ -13,6 +13,10 @@
 | **RPM** | Rotações Por Minuto — unidade de velocidade angular de um motor. |
 | **Fator de Redução** | Razão entre a velocidade de entrada e saída de uma caixa de redução/engrenagem, usada para calcular torque e velocidade efetivos. |
 | **Part Number** | Código de identificação único de um componente (ex: sensor) usado para rastreabilidade e recompra. |
+| **FC / FB** | Function/Function Block — blocos de lógica de programação de CLP (ex: Siemens TIA Portal); parte da sub-etapa "Lógica" do checklist da fase Offline. |
+| **IHM** | Interface Homem-Máquina — tela/painel de operação da máquina; parte do checklist da fase Offline. |
+| **PLC de Segurança** | Controlador lógico programável dedicado a funções de segurança (parada de emergência, proteções), fisicamente separado do PLC principal — geralmente Siemens neste time; parte do checklist da fase Offline. |
+| **Checklist Offline** | As 4 sub-etapas fixas do trabalho da fase "Projeto Offline" (Hardware → Lógica FC/FB → IHM → Segurança); cada uma vale 25% do progresso, e as 4 precisam estar concluídas para o projeto avançar para "Aguardando Montagem". |
 | **Calibragem** | Processo de ajuste de um sensor para garantir que sua leitura corresponda ao valor físico real medido. |
 | **Sintonia de Parâmetros Dinâmicos** | Ajuste fino de parâmetros de controle (ex: PID) durante o comissionamento, para que a máquina opere de forma estável e precisa. |
 

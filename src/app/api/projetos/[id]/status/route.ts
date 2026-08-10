@@ -4,7 +4,12 @@ import { getDb } from "@/db";
 import { especificacoesTecnicas, historicoTransicoes, projetos } from "@/db/schema";
 import { erroResponse } from "@/lib/api-error";
 import { buscarProjetoPorId } from "@/lib/projetos-repo";
-import { isTransicaoValida, statusValido, validarParametrosFisicos } from "@/lib/fluxo";
+import {
+  isTransicaoValida,
+  statusValido,
+  validarChecklistOffline,
+  validarParametrosFisicos,
+} from "@/lib/fluxo";
 import { StatusProjeto } from "@/types/projeto";
 
 // PATCH /api/projetos/:id/status — move o projeto para uma coluna adjacente.
@@ -50,6 +55,18 @@ export async function PATCH(
       "TRANSICAO_INVALIDA",
       `Não é possível mover de "${projeto.statusAtual}" para "${novoStatus}".`
     );
+  }
+
+  if (projeto.statusAtual === "Offline" && novoStatus === "Montagem") {
+    const validacao = validarChecklistOffline(projeto.checklistOffline);
+    if (!validacao.valido) {
+      return erroResponse(
+        422,
+        "CHECKLIST_OFFLINE_INCOMPLETO",
+        "Checklist da fase Offline precisa estar 100% concluído antes de avançar.",
+        { itensFaltantes: validacao.itensFaltantes }
+      );
+    }
   }
 
   if (novoStatus === "Concluido") {

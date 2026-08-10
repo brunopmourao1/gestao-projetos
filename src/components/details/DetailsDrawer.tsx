@@ -1,5 +1,10 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { EspecificacoesTecnicas, MetricaTempoEstagio, ProjetoDetalhado } from "@/types/projeto";
+import {
+  ChecklistOffline,
+  EspecificacoesTecnicas,
+  MetricaTempoEstagio,
+  ProjetoDetalhado,
+} from "@/types/projeto";
 import type { RelatorioPayload } from "@/lib/relatorio";
 import { TabNavigation } from "./TabNavigation";
 import { EditarProjetoDialog, DadosEditarProjeto } from "@/components/board/EditarProjetoDialog";
@@ -15,6 +20,8 @@ interface DetailsDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
+  onChecklistAtualizado: (checklist: ChecklistOffline) => void;
+  onObservacoesAtualizadas: (observacoes: string | null) => void;
   onEditarProjeto: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
   onExcluirProjeto: (id: string) => Promise<ResultadoMover>;
 }
@@ -26,6 +33,8 @@ export function DetailsDrawer({
   open,
   onOpenChange,
   onEspecificacoesAtualizadas,
+  onChecklistAtualizado,
+  onObservacoesAtualizadas,
   onEditarProjeto,
   onExcluirProjeto,
 }: DetailsDrawerProps) {
@@ -55,6 +64,8 @@ export function DetailsDrawer({
             metricas={metricas}
             relatorio={relatorio}
             onEspecificacoesAtualizadas={onEspecificacoesAtualizadas}
+            onChecklistAtualizado={onChecklistAtualizado}
+            onObservacoesAtualizadas={onObservacoesAtualizadas}
           />
         )}
       </SheetContent>

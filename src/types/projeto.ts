@@ -7,6 +7,20 @@ export type StatusProjeto =
   | "Online"
   | "Concluido";
 
+export interface ChecklistOffline {
+  hardware: boolean;
+  logicaFcFb: boolean;
+  ihm: boolean;
+  seguranca: boolean;
+}
+
+export const ITENS_CHECKLIST_OFFLINE: { chave: keyof ChecklistOffline; rotulo: string }[] = [
+  { chave: "hardware", rotulo: "Hardware" },
+  { chave: "logicaFcFb", rotulo: "Lógica (FC's e FB's)" },
+  { chave: "ihm", rotulo: "IHM" },
+  { chave: "seguranca", rotulo: "Segurança (PLC de segurança)" },
+];
+
 export interface Projeto {
   idProjeto: string;
   numero: string;
@@ -16,6 +30,8 @@ export interface Projeto {
   dataPrevistaConclusao: string | null;
   statusAtual: StatusProjeto;
   dataCriacao: string;
+  checklistOffline: ChecklistOffline;
+  observacoes: string | null;
 }
 
 export interface DadosMotores {
