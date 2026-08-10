@@ -105,6 +105,15 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     setProjetoSelecionado((atual) => (atual ? { ...atual, observacoes } : atual));
   }
 
+  function handlePercentualMontagemAtualizado(percentual: number) {
+    setProjetoSelecionado((atual) => (atual ? { ...atual, percentualMontagem: percentual } : atual));
+    setProjetos((atual) =>
+      atual.map((p) =>
+        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, percentualMontagem: percentual } : p
+      )
+    );
+  }
+
   async function handleMoverProjeto(
     projeto: Projeto,
     novoStatus: StatusProjeto,
@@ -315,6 +324,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
         onChecklistAtualizado={handleChecklistAtualizado}
         onObservacoesAtualizadas={handleObservacoesAtualizadas}
+        onPercentualMontagemAtualizado={handlePercentualMontagemAtualizado}
         onEditarProjeto={handleEditarProjeto}
         onExcluirProjeto={handleExcluirProjeto}
       />

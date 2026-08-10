@@ -44,6 +44,7 @@ export async function montarProjetoDetalhado(db: Db, id: string): Promise<Projet
     dataCriacao: projeto.dataCriacao.toISOString(),
     checklistOffline: projeto.checklistOffline,
     observacoes: projeto.observacoes,
+    percentualMontagem: projeto.percentualMontagem,
     especificacoesTecnicas: espec ?? null,
     historicoTransicoes: historico.map((h) => ({
       ...h,

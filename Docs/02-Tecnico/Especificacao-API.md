@@ -54,6 +54,7 @@ Retorna detalhes de um projeto, incluindo especificações técnicas associadas 
   "data_criacao": "timestamp",
   "checklist_offline": { "hardware": "boolean", "logica_fc_fb": "boolean", "ihm": "boolean", "seguranca": "boolean" },
   "observacoes": "string | null",
+  "percentual_montagem": "number (0-100)",
   "especificacoes_tecnicas": { "...": "ver Especificacoes_Tecnicas" },
   "historico_transicoes": [ "...ver Historico_Transicoes" ]
 }
@@ -87,6 +88,12 @@ Atualiza uma ou mais sub-etapas do checklist da fase Offline (ver HU-15). Merge 
 Define ou limpa a nota única de observações gerais do projeto (ver HU-16), sem precisar reenviar `numero`/`nome_maquina`/`descricao`.
 **Body:** `{ "observacoes": "string | null" }`
 **Resposta 200:** projeto atualizado.
+
+### `PATCH /api/projetos/:id/percentual-montagem`
+Ajusta o progresso manual (0-100) da fase Montagem (ver HU-17). Sem checklist, sem bloqueio de avanço associado — diferente de `checklist-offline`.
+**Body:** `{ "percentual": "number (0-100)" }`
+**Resposta 200:** projeto atualizado.
+**Resposta 400** (`VALIDACAO_CAMPO`): quando `percentual` não é um inteiro entre 0 e 100.
 
 ## Especificações Técnicas
 

@@ -14,6 +14,7 @@ const projeto: Projeto = {
   dataCriacao: new Date().toISOString(),
   checklistOffline: { hardware: false, logicaFcFb: false, ihm: false, seguranca: false },
   observacoes: null,
+  percentualMontagem: 0,
 };
 
 describe("ProjectCard", () => {
@@ -48,8 +49,13 @@ describe("ProjectCard", () => {
     expect(screen.getByText("50% concluído (2/4)")).toBeInTheDocument();
   });
 
-  it("não mostra percentual quando o projeto não está na fase Offline", () => {
-    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem" }} />);
+  it("mostra o percentual manual de montagem quando o projeto está na fase Montagem", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem", percentualMontagem: 60 }} />);
+    expect(screen.getByText("60% concluído")).toBeInTheDocument();
+  });
+
+  it("não mostra percentual quando o projeto não está em Offline nem Montagem", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Esquema_Eletrico" }} />);
     expect(screen.queryByText(/% concluído/)).not.toBeInTheDocument();
   });
 });

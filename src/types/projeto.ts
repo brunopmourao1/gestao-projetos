@@ -32,6 +32,7 @@ export interface Projeto {
   dataCriacao: string;
   checklistOffline: ChecklistOffline;
   observacoes: string | null;
+  percentualMontagem: number;
 }
 
 export interface DadosMotores {

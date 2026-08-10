@@ -22,6 +22,7 @@ interface DetailsDrawerProps {
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
   onChecklistAtualizado: (checklist: ChecklistOffline) => void;
   onObservacoesAtualizadas: (observacoes: string | null) => void;
+  onPercentualMontagemAtualizado: (percentual: number) => void;
   onEditarProjeto: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
   onExcluirProjeto: (id: string) => Promise<ResultadoMover>;
 }
@@ -35,6 +36,7 @@ export function DetailsDrawer({
   onEspecificacoesAtualizadas,
   onChecklistAtualizado,
   onObservacoesAtualizadas,
+  onPercentualMontagemAtualizado,
   onEditarProjeto,
   onExcluirProjeto,
 }: DetailsDrawerProps) {
@@ -66,6 +68,7 @@ export function DetailsDrawer({
             onEspecificacoesAtualizadas={onEspecificacoesAtualizadas}
             onChecklistAtualizado={onChecklistAtualizado}
             onObservacoesAtualizadas={onObservacoesAtualizadas}
+            onPercentualMontagemAtualizado={onPercentualMontagemAtualizado}
           />
         )}
       </SheetContent>

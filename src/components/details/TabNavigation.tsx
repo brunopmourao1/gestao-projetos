@@ -9,6 +9,7 @@ import {
 import type { RelatorioPayload } from "@/lib/relatorio";
 import { ParametrosForm } from "./ParametrosForm";
 import { ChecklistOfflineForm } from "./ChecklistOfflineForm";
+import { PercentualMontagemForm } from "./PercentualMontagemForm";
 import { ObservacoesForm } from "./ObservacoesForm";
 import { formatarDuracao } from "@/lib/formatacao";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
@@ -21,6 +22,7 @@ interface TabNavigationProps {
   onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
   onChecklistAtualizado: (checklist: ChecklistOffline) => void;
   onObservacoesAtualizadas: (observacoes: string | null) => void;
+  onPercentualMontagemAtualizado: (percentual: number) => void;
 }
 
 export function TabNavigation({
@@ -30,12 +32,13 @@ export function TabNavigation({
   onEspecificacoesAtualizadas,
   onChecklistAtualizado,
   onObservacoesAtualizadas,
+  onPercentualMontagemAtualizado,
 }: TabNavigationProps) {
   return (
     <Tabs defaultValue="visao-geral" className="mt-4">
       <TabsList className="w-full">
         <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
-        <TabsTrigger value="checklist">Checklist</TabsTrigger>
+        <TabsTrigger value="progresso">Progresso</TabsTrigger>
         <TabsTrigger value="parametros">Parâmetros</TabsTrigger>
         <TabsTrigger value="relatorio">Relatório</TabsTrigger>
       </TabsList>
@@ -88,8 +91,22 @@ export function TabNavigation({
         )}
       </TabsContent>
 
-      <TabsContent value="checklist">
-        <ChecklistOfflineForm projeto={projeto} onChecklistAtualizado={onChecklistAtualizado} />
+      <TabsContent value="progresso">
+        {projeto.statusAtual === "Offline" && (
+          <ChecklistOfflineForm projeto={projeto} onChecklistAtualizado={onChecklistAtualizado} />
+        )}
+        {projeto.statusAtual === "Montagem" && (
+          <PercentualMontagemForm
+            projeto={projeto}
+            onPercentualAtualizado={onPercentualMontagemAtualizado}
+          />
+        )}
+        {projeto.statusAtual !== "Offline" && projeto.statusAtual !== "Montagem" && (
+          <p className="text-sm text-muted-foreground">
+            Progresso disponível durante as fases &quot;Projeto Offline&quot; e &quot;Aguardando
+            Montagem&quot;.
+          </p>
+        )}
       </TabsContent>
 
       {/* HU-06/HU-07: inputs numéricos para dados de comissionamento físico */}

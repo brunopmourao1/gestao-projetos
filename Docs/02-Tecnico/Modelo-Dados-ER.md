@@ -19,6 +19,7 @@ erDiagram
         timestamp data_criacao
         json checklist_offline "hardware, logica_fc_fb, ihm, seguranca (booleans) — sub-etapas da fase Offline"
         string observacoes "opcional — nota única do projeto, qualquer fase"
+        int percentual_montagem "0-100, default 0 — progresso manual da fase Montagem, sem checklist"
     }
 
     ESPECIFICACOES_TECNICAS {
@@ -51,3 +52,4 @@ erDiagram
 * `Projetos.data_prevista_conclusao` é opcional e está atrelada à etapa atual (`status_atual`), não ao projeto como um todo — o objetivo é permitir cobrar/verificar se a etapa corrente está pronta na data esperada antes de avançar. Ao mover o card para uma nova coluna, o valor anterior não é preservado no histórico: a UI abre um diálogo pedindo a nova data da etapa recém-iniciada (pode ser deixado em branco). Um card com essa data no passado é destacado visualmente (vermelho) no board.
 * `Projetos.checklist_offline` tem 4 sub-etapas fixas, sempre nessa ordem: Hardware → Lógica (FC's e FB's) → IHM → Segurança. Cada uma vale 25% (checkbox binário, sem progresso parcial por item). A transição de `status_atual` de `Offline` para `Montagem` exige que as 4 estejam `true` (regra aplicada por `validarChecklistOffline`, não uma constraint de banco), igual em espírito à regra de `ValidacaoParametrosFisicos` para `Concluido`.
 * `Projetos.observacoes` é uma nota única de texto livre, não um log — sobrescrita a cada edição, visível/editável independente da fase atual.
+* `Projetos.percentual_montagem` é ajustado manualmente pelo usuário (slider de 5 em 5%), sem checklist de sub-etapas e **sem** exigência de 100% para avançar de `Montagem` para `Online` — ao contrário de `checklist_offline`, não há nenhuma regra de bloqueio associada a este campo.

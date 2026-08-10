@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, pgEnum, json, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, json, doublePrecision, integer } from "drizzle-orm/pg-core";
 
 export const statusProjetoEnum = pgEnum("status_projeto", [
   "Esquema_Eletrico",
@@ -39,6 +39,9 @@ export const projetos = pgTable("projetos", {
     .notNull()
     .default(CHECKLIST_OFFLINE_PADRAO),
   observacoes: text("observacoes"),
+  // Progresso manual (0-100) da fase "Montagem" — sem checklist, ajustado
+  // livremente conforme informação recebida em reunião. Ver HU-17.
+  percentualMontagem: integer("percentual_montagem").notNull().default(0),
 });
 
 type DadosMotores = {

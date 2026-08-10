@@ -13,6 +13,7 @@ const projetoBase: ProjetoDetalhado = {
   dataCriacao: "2024-01-01T00:00:00.000Z",
   checklistOffline: { hardware: false, logicaFcFb: false, ihm: false, seguranca: false },
   observacoes: null,
+  percentualMontagem: 0,
   especificacoesTecnicas: null,
   historicoTransicoes: [],
 };

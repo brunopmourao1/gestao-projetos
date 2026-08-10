@@ -98,7 +98,7 @@ Como **Gestor/Tech Lead**, quero que o sistema impeça a conclusão de um projet
 ### HU-15 — Checklist de sub-etapas da fase Offline
 Como **Programador**, quero marcar quais sub-etapas do trabalho offline já concluí (Hardware, Lógica das FC's e FB's, IHM, Segurança), para saber quanto falta e não avançar o projeto incompleto para a montagem física.
 **Critérios de aceite:**
-* Aba "Checklist" no `DetailsDrawer` com 4 itens, sempre na mesma ordem: Hardware → Lógica (FC's e FB's) → IHM → Segurança (tipicamente um PLC de segurança separado do PLC principal, geralmente Siemens).
+* Aba "Progresso" no `DetailsDrawer` (compartilhada com HU-17: mostra o checklist na fase Offline, o progresso manual na fase Montagem) com 4 itens, sempre na mesma ordem: Hardware → Lógica (FC's e FB's) → IHM → Segurança (tipicamente um PLC de segurança separado do PLC principal, geralmente Siemens).
 * Cada item é um checkbox binário (feito/não feito); cada um vale 25% do total. Marcar/desmarcar salva imediatamente.
 * O `ProjectCard` mostra uma barra de progresso com o percentual quando o projeto está na coluna "Projeto Offline".
 * Tentar mover o card de "Projeto Offline" para "Aguardando Montagem" com menos de 100% é bloqueado, com mensagem indicando quais sub-etapas faltam (mesmo padrão de bloqueio de HU-08).
@@ -109,6 +109,14 @@ Como **Gestor/Tech Lead** ou **Programador**, quero registrar observações livr
 * Campo de texto livre "Observações" na Aba 1 (Visão Geral) do `DetailsDrawer`, com botão de salvar próprio.
 * É uma nota única e editável (não um log com histórico) — sobrescreve o valor anterior ao salvar.
 * Visível e editável em qualquer fase do projeto, não só na "Projeto Offline".
+
+### HU-17 — Progresso manual da fase Montagem
+Como **Gestor/Tech Lead**, quero ajustar manualmente o percentual de andamento da montagem física da máquina, conforme vou recebendo informação em reunião, para ter uma noção visual do progresso mesmo sem um checklist formal (a montagem física não é controlada diretamente pelo sistema).
+**Critérios de aceite:**
+* Aba "Progresso" no `DetailsDrawer` (mesma aba de HU-15) mostra, quando o projeto está em "Aguardando Montagem", um slider de 0% a 100% em passos de 5%.
+* Ajuste do slider salva imediatamente, sem botão "Salvar" — sem checklist, sem sub-etapas.
+* Diferente de HU-15: **não há bloqueio** de avanço para "Projeto Online" baseado nesse percentual, em nenhum valor.
+* O `ProjectCard` mostra a barra de progresso com esse percentual quando o projeto está na coluna "Aguardando Montagem", mesmo estilo visual usado para a fase Offline (HU-15).
 
 ## Épico 4 — Relatórios Executivos (RF04)
 ### HU-09 — Gerar relatório de apresentação

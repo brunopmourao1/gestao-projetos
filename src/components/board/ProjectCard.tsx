@@ -29,8 +29,12 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
   };
 
   const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
-  const percentualOffline =
-    projeto.statusAtual === "Offline" ? percentualChecklistOffline(projeto.checklistOffline) : null;
+  const percentualFase =
+    projeto.statusAtual === "Offline"
+      ? percentualChecklistOffline(projeto.checklistOffline)
+      : projeto.statusAtual === "Montagem"
+        ? projeto.percentualMontagem
+        : null;
 
   return (
     <div
@@ -52,16 +56,18 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
               Prazo: {formatarData(projeto.dataPrevistaConclusao)}
             </p>
           )}
-          {percentualOffline !== null && (
+          {percentualFase !== null && (
             <div className="space-y-0.5 pt-1">
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className={`h-full rounded-full ${percentualOffline === 100 ? "bg-emerald-500" : "bg-primary"}`}
-                  style={{ width: `${percentualOffline}%` }}
+                  className={`h-full rounded-full ${percentualFase === 100 ? "bg-emerald-500" : "bg-primary"}`}
+                  style={{ width: `${percentualFase}%` }}
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {percentualOffline}% concluído ({percentualOffline / 25}/4)
+                {projeto.statusAtual === "Offline"
+                  ? `${percentualFase}% concluído (${percentualFase / 25}/4)`
+                  : `${percentualFase}% concluído`}
               </p>
             </div>
           )}
