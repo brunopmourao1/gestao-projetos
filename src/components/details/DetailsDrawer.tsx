@@ -25,6 +25,7 @@ interface DetailsDrawerProps {
   onPercentualMontagemAtualizado: (percentual: number) => void;
   onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
   onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
+  onPendenciaAtualizada: (pendencia: PendenciaVisita) => void;
   onEditarProjeto: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
   onExcluirProjeto: (id: string) => Promise<ResultadoMover>;
 }
@@ -40,6 +41,7 @@ export function DetailsDrawer({
   onPercentualMontagemAtualizado,
   onChecklistOnlineAtualizado,
   onPendenciaAdicionada,
+  onPendenciaAtualizada,
   onEditarProjeto,
   onExcluirProjeto,
 }: DetailsDrawerProps) {
@@ -73,6 +75,7 @@ export function DetailsDrawer({
             onPercentualMontagemAtualizado={onPercentualMontagemAtualizado}
             onChecklistOnlineAtualizado={onChecklistOnlineAtualizado}
             onPendenciaAdicionada={onPendenciaAdicionada}
+            onPendenciaAtualizada={onPendenciaAtualizada}
           />
         )}
       </SheetContent>

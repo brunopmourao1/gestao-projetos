@@ -36,6 +36,7 @@ erDiagram
         uuid id_projeto FK
         timestamp data "default now"
         text texto
+        boolean concluida "default false"
     }
 
     CHECKLIST_ITENS {
@@ -63,4 +64,4 @@ erDiagram
 * `Checklist_Itens` define dinamicamente os itens de cada checklist (Offline/Online), editáveis via tela de Configurações (add/renomear/excluir) — **não é mais um shape fixo de 4 campos**. Cada item vale sempre `100/N%` (N = quantidade de itens da fase no momento, recalculado a cada leitura, nunca armazenado). A transição de `status_atual` de `Offline` para `Montagem` (ou `Online` para `Tryout`) exige que todos os itens configurados da fase correspondente estejam `true` no JSON `checklist_offline`/`checklist_online` do projeto (regra aplicada por `validarChecklist`, não uma constraint de banco). Excluir um item não limpa a chave já salva nos projetos (fica órfã, ignorada no cálculo) — sem migração retroativa. Seed inicial (migração desta sessão) usa as mesmas 4+4 chaves que já existiam como campos fixos (`hardware`, `logicaFcFb`, `ihm`, `seguranca`, `testesIO`, `ajusteParametros`, `testesFuncionais`, `liberacao`), preservando o histórico real sem transformação de dado. Ver HU-20.
 * `Projetos.observacoes` é uma nota única de texto livre, não um log — sobrescrita a cada edição, visível/editável independente da fase atual.
 * `Projetos.percentual_montagem` é ajustado manualmente pelo usuário (slider de 5 em 5%), sem checklist de sub-etapas e **sem** exigência de 100% para avançar de `Montagem` para `Online` — ao contrário de `checklist_offline`, não há nenhuma regra de bloqueio associada a este campo.
-* `Pendencias_Visitas` é um log de texto livre (nunca sobrescrito, ao contrário de `observacoes`) — cada visita técnica nas fases `Tryout`/`Entregue` vira uma nova linha com `data` automática. Sem regra de bloqueio associada.
+* `Pendencias_Visitas` é um log de texto livre (nunca sobrescrito, ao contrário de `observacoes`) — cada visita técnica nas fases `Tryout`/`Entregue` vira uma nova linha com `data` automática. Sem regra de bloqueio associada. `concluida` (default `false`) marca se aquela pendência específica já foi resolvida — é só um check de acompanhamento, não afeta avanço de fase nem é obrigatório pra mover o card.

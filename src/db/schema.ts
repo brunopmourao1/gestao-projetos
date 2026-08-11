@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, pgEnum, json, doublePrecision, integer } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, json, doublePrecision, integer, boolean } from "drizzle-orm/pg-core";
 
 export const statusProjetoEnum = pgEnum("status_projeto", [
   "Esquema_Eletrico",
@@ -61,6 +61,7 @@ export const pendenciasVisitas = pgTable("pendencias_visitas", {
     .references(() => projetos.idProjeto, { onDelete: "cascade" }),
   data: timestamp("data").notNull().defaultNow(),
   texto: text("texto").notNull(),
+  concluida: boolean("concluida").notNull().default(false),
 });
 
 export const faseChecklistEnum = pgEnum("fase_checklist", ["Offline", "Online"]);

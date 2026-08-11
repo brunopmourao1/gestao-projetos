@@ -126,6 +126,19 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     );
   }
 
+  function handlePendenciaAtualizada(pendencia: PendenciaVisita) {
+    setProjetoSelecionado((atual) =>
+      atual
+        ? {
+            ...atual,
+            pendenciasVisitas: atual.pendenciasVisitas.map((p) =>
+              p.idPendencia === pendencia.idPendencia ? pendencia : p
+            ),
+          }
+        : atual
+    );
+  }
+
   function handleObservacoesAtualizadas(observacoes: string | null) {
     setProjetoSelecionado((atual) => (atual ? { ...atual, observacoes } : atual));
   }
@@ -353,6 +366,7 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         onPercentualMontagemAtualizado={handlePercentualMontagemAtualizado}
         onChecklistOnlineAtualizado={handleChecklistOnlineAtualizado}
         onPendenciaAdicionada={handlePendenciaAdicionada}
+        onPendenciaAtualizada={handlePendenciaAtualizada}
         onEditarProjeto={handleEditarProjeto}
         onExcluirProjeto={handleExcluirProjeto}
       />

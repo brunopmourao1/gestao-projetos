@@ -146,6 +146,13 @@ Como **Gestor/Tech Lead**, quero que o sistema exija uma senha antes de dar aces
 * Sessão persiste via cookie (`httpOnly`) por até 30 dias; botão "Sair" na `TopNavbar` limpa a sessão e volta pra `/login`.
 * Login errado mostra mensagem de erro clara ("Senha incorreta"), sem revelar mais detalhes.
 
+### HU-22 — Marcar pendências de visita técnica como concluídas
+Como **Gestor/Tech Lead**, quero marcar cada pendência do log de visitas técnicas (fases Tryout/Entregue) como concluída, para saber de relance o que já foi resolvido sem precisar ler o texto de cada entrada.
+**Critérios de aceite:**
+* Cada entrada da lista de pendências (aba "Pendências" do `DetailsDrawer`, ver HU-19) tem um checkbox "concluída"; marcar/desmarcar salva imediatamente.
+* Pendência concluída fica com o texto riscado, mas continua na lista (não é removida nem some do histórico).
+* Sem bloqueio de avanço associado — igual ao log em si (HU-19), é só um controle de acompanhamento.
+
 ## Épico 4 — Relatórios Executivos (RF04)
 ### HU-09 — Gerar relatório de apresentação
 Como **Gestor/Tech Lead**, quero gerar um relatório/apresentação visual consolidada a partir dos dados do cartão ativo, para extrair relatórios gerenciais sem montagem manual.

@@ -51,6 +51,7 @@ export interface PendenciaVisita {
   idProjeto: string;
   data: string;
   texto: string;
+  concluida: boolean;
 }
 
 export interface ProjetoDetalhado extends Projeto {

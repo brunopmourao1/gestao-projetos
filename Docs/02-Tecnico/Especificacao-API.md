@@ -57,7 +57,7 @@ Retorna detalhes de um projeto (usado ao abrir o `DetailsDrawer`).
   "percentual_montagem": "number (0-100)",
   "checklist_online": { "<chave-do-item>": "boolean, ..." },
   "historico_transicoes": [ "...ver Historico_Transicoes" ],
-  "pendencias_visitas": [ { "id_pendencia": "uuid", "data": "timestamp", "texto": "string" } ]
+  "pendencias_visitas": [ { "id_pendencia": "uuid", "data": "timestamp", "texto": "string", "concluida": "boolean" } ]
 }
 ```
 
@@ -103,10 +103,17 @@ Atualiza um ou mais itens do checklist configurável da fase Online (ver HU-18/H
 **Resposta 400** (`VALIDACAO_CAMPO`): quando alguma chave não corresponde a um item configurado, ou o valor não é booleano.
 
 ### `POST /api/projetos/:id/pendencias`
-Adiciona uma entrada ao log de pendências de visitas técnicas (fases Tryout/Entregue, ver HU-19). Log com múltiplas entradas — nunca sobrescreve, diferente de `observacoes`.
+Adiciona uma entrada ao log de pendências de visitas técnicas (fases Tryout/Entregue, ver HU-19). Log com múltiplas entradas — nunca sobrescreve, diferente de `observacoes`. Criada sempre com `concluida: false`.
 **Body:** `{ "texto": "string" }`
-**Resposta 201:** `{ "id_pendencia": "uuid", "id_projeto": "uuid", "data": "timestamp", "texto": "string" }`
+**Resposta 201:** `{ "id_pendencia": "uuid", "id_projeto": "uuid", "data": "timestamp", "texto": "string", "concluida": false }`
 **Resposta 400** (`VALIDACAO_CAMPO`): quando `texto` está ausente ou vazio.
+
+### `PATCH /api/projetos/:id/pendencias/:idPendencia`
+Marca ou desmarca uma pendência específica como concluída (ver HU-22). É só um controle de acompanhamento — não bloqueia nem exige nada pra mover o card entre colunas.
+**Body:** `{ "concluida": "boolean" }`
+**Resposta 200:** `{ "id_pendencia": "uuid", "id_projeto": "uuid", "data": "timestamp", "texto": "string", "concluida": "boolean" }`
+**Resposta 400** (`VALIDACAO_CAMPO`): quando `concluida` está ausente ou não é booleano.
+**Resposta 404** (`PENDENCIA_NAO_ENCONTRADA`): quando `idPendencia` não existe.
 
 ## Configurações
 

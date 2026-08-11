@@ -25,6 +25,7 @@ interface TabNavigationProps {
   onPercentualMontagemAtualizado: (percentual: number) => void;
   onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
   onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
+  onPendenciaAtualizada: (pendencia: PendenciaVisita) => void;
 }
 
 export function TabNavigation({
@@ -36,6 +37,7 @@ export function TabNavigation({
   onPercentualMontagemAtualizado,
   onChecklistOnlineAtualizado,
   onPendenciaAdicionada,
+  onPendenciaAtualizada,
 }: TabNavigationProps) {
   return (
     <Tabs defaultValue="visao-geral" className="mt-4">
@@ -123,7 +125,11 @@ export function TabNavigation({
 
       <TabsContent value="pendencias">
         {projeto.statusAtual === "Tryout" || projeto.statusAtual === "Entregue" ? (
-          <PendenciasForm projeto={projeto} onPendenciaAdicionada={onPendenciaAdicionada} />
+          <PendenciasForm
+            projeto={projeto}
+            onPendenciaAdicionada={onPendenciaAdicionada}
+            onPendenciaAtualizada={onPendenciaAtualizada}
+          />
         ) : (
           <p className="text-sm text-muted-foreground">
             Pendências de visitas técnicas disponíveis a partir da fase &quot;Tryout com o

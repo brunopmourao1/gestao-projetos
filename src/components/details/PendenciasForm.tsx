@@ -8,14 +8,42 @@ import { PendenciaVisita, ProjetoDetalhado } from "@/types/projeto";
 interface PendenciasFormProps {
   projeto: ProjetoDetalhado;
   onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
+  onPendenciaAtualizada: (pendencia: PendenciaVisita) => void;
 }
 
 // Log de pendências de visitas técnicas (Tryout/Entregue) — cada visita vira
-// uma entrada nova (data + texto), nada é sobrescrito. Ver HU-19.
-export function PendenciasForm({ projeto, onPendenciaAdicionada }: PendenciasFormProps) {
+// uma entrada nova (data + texto), nada é sobrescrito. Ver HU-19. O check de
+// concluída é só acompanhamento, não bloqueia avanço de fase.
+export function PendenciasForm({ projeto, onPendenciaAdicionada, onPendenciaAtualizada }: PendenciasFormProps) {
   const [texto, setTexto] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [atualizandoId, setAtualizandoId] = useState<string | null>(null);
+
+  async function handleToggleConcluida(pendencia: PendenciaVisita, concluida: boolean) {
+    setAtualizandoId(pendencia.idPendencia);
+    setErro(null);
+    try {
+      const resposta = await fetch(
+        `/api/projetos/${projeto.idProjeto}/pendencias/${pendencia.idPendencia}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ concluida }),
+        }
+      );
+      const dados = await resposta.json();
+      if (!resposta.ok) {
+        setErro(dados?.erro?.mensagem ?? "Não foi possível atualizar a pendência.");
+        return;
+      }
+      onPendenciaAtualizada(dados as PendenciaVisita);
+    } catch {
+      setErro("Falha de rede ao atualizar a pendência.");
+    } finally {
+      setAtualizandoId(null);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,10 +93,23 @@ export function PendenciasForm({ projeto, onPendenciaAdicionada }: PendenciasFor
           <ul className="space-y-2">
             {projeto.pendenciasVisitas.map((p) => (
               <li key={p.idPendencia} className="rounded-md border p-2 text-sm">
-                <p className="text-xs text-muted-foreground">
-                  {new Date(p.data).toLocaleString("pt-BR")}
-                </p>
-                <p className="whitespace-pre-wrap">{p.texto}</p>
+                <label className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    checked={p.concluida}
+                    disabled={atualizandoId === p.idPendencia}
+                    onChange={(e) => handleToggleConcluida(p, e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-input"
+                  />
+                  <span className="flex-1">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(p.data).toLocaleString("pt-BR")}
+                    </p>
+                    <p className={`whitespace-pre-wrap ${p.concluida ? "text-muted-foreground line-through" : ""}`}>
+                      {p.texto}
+                    </p>
+                  </span>
+                </label>
               </li>
             ))}
           </ul>

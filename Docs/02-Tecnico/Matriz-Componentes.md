@@ -20,7 +20,7 @@
 * **`TabNavigation`**: Navegação interna do modal.
   * *Aba 1 (Visão Geral):* Descrição, campo de observações gerais (`ObservacoesForm`, HU-16), data prevista de conclusão da etapa atual, tempo por estágio e histórico de transições.
   * *Aba 2 (Progresso):* Adaptativa por fase — `ChecklistForm` (componente único parametrizado por `fase`, HU-20) quando o projeto está em "Projeto Offline" (`fase="Offline"`) ou "Projeto Online" (`fase="Online"`), busca os itens configurados via `GET /configuracoes/checklist` ao montar; `PercentualMontagemForm` (slider manual, HU-17) quando está em "Aguardando Montagem"; mensagem neutra nas demais fases.
-  * *Aba 3 (Pendências):* `PendenciasForm` (HU-19) — log de pendências de visitas técnicas (textarea + lista cronológica) quando o projeto está em "Tryout com o Cliente" ou "Máquina Entregue"; mensagem neutra nas demais fases.
+  * *Aba 3 (Pendências):* `PendenciasForm` (HU-19) — log de pendências de visitas técnicas (textarea + lista cronológica, cada entrada com checkbox "concluída", HU-22) quando o projeto está em "Tryout com o Cliente" ou "Máquina Entregue"; mensagem neutra nas demais fases.
   * *Aba 4 (Relatório):* Preview visual dos dados que serão enviados ao `MotorApresentacao`.
 
 ## 4. Configurações
