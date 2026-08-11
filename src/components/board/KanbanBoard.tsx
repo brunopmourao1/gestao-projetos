@@ -13,7 +13,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { COLUNAS_FLUXO, Projeto, StatusProjeto } from "@/types/projeto";
+import { ChecklistItemConfig, COLUNAS_FLUXO, Projeto, StatusProjeto } from "@/types/projeto";
 import { calcularOrdem } from "@/lib/ordenacao";
 import { KanbanColumn } from "./KanbanColumn";
 import { ProjectCard, ResultadoMover } from "./ProjectCard";
@@ -22,6 +22,8 @@ import { ProjectCard, ResultadoMover } from "./ProjectCard";
 // Componente pai que orquestra as listas (GerenciadorEstadoBoard consome os dados via API).
 interface KanbanBoardProps {
   projetos: Projeto[];
+  itensOffline: ChecklistItemConfig[];
+  itensOnline: ChecklistItemConfig[];
   onSelectProjeto?: (projeto: Projeto) => void;
   onMoverProjeto?: (projeto: Projeto, novoStatus: StatusProjeto, ordem: number) => Promise<ResultadoMover>;
   onReordenarProjeto?: (projeto: Projeto, novaOrdem: number) => Promise<ResultadoMover>;
@@ -31,6 +33,8 @@ const STATUS_VALIDOS = COLUNAS_FLUXO.map((c) => c.status) as string[];
 
 export function KanbanBoard({
   projetos,
+  itensOffline,
+  itensOnline,
   onSelectProjeto,
   onMoverProjeto,
   onReordenarProjeto,
@@ -100,11 +104,17 @@ export function KanbanBoard({
             projetos={projetos
               .filter((p) => p.statusAtual === status)
               .sort((a, b) => a.ordem - b.ordem)}
+            itensOffline={itensOffline}
+            itensOnline={itensOnline}
             onSelectProjeto={onSelectProjeto}
           />
         ))}
       </div>
-      <DragOverlay>{activeProjeto && <ProjectCard projeto={activeProjeto} />}</DragOverlay>
+      <DragOverlay>
+        {activeProjeto && (
+          <ProjectCard projeto={activeProjeto} itensOffline={itensOffline} itensOnline={itensOnline} />
+        )}
+      </DragOverlay>
     </DndContext>
   );
 }

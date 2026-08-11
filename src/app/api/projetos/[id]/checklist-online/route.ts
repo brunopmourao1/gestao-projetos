@@ -6,10 +6,9 @@ import { erroResponse } from "@/lib/api-error";
 import { buscarProjetoPorId } from "@/lib/projetos-repo";
 import { buscarItensChecklist, mesclarChecklist } from "@/lib/checklist-config-repo";
 
-// PATCH /api/projetos/:id/checklist-offline — merge parcial dos itens
-// configurados pra fase Offline (ver tela de Configurações, HU-20). Uma
-// chave ausente do body preserva o valor já salvo; corpo usa a `chave`
-// exata de cada item configurado (não mais um shape fixo de 4 campos).
+// PATCH /api/projetos/:id/checklist-online — merge parcial dos itens
+// configurados pra fase Online (ver tela de Configurações, HU-20). Mesmo
+// padrão de /checklist-offline.
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -28,10 +27,10 @@ export async function PATCH(
     return erroResponse(400, "VALIDACAO_CAMPO", "Corpo da requisição inválido (JSON esperado).");
   }
 
-  const itens = await buscarItensChecklist(db, "Offline");
+  const itens = await buscarItensChecklist(db, "Online");
   const { checklistAtualizado, chavesInvalidas } = mesclarChecklist(
     itens,
-    projeto.checklistOffline,
+    projeto.checklistOnline,
     body
   );
   if (chavesInvalidas.length > 0) {
@@ -40,7 +39,7 @@ export async function PATCH(
 
   const [atualizado] = await db
     .update(projetos)
-    .set({ checklistOffline: checklistAtualizado })
+    .set({ checklistOnline: checklistAtualizado })
     .where(eq(projetos.idProjeto, id))
     .returning();
 

@@ -3,7 +3,7 @@
 ## 1. Estratégia geral
 | Nível | Cobertura alvo | Ferramenta sugerida |
 |---|---|---|
-| Unitário | Sub-rotinas puras: `CalculoMetricasTempo`, `ValidacaoParametrosFisicos` | Vitest/Jest |
+| Unitário | Sub-rotinas puras: `CalculoMetricasTempo` | Vitest/Jest |
 | Integração | Endpoints da `Especificacao-API.md` contra banco de teste | Vitest/Jest + banco Neon de teste |
 | E2E | Fluxo completo de transição de estado no board | Playwright |
 
@@ -12,19 +12,13 @@
 ### Fluxo de estados
 * Mover projeto entre colunas adjacentes deve suceder e gravar `Historico_Transicoes`.
 * Tentar mover projeto pulando uma coluna (ex: de "Offline" direto para "Online") deve ser bloqueado (`TRANSICAO_INVALIDA`).
-* Mover projeto para "Operação Concluída" sem `dados_motores`/`dados_sensores` preenchidos deve ser bloqueado (`PARAMETROS_INCOMPLETOS`).
-* Mover projeto para "Operação Concluída" com todos os dados obrigatórios preenchidos deve suceder.
 
 ### Métricas de tempo
 * `CalculoMetricasTempo` deve retornar tempo de permanência correto para um projeto com múltiplas transições conhecidas (caso de teste com timestamps fixos).
 
-### Especificações técnicas
-* `PUT /especificacoes` deve ser idempotente — chamar duas vezes com o mesmo payload não deve criar registros duplicados.
-* Campos numéricos (RPM, fator de redução) devem rejeitar valores não-numéricos.
-
 ### Relatório
-* `MotorApresentacao` deve incluir status atual, histórico resumido e especificações técnicas no payload gerado.
-* Geração de relatório para projeto sem especificações técnicas preenchidas deve tratar campos ausentes sem quebrar (exibir "não informado" ou equivalente).
+* `MotorApresentacao` deve incluir status atual e histórico resumido no payload gerado.
+* Geração de relatório para projeto sem descrição/nome preenchidos deve tratar campos ausentes sem quebrar (exibir "não informado" ou equivalente).
 
 ### Board / UI
 * Board renderiza corretamente projetos em todas as 5 colunas com dados reais.

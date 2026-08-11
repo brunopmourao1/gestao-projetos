@@ -52,7 +52,7 @@ export function ExcluirProjetoDialog({ projeto, onExcluir }: ExcluirProjetoDialo
           <p>
             Isso remove o projeto <strong>{projeto.numero}</strong>
             {projeto.nomeMaquina ? ` (${projeto.nomeMaquina})` : ""} permanentemente, junto com
-            todo o histórico e especificações técnicas associados. Essa ação não pode ser desfeita.
+            todo o histórico associado. Essa ação não pode ser desfeita.
           </p>
           {erro && <p className="mt-2 text-destructive">{erro}</p>}
         </div>

@@ -5,21 +5,23 @@ export type StatusProjeto =
   | "Offline"
   | "Montagem"
   | "Online"
-  | "Concluido";
+  | "Tryout"
+  | "Entregue";
 
-export interface ChecklistOffline {
-  hardware: boolean;
-  logicaFcFb: boolean;
-  ihm: boolean;
-  seguranca: boolean;
+// Mapa chave-do-item -> concluído. Os itens (chaves/rótulos/ordem) são
+// configuráveis via tela de Configurações — ver ChecklistItemConfig/HU-20.
+export type ChecklistOffline = Record<string, boolean>;
+export type ChecklistOnline = Record<string, boolean>;
+
+export type FaseChecklist = "Offline" | "Online";
+
+export interface ChecklistItemConfig {
+  idItem: string;
+  fase: FaseChecklist;
+  chave: string;
+  rotulo: string;
+  ordem: number;
 }
-
-export const ITENS_CHECKLIST_OFFLINE: { chave: keyof ChecklistOffline; rotulo: string }[] = [
-  { chave: "hardware", rotulo: "Hardware" },
-  { chave: "logicaFcFb", rotulo: "Lógica (FC's e FB's)" },
-  { chave: "ihm", rotulo: "IHM" },
-  { chave: "seguranca", rotulo: "Segurança (PLC de segurança)" },
-];
 
 export interface Projeto {
   idProjeto: string;
@@ -33,25 +35,7 @@ export interface Projeto {
   checklistOffline: ChecklistOffline;
   observacoes: string | null;
   percentualMontagem: number;
-}
-
-export interface DadosMotores {
-  rpm: number;
-  fatorReducao: number;
-  diametroEngrenagem: number;
-}
-
-export interface DadosSensores {
-  partNumbers: string[];
-  calibragem: Record<string, unknown>;
-}
-
-export interface EspecificacoesTecnicas {
-  idEspecificacao: string;
-  idProjeto: string;
-  linkEsquemaEletrico: string | null;
-  dadosMotores: DadosMotores | null;
-  dadosSensores: DadosSensores | null;
+  checklistOnline: ChecklistOnline;
 }
 
 export interface HistoricoTransicao {
@@ -62,9 +46,16 @@ export interface HistoricoTransicao {
   dataMovimentacao: string;
 }
 
+export interface PendenciaVisita {
+  idPendencia: string;
+  idProjeto: string;
+  data: string;
+  texto: string;
+}
+
 export interface ProjetoDetalhado extends Projeto {
-  especificacoesTecnicas: EspecificacoesTecnicas | null;
   historicoTransicoes: HistoricoTransicao[];
+  pendenciasVisitas: PendenciaVisita[];
 }
 
 export interface MetricaTempoEstagio {
@@ -77,5 +68,6 @@ export const COLUNAS_FLUXO: { status: StatusProjeto; titulo: string }[] = [
   { status: "Offline", titulo: "Projeto Offline" },
   { status: "Montagem", titulo: "Aguardando Montagem" },
   { status: "Online", titulo: "Projeto Online (Comissionamento)" },
-  { status: "Concluido", titulo: "Operação Concluída" },
+  { status: "Tryout", titulo: "Tryout com o Cliente" },
+  { status: "Entregue", titulo: "Máquina Entregue" },
 ];

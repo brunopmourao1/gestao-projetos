@@ -1,6 +1,6 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { especificacoesTecnicas, historicoTransicoes, projetos } from "@/db/schema";
+import { historicoTransicoes, pendenciasVisitas, projetos } from "@/db/schema";
 import { ProjetoDetalhado } from "@/types/projeto";
 
 type Db = ReturnType<typeof getDb>;
@@ -23,15 +23,17 @@ export async function montarProjetoDetalhado(db: Db, id: string): Promise<Projet
   const projeto = await buscarProjetoPorId(db, id);
   if (!projeto) return null;
 
-  const [espec] = await db
-    .select()
-    .from(especificacoesTecnicas)
-    .where(eq(especificacoesTecnicas.idProjeto, id));
   const historico = await db
     .select()
     .from(historicoTransicoes)
     .where(eq(historicoTransicoes.idProjeto, id))
     .orderBy(asc(historicoTransicoes.dataMovimentacao));
+
+  const pendencias = await db
+    .select()
+    .from(pendenciasVisitas)
+    .where(eq(pendenciasVisitas.idProjeto, id))
+    .orderBy(desc(pendenciasVisitas.data));
 
   return {
     idProjeto: projeto.idProjeto,
@@ -45,10 +47,14 @@ export async function montarProjetoDetalhado(db: Db, id: string): Promise<Projet
     checklistOffline: projeto.checklistOffline,
     observacoes: projeto.observacoes,
     percentualMontagem: projeto.percentualMontagem,
-    especificacoesTecnicas: espec ?? null,
+    checklistOnline: projeto.checklistOnline,
     historicoTransicoes: historico.map((h) => ({
       ...h,
       dataMovimentacao: h.dataMovimentacao.toISOString(),
+    })),
+    pendenciasVisitas: pendencias.map((p) => ({
+      ...p,
+      data: p.data.toISOString(),
     })),
   };
 }

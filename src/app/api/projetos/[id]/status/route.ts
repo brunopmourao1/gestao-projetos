@@ -1,21 +1,16 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { especificacoesTecnicas, historicoTransicoes, projetos } from "@/db/schema";
+import { historicoTransicoes, projetos } from "@/db/schema";
 import { erroResponse } from "@/lib/api-error";
 import { buscarProjetoPorId } from "@/lib/projetos-repo";
-import {
-  isTransicaoValida,
-  statusValido,
-  validarChecklistOffline,
-  validarParametrosFisicos,
-} from "@/lib/fluxo";
+import { buscarItensChecklist } from "@/lib/checklist-config-repo";
+import { isTransicaoValida, statusValido, validarChecklist } from "@/lib/fluxo";
 import { StatusProjeto } from "@/types/projeto";
 
 // PATCH /api/projetos/:id/status — move o projeto para uma coluna adjacente.
-// Aciona CalculoMetricasTempo (implícito via Historico_Transicoes) e, se
-// destino for Concluido, ValidacaoParametrosFisicos.
-// Ver Docs/02-Tecnico/Especificacao-API.md e HU-02/HU-08 em Backlog-Historias-Usuario.md
+// Aciona CalculoMetricasTempo (implícito via Historico_Transicoes).
+// Ver Docs/02-Tecnico/Especificacao-API.md e HU-02 em Backlog-Historias-Usuario.md
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -58,7 +53,8 @@ export async function PATCH(
   }
 
   if (projeto.statusAtual === "Offline" && novoStatus === "Montagem") {
-    const validacao = validarChecklistOffline(projeto.checklistOffline);
+    const itens = await buscarItensChecklist(db, "Offline");
+    const validacao = validarChecklist(itens, projeto.checklistOffline);
     if (!validacao.valido) {
       return erroResponse(
         422,
@@ -69,18 +65,15 @@ export async function PATCH(
     }
   }
 
-  if (novoStatus === "Concluido") {
-    const [espec] = await db
-      .select()
-      .from(especificacoesTecnicas)
-      .where(eq(especificacoesTecnicas.idProjeto, id));
-    const validacao = validarParametrosFisicos(espec ?? null);
+  if (projeto.statusAtual === "Online" && novoStatus === "Tryout") {
+    const itens = await buscarItensChecklist(db, "Online");
+    const validacao = validarChecklist(itens, projeto.checklistOnline);
     if (!validacao.valido) {
       return erroResponse(
         422,
-        "PARAMETROS_INCOMPLETOS",
-        "Dados obrigatórios ausentes para concluir o projeto.",
-        { camposFaltantes: validacao.camposFaltantes }
+        "CHECKLIST_ONLINE_INCOMPLETO",
+        "Checklist da fase Online precisa estar 100% concluído antes de avançar.",
+        { itensFaltantes: validacao.itensFaltantes }
       );
     }
   }

@@ -10,23 +10,32 @@ O sistema é dividido em rotinas e sub-rotinas focadas em responsabilidade únic
 
 ### 1.2. Sub-rotinas (Execução Micro)
 * `CalculoMetricasTempo`: Sub-rotina acionada a cada mudança de coluna para calcular o tempo de permanência em cada estágio de montagem.
-* `ValidacaoParametrosFisicos`: Sub-rotina que verifica se os dados obrigatórios (ex: configuração de hardware, ajustes de sensores) foram preenchidos antes de permitir a transição para "Operação Concluída".
+* `validarChecklist`: Sub-rotina genérica que verifica se todos os itens configurados de uma fase (Offline ou Online, ver `Checklist_Itens`/HU-20) estão marcados antes de permitir a transição pra próxima coluna do fluxo.
+
+> **Nota histórica:** existia uma sub-rotina `ValidacaoParametrosFisicos` (dados de motores/sensores/esquema elétrico, tabela `Especificacoes_Tecnicas`) que bloqueava a transição pra "Operação Concluída" — **removida por completo** numa sessão posterior a pedido do usuário, junto com a própria coluna "Operação Concluída" (substituída por "Tryout com o Cliente"/"Máquina Entregue", ver HU-19). Ver `Backlog-Historias-Usuario.md` (HU-06/07/08, marcadas como removidas) e `Board-Tarefas.md`.
 
 ## 2. Modelagem de Dados
-Estrutura relacional pensada para operar em bancos de dados serverless modernos.
+Estrutura relacional pensada para operar em bancos de dados serverless modernos. Ver `Modelo-Dados-ER.md` para o diagrama completo e atualizado — resumo:
 
 **Tabela: `Projetos`**
 * `id_projeto` (UUID)
 * `nome_maquina` (String)
-* `status_atual` (Enum: Esquema_Eletrico, Offline, Montagem, Online, Concluido)
+* `status_atual` (Enum: Esquema_Eletrico, Offline, Montagem, Online, Tryout, Entregue)
 * `data_criacao` (Timestamp)
+* `checklist_offline` / `checklist_online` (JSON — mapa chave-item → concluído, chaves definidas em `Checklist_Itens`)
 
-**Tabela: `Especificacoes_Tecnicas`**
-* `id_especificacao` (UUID)
+**Tabela: `Checklist_Itens`** (configuração global, sem FK pra `Projetos` — ver HU-20)
+* `id_item` (UUID)
+* `fase` (Enum: Offline, Online)
+* `chave` (String — identificador estável usado no JSON `checklist_offline`/`checklist_online`)
+* `rotulo` (String)
+* `ordem` (Int)
+
+**Tabela: `Pendencias_Visitas`** (log de pendências de visitas técnicas, fases Tryout/Entregue — ver HU-19)
+* `id_pendencia` (UUID)
 * `id_projeto` (UUID - FK)
-* `link_esquema_eletrico` (URL)
-* `dados_motores` (JSON - Contendo RPM, fator_reducao, diametro_engrenagem)
-* `dados_sensores` (JSON - Contendo part_numbers e calibragem)
+* `data` (Timestamp)
+* `texto` (Text)
 
 **Tabela: `Historico_Transicoes`**
 * `id_transicao` (UUID)

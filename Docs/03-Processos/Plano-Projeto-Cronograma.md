@@ -1,6 +1,8 @@
 # Plano de Projeto / Cronograma por Fases
 **Abordagem:** fases sequenciais com marcos de entrega, compatíveis com fluxo contínuo (Kanban) — sem datas fixas rígidas, mas com ordem de dependência clara.
 
+> **Nota histórica:** este é o plano original de kickoff do projeto. A Fase 3 (Parâmetros Técnicos/`Especificacoes_Tecnicas`) e a validação `ValidacaoParametrosFisicos` da Fase 4, descritas abaixo, foram implementadas conforme planejado e depois **removidas por completo** numa sessão posterior a pedido do usuário — não fazem mais parte do produto. A execução real, sessão a sessão, está registrada em `04-Acompanhamento/Board-Tarefas.md`, que é a fonte de verdade atual sobre o que existe no sistema.
+
 ## Fase 1 — Fundação: Schema + API
 **Objetivo:** ter o modelo de dados e os endpoints centrais funcionando, sem UI final.
 * Provisionar banco Neon e aplicar schema (`Projetos`, `Especificacoes_Tecnicas`, `Historico_Transicoes` — ver `02-Tecnico/Modelo-Dados-ER.md`).

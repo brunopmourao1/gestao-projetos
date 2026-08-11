@@ -1,10 +1,4 @@
-import {
-  ChecklistOffline,
-  COLUNAS_FLUXO,
-  EspecificacoesTecnicas,
-  ITENS_CHECKLIST_OFFLINE,
-  StatusProjeto,
-} from "@/types/projeto";
+import { ChecklistItemConfig, COLUNAS_FLUXO, StatusProjeto } from "@/types/projeto";
 
 const ORDEM: StatusProjeto[] = COLUNAS_FLUXO.map((c) => c.status);
 
@@ -21,43 +15,19 @@ export function isTransicaoValida(origem: StatusProjeto, destino: StatusProjeto)
   return Math.abs(idxDestino - idxOrigem) === 1;
 }
 
-export interface ResultadoValidacaoParametros {
-  valido: boolean;
-  camposFaltantes: string[];
-}
-
-// ValidacaoParametrosFisicos (ver Arquitetura.md) — checada antes de permitir
-// transição para "Concluido". link_esquema_eletrico não é obrigatório.
-export function validarParametrosFisicos(
-  especificacoes: EspecificacoesTecnicas | null
-): ResultadoValidacaoParametros {
-  const faltantes: string[] = [];
-  const motores = especificacoes?.dadosMotores;
-  if (typeof motores?.rpm !== "number") faltantes.push("dados_motores.rpm");
-  if (typeof motores?.fatorReducao !== "number") faltantes.push("dados_motores.fator_reducao");
-  if (typeof motores?.diametroEngrenagem !== "number")
-    faltantes.push("dados_motores.diametro_engrenagem");
-
-  const sensores = especificacoes?.dadosSensores;
-  if (!Array.isArray(sensores?.partNumbers) || sensores.partNumbers.length === 0) {
-    faltantes.push("dados_sensores.part_numbers");
-  }
-
-  return { valido: faltantes.length === 0, camposFaltantes: faltantes };
-}
-
-export interface ResultadoValidacaoChecklistOffline {
+export interface ResultadoValidacaoChecklist {
   valido: boolean;
   itensFaltantes: string[];
 }
 
-// Checada antes de permitir transição de "Offline" para "Montagem" — as 4
-// sub-etapas (Hardware, Lógica FC/FB, IHM, Segurança) precisam estar 100%.
-export function validarChecklistOffline(
-  checklist: ChecklistOffline
-): ResultadoValidacaoChecklistOffline {
-  const itensFaltantes = ITENS_CHECKLIST_OFFLINE.filter((item) => !checklist[item.chave]).map(
-    (item) => item.rotulo
-  );
+// Checada antes de permitir Offline->Montagem (itens da fase Offline) ou
+// Online->Tryout (itens da fase Online). Itens vêm da tabela checklist_itens
+// (configurável via tela de Configurações, ver HU-20) — todos precisam
+// estar `true` no mapa `checklist` (chave-do-item -> concluído).
+export function validarChecklist(
+  itens: ChecklistItemConfig[],
+  checklist: Record<string, boolean>
+): ResultadoValidacaoChecklist {
+  const itensFaltantes = itens.filter((item) => !checklist[item.chave]).map((item) => item.rotulo);
   return { valido: itensFaltantes.length === 0, itensFaltantes };
 }

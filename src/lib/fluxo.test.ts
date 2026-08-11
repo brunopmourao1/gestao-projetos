@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
-import {
-  isTransicaoValida,
-  statusValido,
-  validarChecklistOffline,
-  validarParametrosFisicos,
-} from "./fluxo";
+import { isTransicaoValida, statusValido, validarChecklist } from "./fluxo";
+import { ChecklistItemConfig } from "@/types/projeto";
+
+const itensOffline: ChecklistItemConfig[] = [
+  { idItem: "1", fase: "Offline", chave: "hardware", rotulo: "Hardware", ordem: 0 },
+  { idItem: "2", fase: "Offline", chave: "logicaFcFb", rotulo: "Lógica (FC's e FB's)", ordem: 1 },
+  { idItem: "3", fase: "Offline", chave: "ihm", rotulo: "IHM", ordem: 2 },
+  { idItem: "4", fase: "Offline", chave: "seguranca", rotulo: "Segurança (PLC de segurança)", ordem: 3 },
+];
 
 describe("statusValido", () => {
   it("aceita cada status válido do fluxo", () => {
@@ -13,7 +16,8 @@ describe("statusValido", () => {
       "Offline",
       "Montagem",
       "Online",
-      "Concluido",
+      "Tryout",
+      "Entregue",
     ]) {
       expect(statusValido(status)).toBe(true);
     }
@@ -30,6 +34,7 @@ describe("isTransicaoValida", () => {
   it("permite avançar uma coluna", () => {
     expect(isTransicaoValida("Esquema_Eletrico", "Offline")).toBe(true);
     expect(isTransicaoValida("Montagem", "Online")).toBe(true);
+    expect(isTransicaoValida("Tryout", "Entregue")).toBe(true);
   });
 
   it("permite retroceder uma coluna", () => {
@@ -39,7 +44,7 @@ describe("isTransicaoValida", () => {
 
   it("bloqueia pular etapas", () => {
     expect(isTransicaoValida("Offline", "Online")).toBe(false);
-    expect(isTransicaoValida("Esquema_Eletrico", "Concluido")).toBe(false);
+    expect(isTransicaoValida("Esquema_Eletrico", "Entregue")).toBe(false);
   });
 
   it("bloqueia status desconhecido", () => {
@@ -47,56 +52,9 @@ describe("isTransicaoValida", () => {
   });
 });
 
-describe("validarParametrosFisicos", () => {
-  it("aponta todos os campos faltantes quando especificações é null", () => {
-    const resultado = validarParametrosFisicos(null);
-    expect(resultado.valido).toBe(false);
-    expect(resultado.camposFaltantes).toEqual([
-      "dados_motores.rpm",
-      "dados_motores.fator_reducao",
-      "dados_motores.diametro_engrenagem",
-      "dados_sensores.part_numbers",
-    ]);
-  });
-
-  it("aprova quando todos os campos obrigatórios estão preenchidos", () => {
-    const resultado = validarParametrosFisicos({
-      idEspecificacao: "1",
-      idProjeto: "1",
-      linkEsquemaEletrico: null,
-      dadosMotores: { rpm: 1750, fatorReducao: 2.5, diametroEngrenagem: 30 },
-      dadosSensores: { partNumbers: ["PN-001"], calibragem: {} },
-    });
-    expect(resultado).toEqual({ valido: true, camposFaltantes: [] });
-  });
-
-  it("aponta apenas o campo faltante quando só um está ausente", () => {
-    const resultado = validarParametrosFisicos({
-      idEspecificacao: "1",
-      idProjeto: "1",
-      linkEsquemaEletrico: null,
-      dadosMotores: { rpm: 1750, fatorReducao: undefined as unknown as number, diametroEngrenagem: 30 },
-      dadosSensores: { partNumbers: ["PN-001"], calibragem: {} },
-    });
-    expect(resultado.camposFaltantes).toEqual(["dados_motores.fator_reducao"]);
-  });
-
-  it("trata part_numbers vazio como faltante", () => {
-    const resultado = validarParametrosFisicos({
-      idEspecificacao: "1",
-      idProjeto: "1",
-      linkEsquemaEletrico: null,
-      dadosMotores: { rpm: 1750, fatorReducao: 2.5, diametroEngrenagem: 30 },
-      dadosSensores: { partNumbers: [], calibragem: {} },
-    });
-    expect(resultado.valido).toBe(false);
-    expect(resultado.camposFaltantes).toEqual(["dados_sensores.part_numbers"]);
-  });
-});
-
-describe("validarChecklistOffline", () => {
+describe("validarChecklist", () => {
   it("aponta todos os itens quando nada está marcado", () => {
-    const resultado = validarChecklistOffline({
+    const resultado = validarChecklist(itensOffline, {
       hardware: false,
       logicaFcFb: false,
       ihm: false,
@@ -111,8 +69,8 @@ describe("validarChecklistOffline", () => {
     ]);
   });
 
-  it("aprova quando as 4 sub-etapas estão concluídas", () => {
-    const resultado = validarChecklistOffline({
+  it("aprova quando todos os itens estão concluídos", () => {
+    const resultado = validarChecklist(itensOffline, {
       hardware: true,
       logicaFcFb: true,
       ihm: true,
@@ -122,12 +80,31 @@ describe("validarChecklistOffline", () => {
   });
 
   it("aponta apenas os itens faltantes", () => {
-    const resultado = validarChecklistOffline({
+    const resultado = validarChecklist(itensOffline, {
       hardware: true,
       logicaFcFb: true,
       ihm: false,
       seguranca: false,
     });
     expect(resultado.itensFaltantes).toEqual(["IHM", "Segurança (PLC de segurança)"]);
+  });
+
+  it("funciona com qualquer número de itens configurados (não fixo em 4)", () => {
+    const doisItens: ChecklistItemConfig[] = [
+      { idItem: "a", fase: "Online", chave: "x", rotulo: "X", ordem: 0 },
+      { idItem: "b", fase: "Online", chave: "y", rotulo: "Y", ordem: 1 },
+    ];
+    expect(validarChecklist(doisItens, { x: true, y: false })).toEqual({
+      valido: false,
+      itensFaltantes: ["Y"],
+    });
+    expect(validarChecklist(doisItens, { x: true, y: true })).toEqual({
+      valido: true,
+      itensFaltantes: [],
+    });
+  });
+
+  it("aprova automaticamente quando não há itens configurados", () => {
+    expect(validarChecklist([], {})).toEqual({ valido: true, itensFaltantes: [] });
   });
 });

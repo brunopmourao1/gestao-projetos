@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutContainer } from "@/components/layout/LayoutContainer";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { DetailsDrawer } from "@/components/details/DetailsDrawer";
 import {
+  ChecklistItemConfig,
   ChecklistOffline,
-  EspecificacoesTecnicas,
+  ChecklistOnline,
   MetricaTempoEstagio,
+  PendenciaVisita,
   Projeto,
   ProjetoDetalhado,
   StatusProjeto,
@@ -23,7 +25,7 @@ interface BoardClientProps {
 }
 
 function paraDetalhado(projeto: Projeto): ProjetoDetalhado {
-  return { ...projeto, especificacoesTecnicas: null, historicoTransicoes: [] };
+  return { ...projeto, historicoTransicoes: [], pendenciasVisitas: [] };
 }
 
 async function buscarMetricas(idProjeto: string): Promise<MetricaTempoEstagio[] | null> {
@@ -58,6 +60,18 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
   const [busca, setBusca] = useState("");
   const [erroMovimento, setErroMovimento] = useState<string | null>(null);
   const [projetoParaDefinirPrazo, setProjetoParaDefinirPrazo] = useState<Projeto | null>(null);
+  const [itensOffline, setItensOffline] = useState<ChecklistItemConfig[]>([]);
+  const [itensOnline, setItensOnline] = useState<ChecklistItemConfig[]>([]);
+
+  useEffect(() => {
+    fetch("/api/configuracoes/checklist")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((todos: ChecklistItemConfig[]) => {
+        setItensOffline(todos.filter((i) => i.fase === "Offline"));
+        setItensOnline(todos.filter((i) => i.fase === "Online"));
+      })
+      .catch(() => {});
+  }, []);
 
   const projetosFiltrados = projetos.filter((p) => {
     const buscaNormalizada = busca.trim().toLowerCase();
@@ -88,16 +102,27 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     }
   }
 
-  function handleEspecificacoesAtualizadas(espec: EspecificacoesTecnicas) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, especificacoesTecnicas: espec } : atual));
-  }
-
   function handleChecklistAtualizado(checklist: ChecklistOffline) {
     setProjetoSelecionado((atual) => (atual ? { ...atual, checklistOffline: checklist } : atual));
     setProjetos((atual) =>
       atual.map((p) =>
         p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, checklistOffline: checklist } : p
       )
+    );
+  }
+
+  function handleChecklistOnlineAtualizado(checklist: ChecklistOnline) {
+    setProjetoSelecionado((atual) => (atual ? { ...atual, checklistOnline: checklist } : atual));
+    setProjetos((atual) =>
+      atual.map((p) =>
+        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, checklistOnline: checklist } : p
+      )
+    );
+  }
+
+  function handlePendenciaAdicionada(pendencia: PendenciaVisita) {
+    setProjetoSelecionado((atual) =>
+      atual ? { ...atual, pendenciasVisitas: [pendencia, ...atual.pendenciasVisitas] } : atual
     );
   }
 
@@ -311,6 +336,8 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       )}
       <KanbanBoard
         projetos={projetosFiltrados}
+        itensOffline={itensOffline}
+        itensOnline={itensOnline}
         onSelectProjeto={handleSelectProjeto}
         onMoverProjeto={handleMoverProjeto}
         onReordenarProjeto={handleReordenarProjeto}
@@ -321,10 +348,11 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         relatorio={relatorio}
         open={drawerAberto}
         onOpenChange={handleDrawerOpenChange}
-        onEspecificacoesAtualizadas={handleEspecificacoesAtualizadas}
         onChecklistAtualizado={handleChecklistAtualizado}
         onObservacoesAtualizadas={handleObservacoesAtualizadas}
         onPercentualMontagemAtualizado={handlePercentualMontagemAtualizado}
+        onChecklistOnlineAtualizado={handleChecklistOnlineAtualizado}
+        onPendenciaAdicionada={handlePendenciaAdicionada}
         onEditarProjeto={handleEditarProjeto}
         onExcluirProjeto={handleExcluirProjeto}
       />

@@ -40,7 +40,7 @@ Substituir as planilhas por um sistema visual (Kanban customizado) que padronize
 * 100% dos projetos ativos migrados das planilhas para o Kanban.
 * Lead time por estágio calculável automaticamente para qualquer projeto (RF02).
 * Geração de relatório executivo em menos de 1 minuto, sem montagem manual.
-* Zero projetos chegando a "Operação Concluída" sem os parâmetros obrigatórios preenchidos (RF de validação, ver `ValidacaoParametrosFisicos` em `Arquitetura.md`).
+* ~~Zero projetos chegando a "Operação Concluída" sem os parâmetros obrigatórios preenchidos~~ — critério removido: a funcionalidade de parâmetros técnicos/`ValidacaoParametrosFisicos` e a própria coluna "Operação Concluída" (agora "Tryout com o Cliente"/"Máquina Entregue") não existem mais no produto, ver `Arquitetura.md`.
 
 ## 6. Premissas
 * O time (Gestor/Tech Lead + Programador(es)) já está definido e disponível para uso e feedback contínuo do sistema.

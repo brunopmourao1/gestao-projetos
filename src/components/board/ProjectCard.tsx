@@ -3,21 +3,30 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Projeto } from "@/types/projeto";
+import { ChecklistItemConfig, Projeto } from "@/types/projeto";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
-import { percentualChecklistOffline } from "@/lib/checklist-offline";
+import { percentualChecklist } from "@/lib/checklist";
 
 export type ResultadoMover = { ok: true } | { ok: false; mensagem: string };
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 2
 interface ProjectCardProps {
   projeto: Projeto;
+  itensOffline?: ChecklistItemConfig[];
+  itensOnline?: ChecklistItemConfig[];
   responsavel?: string;
   tecnologias?: string[];
   onClick?: (projeto: Projeto) => void;
 }
 
-export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }: ProjectCardProps) {
+export function ProjectCard({
+  projeto,
+  itensOffline = [],
+  itensOnline = [],
+  responsavel,
+  tecnologias = [],
+  onClick,
+}: ProjectCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: projeto.idProjeto,
   });
@@ -29,12 +38,24 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
   };
 
   const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
-  const percentualFase =
+  const checklistDaFase =
     projeto.statusAtual === "Offline"
-      ? percentualChecklistOffline(projeto.checklistOffline)
+      ? projeto.checklistOffline
+      : projeto.statusAtual === "Online"
+        ? projeto.checklistOnline
+        : null;
+  const itensDaFase =
+    projeto.statusAtual === "Offline" ? itensOffline : projeto.statusAtual === "Online" ? itensOnline : [];
+  // Sem itens configurados pra fase ainda -> nada pra mostrar (evita 0/0).
+  const itensChecklist = checklistDaFase !== null && itensDaFase.length > 0 ? itensDaFase : null;
+  const percentualFase =
+    itensChecklist !== null
+      ? percentualChecklist(itensChecklist, checklistDaFase!)
       : projeto.statusAtual === "Montagem"
         ? projeto.percentualMontagem
         : null;
+  const concluidos =
+    itensChecklist?.filter((item) => checklistDaFase![item.chave]).length ?? null;
 
   return (
     <div
@@ -65,8 +86,8 @@ export function ProjectCard({ projeto, responsavel, tecnologias = [], onClick }:
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {projeto.statusAtual === "Offline"
-                  ? `${percentualFase}% concluído (${percentualFase / 25}/4)`
+                {itensChecklist !== null
+                  ? `${percentualFase}% concluído (${concluidos}/${itensChecklist.length})`
                   : `${percentualFase}% concluído`}
               </p>
             </div>

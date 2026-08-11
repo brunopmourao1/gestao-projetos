@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gestão de Comissionamento",
+  title: "Bruno Mourão - Gestão de Projeto",
   description: "Sistema de Gestão de Comissionamento e Projetos",
 };
 

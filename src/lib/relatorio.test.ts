@@ -14,39 +14,14 @@ const projetoBase: ProjetoDetalhado = {
   checklistOffline: { hardware: false, logicaFcFb: false, ihm: false, seguranca: false },
   observacoes: null,
   percentualMontagem: 0,
-  especificacoesTecnicas: null,
+  checklistOnline: { testesIO: false, ajusteParametros: false, testesFuncionais: false, liberacao: false },
   historicoTransicoes: [],
+  pendenciasVisitas: [],
 };
 
 describe("compilarRelatorio", () => {
-  it("preenche tudo com 'não informado' quando especificações é null, sem lançar erro", () => {
+  it("não lança erro para um projeto sem histórico", () => {
     expect(() => compilarRelatorio(projetoBase)).not.toThrow();
-    const payload = compilarRelatorio(projetoBase);
-    expect(payload.especificacoesTecnicas).toEqual({
-      linkEsquemaEletrico: "não informado",
-      dadosMotores: { rpm: "não informado", fatorReducao: "não informado", diametroEngrenagem: "não informado" },
-      dadosSensores: { partNumbers: "não informado", calibragem: "não informado" },
-    });
-  });
-
-  it("preenche parcialmente quando só dados_motores está presente", () => {
-    const projeto: ProjetoDetalhado = {
-      ...projetoBase,
-      especificacoesTecnicas: {
-        idEspecificacao: "e1",
-        idProjeto: "1",
-        linkEsquemaEletrico: null,
-        dadosMotores: { rpm: 1750, fatorReducao: 2.5, diametroEngrenagem: 30 },
-        dadosSensores: null,
-      },
-    };
-    const payload = compilarRelatorio(projeto);
-    expect(payload.especificacoesTecnicas.dadosMotores).toEqual({
-      rpm: "1750",
-      fatorReducao: "2.5",
-      diametroEngrenagem: "30",
-    });
-    expect(payload.especificacoesTecnicas.dadosSensores.partNumbers).toBe("não informado");
   });
 
   it("mantém numero e usa 'não informado' quando nome_maquina/descricao são null", () => {
@@ -61,7 +36,7 @@ describe("compilarRelatorio", () => {
 });
 
 describe("compilarRelatorioMarkdown", () => {
-  it("gera markdown com 'não informado' sem lançar erro para especificações ausentes", () => {
+  it("gera markdown com 'não informado' sem lançar erro para descrição ausente", () => {
     const payload = compilarRelatorio(projetoBase);
     const markdown = compilarRelatorioMarkdown(payload);
     expect(() => markdown).not.toThrow();

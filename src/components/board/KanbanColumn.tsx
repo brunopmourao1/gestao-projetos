@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { cn } from "@/lib/utils";
-import { Projeto } from "@/types/projeto";
+import { ChecklistItemConfig, Projeto } from "@/types/projeto";
 import { ProjectCard } from "./ProjectCard";
 
 // Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 2
@@ -11,7 +11,8 @@ export const CORES_CRITICIDADE: Record<string, string> = {
   Offline: "border-t-blue-400",
   Montagem: "border-t-red-500",
   Online: "border-t-green-500",
-  Concluido: "border-t-emerald-600",
+  Tryout: "border-t-amber-500",
+  Entregue: "border-t-emerald-600",
 };
 
 interface KanbanColumnProps {
@@ -19,10 +20,19 @@ interface KanbanColumnProps {
   titulo: string;
   // Já ordenados por ordem ascendente (menor = mais crítico, topo da coluna).
   projetos: Projeto[];
+  itensOffline: ChecklistItemConfig[];
+  itensOnline: ChecklistItemConfig[];
   onSelectProjeto?: (projeto: Projeto) => void;
 }
 
-export function KanbanColumn({ status, titulo, projetos, onSelectProjeto }: KanbanColumnProps) {
+export function KanbanColumn({
+  status,
+  titulo,
+  projetos,
+  itensOffline,
+  itensOnline,
+  onSelectProjeto,
+}: KanbanColumnProps) {
   const { setNodeRef } = useDroppable({ id: status });
   const ids = projetos.map((p) => p.idProjeto);
 
@@ -40,7 +50,13 @@ export function KanbanColumn({ status, titulo, projetos, onSelectProjeto }: Kanb
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <div className="flex min-h-8 flex-col gap-2">
           {projetos.map((projeto) => (
-            <ProjectCard key={projeto.idProjeto} projeto={projeto} onClick={onSelectProjeto} />
+            <ProjectCard
+              key={projeto.idProjeto}
+              projeto={projeto}
+              itensOffline={itensOffline}
+              itensOnline={itensOnline}
+              onClick={onSelectProjeto}
+            />
           ))}
         </div>
       </SortableContext>

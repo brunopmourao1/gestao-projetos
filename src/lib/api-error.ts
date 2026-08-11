@@ -3,8 +3,11 @@ import { NextResponse } from "next/server";
 export type CodigoErro =
   | "PROJETO_NAO_ENCONTRADO"
   | "TRANSICAO_INVALIDA"
-  | "PARAMETROS_INCOMPLETOS"
   | "CHECKLIST_OFFLINE_INCOMPLETO"
+  | "CHECKLIST_ONLINE_INCOMPLETO"
+  | "ITEM_CHECKLIST_NAO_ENCONTRADO"
+  | "SENHA_INCORRETA"
+  | "NAO_AUTENTICADO"
   | "VALIDACAO_CAMPO";
 
 // Formato de erro conforme Docs/02-Tecnico/Especificacao-API.md.

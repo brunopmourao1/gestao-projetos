@@ -1,16 +1,17 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ChecklistOffline,
+  ChecklistOnline,
   COLUNAS_FLUXO,
-  EspecificacoesTecnicas,
   MetricaTempoEstagio,
+  PendenciaVisita,
   ProjetoDetalhado,
 } from "@/types/projeto";
 import type { RelatorioPayload } from "@/lib/relatorio";
-import { ParametrosForm } from "./ParametrosForm";
-import { ChecklistOfflineForm } from "./ChecklistOfflineForm";
+import { ChecklistForm } from "./ChecklistForm";
 import { PercentualMontagemForm } from "./PercentualMontagemForm";
 import { ObservacoesForm } from "./ObservacoesForm";
+import { PendenciasForm } from "./PendenciasForm";
 import { formatarDuracao } from "@/lib/formatacao";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
 
@@ -19,27 +20,29 @@ interface TabNavigationProps {
   projeto: ProjetoDetalhado;
   metricas: MetricaTempoEstagio[] | null;
   relatorio: RelatorioPayload | null;
-  onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
   onChecklistAtualizado: (checklist: ChecklistOffline) => void;
   onObservacoesAtualizadas: (observacoes: string | null) => void;
   onPercentualMontagemAtualizado: (percentual: number) => void;
+  onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
+  onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
 }
 
 export function TabNavigation({
   projeto,
   metricas,
   relatorio,
-  onEspecificacoesAtualizadas,
   onChecklistAtualizado,
   onObservacoesAtualizadas,
   onPercentualMontagemAtualizado,
+  onChecklistOnlineAtualizado,
+  onPendenciaAdicionada,
 }: TabNavigationProps) {
   return (
     <Tabs defaultValue="visao-geral" className="mt-4">
       <TabsList className="w-full">
         <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
         <TabsTrigger value="progresso">Progresso</TabsTrigger>
-        <TabsTrigger value="parametros">Parâmetros</TabsTrigger>
+        <TabsTrigger value="pendencias">Pendências</TabsTrigger>
         <TabsTrigger value="relatorio">Relatório</TabsTrigger>
       </TabsList>
 
@@ -93,7 +96,7 @@ export function TabNavigation({
 
       <TabsContent value="progresso">
         {projeto.statusAtual === "Offline" && (
-          <ChecklistOfflineForm projeto={projeto} onChecklistAtualizado={onChecklistAtualizado} />
+          <ChecklistForm fase="Offline" projeto={projeto} onChecklistAtualizado={onChecklistAtualizado} />
         )}
         {projeto.statusAtual === "Montagem" && (
           <PercentualMontagemForm
@@ -101,17 +104,32 @@ export function TabNavigation({
             onPercentualAtualizado={onPercentualMontagemAtualizado}
           />
         )}
-        {projeto.statusAtual !== "Offline" && projeto.statusAtual !== "Montagem" && (
-          <p className="text-sm text-muted-foreground">
-            Progresso disponível durante as fases &quot;Projeto Offline&quot; e &quot;Aguardando
-            Montagem&quot;.
-          </p>
+        {projeto.statusAtual === "Online" && (
+          <ChecklistForm
+            fase="Online"
+            projeto={projeto}
+            onChecklistAtualizado={onChecklistOnlineAtualizado}
+          />
         )}
+        {projeto.statusAtual !== "Offline" &&
+          projeto.statusAtual !== "Montagem" &&
+          projeto.statusAtual !== "Online" && (
+            <p className="text-sm text-muted-foreground">
+              Progresso disponível durante as fases &quot;Projeto Offline&quot;, &quot;Aguardando
+              Montagem&quot; e &quot;Projeto Online&quot;.
+            </p>
+          )}
       </TabsContent>
 
-      {/* HU-06/HU-07: inputs numéricos para dados de comissionamento físico */}
-      <TabsContent value="parametros">
-        <ParametrosForm projeto={projeto} onSalvo={onEspecificacoesAtualizadas} />
+      <TabsContent value="pendencias">
+        {projeto.statusAtual === "Tryout" || projeto.statusAtual === "Entregue" ? (
+          <PendenciasForm projeto={projeto} onPendenciaAdicionada={onPendenciaAdicionada} />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Pendências de visitas técnicas disponíveis a partir da fase &quot;Tryout com o
+            Cliente&quot;.
+          </p>
+        )}
       </TabsContent>
 
       {/* HU-09: preview visual dos dados enviados ao MotorApresentacao */}
@@ -120,19 +138,6 @@ export function TabNavigation({
           <p>Carregando...</p>
         ) : (
           <div className="space-y-3">
-            <div>
-              <h4 className="text-xs font-semibold text-foreground">Especificações Técnicas</h4>
-              <ul className="space-y-0.5">
-                <li>Link esquema elétrico: {relatorio.especificacoesTecnicas.linkEsquemaEletrico}</li>
-                <li>RPM: {relatorio.especificacoesTecnicas.dadosMotores.rpm}</li>
-                <li>Fator de redução: {relatorio.especificacoesTecnicas.dadosMotores.fatorReducao}</li>
-                <li>
-                  Diâmetro engrenagem: {relatorio.especificacoesTecnicas.dadosMotores.diametroEngrenagem}
-                </li>
-                <li>Part numbers sensores: {relatorio.especificacoesTecnicas.dadosSensores.partNumbers}</li>
-                <li>Calibragem: {relatorio.especificacoesTecnicas.dadosSensores.calibragem}</li>
-              </ul>
-            </div>
             <div>
               <h4 className="text-xs font-semibold text-foreground">Histórico de Transições</h4>
               {relatorio.historicoResumido.length === 0 ? (

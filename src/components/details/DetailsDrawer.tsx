@@ -1,8 +1,9 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   ChecklistOffline,
-  EspecificacoesTecnicas,
+  ChecklistOnline,
   MetricaTempoEstagio,
+  PendenciaVisita,
   ProjetoDetalhado,
 } from "@/types/projeto";
 import type { RelatorioPayload } from "@/lib/relatorio";
@@ -19,10 +20,11 @@ interface DetailsDrawerProps {
   relatorio: RelatorioPayload | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEspecificacoesAtualizadas: (espec: EspecificacoesTecnicas) => void;
   onChecklistAtualizado: (checklist: ChecklistOffline) => void;
   onObservacoesAtualizadas: (observacoes: string | null) => void;
   onPercentualMontagemAtualizado: (percentual: number) => void;
+  onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
+  onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
   onEditarProjeto: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
   onExcluirProjeto: (id: string) => Promise<ResultadoMover>;
 }
@@ -33,10 +35,11 @@ export function DetailsDrawer({
   relatorio,
   open,
   onOpenChange,
-  onEspecificacoesAtualizadas,
   onChecklistAtualizado,
   onObservacoesAtualizadas,
   onPercentualMontagemAtualizado,
+  onChecklistOnlineAtualizado,
+  onPendenciaAdicionada,
   onEditarProjeto,
   onExcluirProjeto,
 }: DetailsDrawerProps) {
@@ -65,10 +68,11 @@ export function DetailsDrawer({
             projeto={projeto}
             metricas={metricas}
             relatorio={relatorio}
-            onEspecificacoesAtualizadas={onEspecificacoesAtualizadas}
             onChecklistAtualizado={onChecklistAtualizado}
             onObservacoesAtualizadas={onObservacoesAtualizadas}
             onPercentualMontagemAtualizado={onPercentualMontagemAtualizado}
+            onChecklistOnlineAtualizado={onChecklistOnlineAtualizado}
+            onPendenciaAdicionada={onPendenciaAdicionada}
           />
         )}
       </SheetContent>
