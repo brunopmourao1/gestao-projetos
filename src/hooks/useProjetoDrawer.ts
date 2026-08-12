@@ -136,7 +136,12 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
   }
 
   function handleObservacoesAtualizadas(observacoes: string | null) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, observacoes } : atual));
+    setProjetoSelecionado((atual) => {
+      if (!atual) return atual;
+      const atualizado = { ...atual, observacoes };
+      onProjetoAtualizado?.(atualizado);
+      return atualizado;
+    });
   }
 
   function handlePendenciaAdicionada(pendencia: PendenciaVisita) {
