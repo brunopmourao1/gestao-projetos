@@ -118,4 +118,17 @@ describe("ProjectCard", () => {
     render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem" }} pendenciasAbertas={3} />);
     expect(screen.queryByText(/pendência/)).not.toBeInTheDocument();
   });
+
+  it("mostra o indicador de observação quando o projeto tem observações preenchidas", () => {
+    render(<ProjectCard projeto={{ ...projeto, observacoes: "Cliente pediu ajuste no prazo." }} />);
+    expect(screen.getByRole("img", { name: "Possui observação" })).toBeInTheDocument();
+  });
+
+  it("não mostra o indicador de observação quando observações é null ou só espaço", () => {
+    const { rerender } = render(<ProjectCard projeto={{ ...projeto, observacoes: null }} />);
+    expect(screen.queryByRole("img", { name: "Possui observação" })).not.toBeInTheDocument();
+
+    rerender(<ProjectCard projeto={{ ...projeto, observacoes: "   " }} />);
+    expect(screen.queryByRole("img", { name: "Possui observação" })).not.toBeInTheDocument();
+  });
 });

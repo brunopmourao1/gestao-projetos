@@ -1,5 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { StickyNote } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ChecklistItemConfig, Projeto } from "@/types/projeto";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
@@ -57,6 +58,7 @@ export function ProjectCard({
   const rotuloProgresso =
     itensChecklist !== null ? `${percentualFase}% · ${concluidos}/${itensChecklist.length} itens` : `${percentualFase}% montagem`;
 
+  const temObservacao = Boolean(projeto.observacoes?.trim());
   const acompanhaPendencias = projeto.statusAtual === "Tryout" || projeto.statusAtual === "Entregue";
   const totalPendenciasAbertas = pendenciasAbertas ?? 0;
   const temPendenciasAbertas = totalPendenciasAbertas > 0;
@@ -68,7 +70,14 @@ export function ProjectCard({
       >
         <div className="flex flex-col gap-2 px-3.5 py-3">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[13px] font-semibold tabular-nums">{projeto.numero}</span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-[13px] font-semibold tabular-nums">{projeto.numero}</span>
+              {temObservacao && (
+                <span role="img" aria-label="Possui observação" title="Possui observação">
+                  <StickyNote className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                </span>
+              )}
+            </span>
             {atrasado && (
               <span className="inline-flex items-center gap-[5px] rounded-full bg-destructive/10 py-0.5 pr-2 pl-[7px] text-[11px] font-semibold text-destructive-foreground">
                 <span className="size-[5px] shrink-0 rounded-full bg-destructive" />
