@@ -26,7 +26,15 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
   const [projetoParaDefinirPrazo, setProjetoParaDefinirPrazo] = useState<Projeto | null>(null);
   const [itensOffline, setItensOffline] = useState<ChecklistItemConfig[]>([]);
   const [itensOnline, setItensOnline] = useState<ChecklistItemConfig[]>([]);
+  const [pendenciasPorProjeto, setPendenciasPorProjeto] = useState<Record<string, number>>({});
   const [novoProjetoAberto, setNovoProjetoAberto] = useState(false);
+
+  function carregarPendenciasResumo() {
+    fetch("/api/pendencias/resumo")
+      .then((r) => (r.ok ? r.json() : {}))
+      .then(setPendenciasPorProjeto)
+      .catch(() => {});
+  }
 
   const drawer = useProjetoDrawer({
     onProjetoAtualizado: (projeto) =>
@@ -34,6 +42,7 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
         atual.map((p) => (p.idProjeto === projeto.idProjeto ? { ...p, ...projeto } : p))
       ),
     onProjetoExcluido: (id) => setProjetos((atual) => atual.filter((p) => p.idProjeto !== id)),
+    onPendenciasAlteradas: carregarPendenciasResumo,
   });
 
   useEffect(() => {
@@ -44,6 +53,7 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
         setItensOnline(todos.filter((i) => i.fase === "Online"));
       })
       .catch(() => {});
+    carregarPendenciasResumo();
   }, []);
 
   const projetosFiltrados = projetos.filter((p) => {
@@ -189,6 +199,7 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
           projetos={projetosFiltrados}
           itensOffline={itensOffline}
           itensOnline={itensOnline}
+          pendenciasPorProjeto={pendenciasPorProjeto}
           onSelectProjeto={drawer.abrirProjeto}
           onMoverProjeto={handleMoverProjeto}
           onReordenarProjeto={handleReordenarProjeto}

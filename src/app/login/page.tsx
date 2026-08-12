@@ -42,7 +42,24 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center px-6">
       <div className="flex w-[360px] max-w-full flex-col gap-6">
         <div className="flex flex-col items-center gap-3">
-          <Image src="/logomarca-ls.png" alt="LS Control" width={140} height={56} className="h-14 w-auto rounded" priority />
+          <div className="h-14 w-full max-w-[180px]">
+            <Image
+              src="/logomarca-ls.png"
+              alt="LS Control"
+              width={140}
+              height={56}
+              className="h-full w-full rounded object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/logomarca-ls-dark.webp"
+              alt="LS Control"
+              width={140}
+              height={56}
+              className="hidden h-full w-full rounded object-contain dark:block"
+              priority
+            />
+          </div>
           <div className="text-center">
             <div className="text-lg font-semibold tracking-[-0.01em]">Gestão de Projetos</div>
             <div className="mt-0.5 text-[13px] text-muted-foreground">

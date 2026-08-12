@@ -39,22 +39,42 @@ export function Sidebar({ temaInicial }: SidebarProps) {
   return (
     <aside className="flex w-14 shrink-0 flex-col gap-1 border-r border-border px-2 py-4 lg:w-[216px] lg:px-3">
       <div className="flex flex-col items-center gap-1.5 px-1 pb-4">
-        <Image
-          src="/logomarca-ls.png"
-          alt="LS Control"
-          width={160}
-          height={44}
-          className="hidden h-auto w-full max-w-[160px] rounded-[5px] lg:block"
-          priority
-        />
-        <Image
-          src="/logomarca-ls.png"
-          alt="LS Control"
-          width={28}
-          height={28}
-          className="h-7 w-7 rounded object-contain lg:hidden"
-          priority
-        />
+        <div className="hidden h-11 w-full max-w-[160px] lg:block">
+          <Image
+            src="/logomarca-ls.png"
+            alt="LS Control"
+            width={160}
+            height={44}
+            className="h-full w-full rounded-[5px] object-contain dark:hidden"
+            priority
+          />
+          <Image
+            src="/logomarca-ls-dark.webp"
+            alt="LS Control"
+            width={160}
+            height={44}
+            className="hidden h-full w-full rounded-[5px] object-contain dark:block"
+            priority
+          />
+        </div>
+        <div className="lg:hidden">
+          <Image
+            src="/logomarca-ls.png"
+            alt="LS Control"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded object-contain dark:hidden"
+            priority
+          />
+          <Image
+            src="/logomarca-ls-dark.webp"
+            alt="LS Control"
+            width={28}
+            height={28}
+            className="hidden h-7 w-7 rounded object-contain dark:block"
+            priority
+          />
+        </div>
         <span className="hidden text-center text-[11px] text-muted-foreground lg:block">
           Gestão de Projetos
         </span>

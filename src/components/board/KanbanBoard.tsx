@@ -24,6 +24,7 @@ interface KanbanBoardProps {
   projetos: Projeto[];
   itensOffline: ChecklistItemConfig[];
   itensOnline: ChecklistItemConfig[];
+  pendenciasPorProjeto: Record<string, number>;
   onSelectProjeto?: (projeto: Projeto) => void;
   onMoverProjeto?: (projeto: Projeto, novoStatus: StatusProjeto, ordem: number) => Promise<ResultadoMover>;
   onReordenarProjeto?: (projeto: Projeto, novaOrdem: number) => Promise<ResultadoMover>;
@@ -35,6 +36,7 @@ export function KanbanBoard({
   projetos,
   itensOffline,
   itensOnline,
+  pendenciasPorProjeto,
   onSelectProjeto,
   onMoverProjeto,
   onReordenarProjeto,
@@ -106,13 +108,19 @@ export function KanbanBoard({
               .sort((a, b) => a.ordem - b.ordem)}
             itensOffline={itensOffline}
             itensOnline={itensOnline}
+            pendenciasPorProjeto={pendenciasPorProjeto}
             onSelectProjeto={onSelectProjeto}
           />
         ))}
       </div>
       <DragOverlay>
         {activeProjeto && (
-          <ProjectCard projeto={activeProjeto} itensOffline={itensOffline} itensOnline={itensOnline} />
+          <ProjectCard
+            projeto={activeProjeto}
+            itensOffline={itensOffline}
+            itensOnline={itensOnline}
+            pendenciasAbertas={pendenciasPorProjeto[activeProjeto.idProjeto]}
+          />
         )}
       </DragOverlay>
     </DndContext>

@@ -12,10 +12,20 @@ interface ProjectCardProps {
   projeto: Projeto;
   itensOffline?: ChecklistItemConfig[];
   itensOnline?: ChecklistItemConfig[];
+  /** Pendências de visita em aberto (fases Tryout/Entregue) — indicador
+   * rápido OK/pendências no card, pra não precisar abrir o drawer só pra
+   * saber. `undefined` enquanto o resumo ainda não carregou. */
+  pendenciasAbertas?: number;
   onClick?: (projeto: Projeto) => void;
 }
 
-export function ProjectCard({ projeto, itensOffline = [], itensOnline = [], onClick }: ProjectCardProps) {
+export function ProjectCard({
+  projeto,
+  itensOffline = [],
+  itensOnline = [],
+  pendenciasAbertas,
+  onClick,
+}: ProjectCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: projeto.idProjeto,
   });
@@ -47,10 +57,14 @@ export function ProjectCard({ projeto, itensOffline = [], itensOnline = [], onCl
   const rotuloProgresso =
     itensChecklist !== null ? `${percentualFase}% · ${concluidos}/${itensChecklist.length} itens` : `${percentualFase}% montagem`;
 
+  const acompanhaPendencias = projeto.statusAtual === "Tryout" || projeto.statusAtual === "Entregue";
+  const totalPendenciasAbertas = pendenciasAbertas ?? 0;
+  const temPendenciasAbertas = totalPendenciasAbertas > 0;
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={() => onClick?.(projeto)} className="cursor-grab active:cursor-grabbing">
       <Card
-        className="gap-0 rounded-lg border-border bg-card p-0 shadow-xs ring-0 transition-[border-color,box-shadow] duration-150 hover:border-[color-mix(in_oklch,var(--foreground)_20%,var(--border))] hover:shadow-sm"
+        className="gap-0 rounded-lg border-border bg-card p-0 shadow-xs ring-0 transition-[border-color,box-shadow] duration-150 hover:border-[color-mix(in_oklch,var(--foreground)_20%,var(--border))] hover:shadow-sm dark:border-white/15"
       >
         <div className="flex flex-col gap-2 px-3.5 py-3">
           <div className="flex items-center justify-between gap-2">
@@ -83,11 +97,31 @@ export function ProjectCard({ projeto, itensOffline = [], itensOnline = [], onCl
               </div>
             </div>
           ) : (
-            projeto.dataPrevistaConclusao && (
-              <div className="flex justify-end text-[11.5px] tabular-nums">
-                <span className={atrasado ? "font-medium text-destructive-foreground" : "text-muted-foreground"}>
-                  {formatarData(projeto.dataPrevistaConclusao)}
-                </span>
+            (acompanhaPendencias || projeto.dataPrevistaConclusao) && (
+              <div className="flex items-center justify-between gap-2 text-[11.5px] tabular-nums">
+                {acompanhaPendencias ? (
+                  <span
+                    className={`inline-flex items-center gap-[5px] rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                      temPendenciasAbertas
+                        ? "bg-destructive/10 text-destructive-foreground"
+                        : "bg-status-entregue/12 text-status-entregue-foreground"
+                    }`}
+                  >
+                    <span
+                      className={`size-[5px] shrink-0 rounded-full ${temPendenciasAbertas ? "bg-destructive" : "bg-status-entregue"}`}
+                    />
+                    {temPendenciasAbertas
+                      ? `${totalPendenciasAbertas} pendência${totalPendenciasAbertas === 1 ? "" : "s"}`
+                      : "OK"}
+                  </span>
+                ) : (
+                  <span />
+                )}
+                {projeto.dataPrevistaConclusao && (
+                  <span className={atrasado ? "font-medium text-destructive-foreground" : "text-muted-foreground"}>
+                    {formatarData(projeto.dataPrevistaConclusao)}
+                  </span>
+                )}
               </div>
             )
           )}

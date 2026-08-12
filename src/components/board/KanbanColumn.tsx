@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   projetos: Projeto[];
   itensOffline: ChecklistItemConfig[];
   itensOnline: ChecklistItemConfig[];
+  pendenciasPorProjeto: Record<string, number>;
   onSelectProjeto?: (projeto: Projeto) => void;
 }
 
@@ -20,6 +21,7 @@ export function KanbanColumn({
   projetos,
   itensOffline,
   itensOnline,
+  pendenciasPorProjeto,
   onSelectProjeto,
 }: KanbanColumnProps) {
   const { setNodeRef } = useDroppable({ id: status });
@@ -43,6 +45,7 @@ export function KanbanColumn({
               projeto={projeto}
               itensOffline={itensOffline}
               itensOnline={itensOnline}
+              pendenciasAbertas={pendenciasPorProjeto[projeto.idProjeto]}
               onClick={onSelectProjeto}
             />
           ))}

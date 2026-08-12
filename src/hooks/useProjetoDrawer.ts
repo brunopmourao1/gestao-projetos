@@ -64,13 +64,17 @@ interface UseProjetoDrawerOptions {
    * geral, que não mantém lista otimista, tipicamente passa router.refresh. */
   onProjetoAtualizado?: (projeto: Projeto) => void;
   onProjetoExcluido?: (id: string) => void;
+  /** Chamado quando uma pendência é adicionada ou tem o check alternado —
+   * o indicador OK/pendências do card (fora do drawer) depende da contagem
+   * agregada de /api/pendencias/resumo, não do projeto selecionado. */
+  onPendenciasAlteradas?: () => void;
 }
 
 // Estado + ações do DetailsDrawer, extraídos de BoardClient pra ser
 // reaproveitado também pela Visão geral ("Prazos críticos" abre o mesmo
 // drawer). Nenhuma chamada de API muda em relação ao BoardClient original.
 export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
-  const { onProjetoAtualizado, onProjetoExcluido } = options;
+  const { onProjetoAtualizado, onProjetoExcluido, onPendenciasAlteradas } = options;
   const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoDetalhado | null>(null);
   const [metricas, setMetricas] = useState<MetricaTempoEstagio[] | null>(null);
   const [relatorio, setRelatorio] = useState<RelatorioPayload | null>(null);
@@ -139,6 +143,7 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
     setProjetoSelecionado((atual) =>
       atual ? { ...atual, pendenciasVisitas: [pendencia, ...atual.pendenciasVisitas] } : atual
     );
+    onPendenciasAlteradas?.();
   }
 
   function handlePendenciaAtualizada(pendencia: PendenciaVisita) {
@@ -152,6 +157,7 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
           }
         : atual
     );
+    onPendenciasAlteradas?.();
   }
 
   async function handleEditarProjeto(id: string, dados: DadosEditarProjeto): Promise<ResultadoMover> {
@@ -190,6 +196,7 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
         return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível excluir o projeto." };
       }
       onProjetoExcluido?.(id);
+      onPendenciasAlteradas?.();
       setDrawerAberto(false);
       setProjetoSelecionado(null);
       return { ok: true };

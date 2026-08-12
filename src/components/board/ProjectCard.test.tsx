@@ -98,4 +98,24 @@ describe("ProjectCard", () => {
     render(<ProjectCard projeto={projeto} itensOffline={[]} />);
     expect(screen.queryByText(/%\s·|% montagem/)).not.toBeInTheDocument();
   });
+
+  it("mostra indicador OK em Tryout quando não há pendência em aberto", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Tryout" }} pendenciasAbertas={0} />);
+    expect(screen.getByText("OK")).toBeInTheDocument();
+  });
+
+  it("mostra a contagem de pendências em aberto em Entregue", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Entregue" }} pendenciasAbertas={2} />);
+    expect(screen.getByText("2 pendências")).toBeInTheDocument();
+  });
+
+  it("mostra singular quando há só 1 pendência em aberto", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Tryout" }} pendenciasAbertas={1} />);
+    expect(screen.getByText("1 pendência")).toBeInTheDocument();
+  });
+
+  it("não mostra indicador de pendências fora de Tryout/Entregue", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem" }} pendenciasAbertas={3} />);
+    expect(screen.queryByText(/pendência/)).not.toBeInTheDocument();
+  });
 });
