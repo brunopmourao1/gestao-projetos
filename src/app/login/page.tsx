@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,27 +39,49 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4 rounded-lg border p-6">
-        <div className="space-y-1 text-center">
-          <h1 className="text-lg font-semibold">Bruno Mourão - Gestão de Projeto</h1>
-          <p className="text-sm text-muted-foreground">Acesso restrito — informe a senha.</p>
+    <div className="flex min-h-screen items-center justify-center px-6">
+      <div className="flex w-[360px] max-w-full flex-col gap-6">
+        <div className="flex flex-col items-center gap-3">
+          <Image src="/logomarca-ls.png" alt="LS Control" width={140} height={56} className="h-14 w-auto rounded" priority />
+          <div className="text-center">
+            <div className="text-lg font-semibold tracking-[-0.01em]">Gestão de Projetos</div>
+            <div className="mt-0.5 text-[13px] text-muted-foreground">
+              Acesso restrito — informe a senha da equipe.
+            </div>
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="senha">Senha</Label>
-          <Input
-            id="senha"
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            autoFocus
-          />
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3.5 rounded-xl border border-border bg-card p-6 shadow-sm"
+        >
+          <div className="flex flex-col items-center gap-1.5">
+            <Label
+              htmlFor="senha"
+              className="text-center text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+            >
+              Senha
+            </Label>
+            <Input
+              id="senha"
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="••••••••"
+              className="h-[38px] rounded-md text-center text-sm"
+              autoFocus
+            />
+          </div>
+          <Button type="submit" className="h-[38px] w-full text-sm" disabled={entrando || !senha}>
+            {entrando ? "Entrando..." : "Entrar"}
+          </Button>
+          {erro && <p className="text-center text-sm text-destructive-foreground">{erro}</p>}
+        </form>
+
+        <div className="text-center text-xs text-muted-foreground">
+          LS Control · Automação e solda em termoplástico
         </div>
-        <Button type="submit" className="w-full" disabled={entrando || !senha}>
-          {entrando ? "Entrando..." : "Entrar"}
-        </Button>
-        {erro && <p className="text-center text-sm text-destructive">{erro}</p>}
-      </form>
+      </div>
     </div>
   );
 }

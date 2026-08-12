@@ -1,67 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LayoutContainer } from "@/components/layout/LayoutContainer";
+import { useRouter } from "next/navigation";
+import { Topbar } from "@/components/layout/Topbar";
+import { EstadoVazio } from "@/components/estados/EstadoVazio";
+import { EstadoErro } from "@/components/estados/EstadoErro";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { DetailsDrawer } from "@/components/details/DetailsDrawer";
-import {
-  ChecklistItemConfig,
-  ChecklistOffline,
-  ChecklistOnline,
-  MetricaTempoEstagio,
-  PendenciaVisita,
-  Projeto,
-  ProjetoDetalhado,
-  StatusProjeto,
-} from "@/types/projeto";
-import type { RelatorioPayload } from "@/lib/relatorio";
+import { ChecklistItemConfig, Projeto, StatusProjeto } from "@/types/projeto";
+import { useProjetoDrawer } from "@/hooks/useProjetoDrawer";
 import { ResultadoMover } from "./ProjectCard";
-import { DadosNovoProjeto } from "./NovoProjetoDialog";
-import { DadosEditarProjeto } from "./EditarProjetoDialog";
+import { NovoProjetoDialog, DadosNovoProjeto } from "./NovoProjetoDialog";
 import { DataPrevistaDialog } from "./DataPrevistaDialog";
 
 interface BoardClientProps {
   projetosIniciais: Projeto[];
+  erroCarregamento: boolean;
 }
 
-function paraDetalhado(projeto: Projeto): ProjetoDetalhado {
-  return { ...projeto, historicoTransicoes: [], pendenciasVisitas: [] };
-}
-
-async function buscarMetricas(idProjeto: string): Promise<MetricaTempoEstagio[] | null> {
-  try {
-    const resposta = await fetch(`/api/projetos/${idProjeto}/metricas-tempo`);
-    if (!resposta.ok) return null;
-    const dados = await resposta.json();
-    return dados.porEstagio ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function buscarRelatorio(idProjeto: string): Promise<RelatorioPayload | null> {
-  try {
-    const resposta = await fetch(`/api/projetos/${idProjeto}/relatorio`);
-    if (!resposta.ok) return null;
-    return await resposta.json();
-  } catch {
-    return null;
-  }
-}
-
-export function BoardClient({ projetosIniciais }: BoardClientProps) {
+export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientProps) {
+  const router = useRouter();
   const [projetos, setProjetos] = useState<Projeto[]>(projetosIniciais);
-  const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoDetalhado | null>(null);
-  const [metricas, setMetricas] = useState<MetricaTempoEstagio[] | null>(null);
-  const [relatorio, setRelatorio] = useState<RelatorioPayload | null>(null);
-  const [drawerAberto, setDrawerAberto] = useState(false);
-  const [exportando, setExportando] = useState(false);
-  const [erroExportacao, setErroExportacao] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [erroMovimento, setErroMovimento] = useState<string | null>(null);
   const [projetoParaDefinirPrazo, setProjetoParaDefinirPrazo] = useState<Projeto | null>(null);
   const [itensOffline, setItensOffline] = useState<ChecklistItemConfig[]>([]);
   const [itensOnline, setItensOnline] = useState<ChecklistItemConfig[]>([]);
+  const [novoProjetoAberto, setNovoProjetoAberto] = useState(false);
+
+  const drawer = useProjetoDrawer({
+    onProjetoAtualizado: (projeto) =>
+      setProjetos((atual) =>
+        atual.map((p) => (p.idProjeto === projeto.idProjeto ? { ...p, ...projeto } : p))
+      ),
+    onProjetoExcluido: (id) => setProjetos((atual) => atual.filter((p) => p.idProjeto !== id)),
+  });
 
   useEffect(() => {
     fetch("/api/configuracoes/checklist")
@@ -80,77 +53,6 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       (p.nomeMaquina?.toLowerCase().includes(buscaNormalizada) ?? false)
     );
   });
-
-  async function handleSelectProjeto(projeto: Projeto) {
-    setProjetoSelecionado(paraDetalhado(projeto));
-    setMetricas(null);
-    setRelatorio(null);
-    setDrawerAberto(true);
-    try {
-      const [resposta, metricasBuscadas, relatorioBuscado] = await Promise.all([
-        fetch(`/api/projetos/${projeto.idProjeto}`),
-        buscarMetricas(projeto.idProjeto),
-        buscarRelatorio(projeto.idProjeto),
-      ]);
-      if (resposta.ok) {
-        setProjetoSelecionado(await resposta.json());
-      }
-      setMetricas(metricasBuscadas);
-      setRelatorio(relatorioBuscado);
-    } catch {
-      // mantém o placeholder em caso de falha de rede
-    }
-  }
-
-  function handleChecklistAtualizado(checklist: ChecklistOffline) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, checklistOffline: checklist } : atual));
-    setProjetos((atual) =>
-      atual.map((p) =>
-        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, checklistOffline: checklist } : p
-      )
-    );
-  }
-
-  function handleChecklistOnlineAtualizado(checklist: ChecklistOnline) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, checklistOnline: checklist } : atual));
-    setProjetos((atual) =>
-      atual.map((p) =>
-        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, checklistOnline: checklist } : p
-      )
-    );
-  }
-
-  function handlePendenciaAdicionada(pendencia: PendenciaVisita) {
-    setProjetoSelecionado((atual) =>
-      atual ? { ...atual, pendenciasVisitas: [pendencia, ...atual.pendenciasVisitas] } : atual
-    );
-  }
-
-  function handlePendenciaAtualizada(pendencia: PendenciaVisita) {
-    setProjetoSelecionado((atual) =>
-      atual
-        ? {
-            ...atual,
-            pendenciasVisitas: atual.pendenciasVisitas.map((p) =>
-              p.idPendencia === pendencia.idPendencia ? pendencia : p
-            ),
-          }
-        : atual
-    );
-  }
-
-  function handleObservacoesAtualizadas(observacoes: string | null) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, observacoes } : atual));
-  }
-
-  function handlePercentualMontagemAtualizado(percentual: number) {
-    setProjetoSelecionado((atual) => (atual ? { ...atual, percentualMontagem: percentual } : atual));
-    setProjetos((atual) =>
-      atual.map((p) =>
-        p.idProjeto === projetoSelecionado?.idProjeto ? { ...p, percentualMontagem: percentual } : p
-      )
-    );
-  }
 
   async function handleMoverProjeto(
     projeto: Projeto,
@@ -182,14 +84,6 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
     );
     setProjetoParaDefinirPrazo({ ...projeto, statusAtual: dados.statusAtual, ordem: dados.ordem });
 
-    if (projetoSelecionado?.idProjeto === projeto.idProjeto) {
-      fetch(`/api/projetos/${projeto.idProjeto}`)
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => d && setProjetoSelecionado(d));
-      buscarMetricas(projeto.idProjeto).then((m) => m && setMetricas(m));
-      buscarRelatorio(projeto.idProjeto).then((r) => r && setRelatorio(r));
-    }
-
     return { ok: true };
   }
 
@@ -215,30 +109,6 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
       const mensagem = "Falha de rede ao reordenar o projeto.";
       setErroMovimento(`${projeto.numero}: ${mensagem}`);
       return { ok: false, mensagem };
-    }
-  }
-
-  async function handleEditarProjeto(id: string, dados: DadosEditarProjeto): Promise<ResultadoMover> {
-    try {
-      const resposta = await fetch(`/api/projetos/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          numero: dados.numero,
-          nome_maquina: dados.nomeMaquina || undefined,
-          descricao: dados.descricao || undefined,
-          data_prevista_conclusao: dados.dataPrevistaConclusao || null,
-        }),
-      });
-      const atualizado = await resposta.json();
-      if (!resposta.ok) {
-        return { ok: false, mensagem: atualizado?.erro?.mensagem ?? "Não foi possível editar o projeto." };
-      }
-      setProjetos((atual) => atual.map((p) => (p.idProjeto === id ? { ...p, ...atualizado } : p)));
-      setProjetoSelecionado((atual) => (atual && atual.idProjeto === id ? { ...atual, ...atualizado } : atual));
-      return { ok: true };
-    } catch {
-      return { ok: false, mensagem: "Falha de rede ao editar o projeto." };
     }
   }
 
@@ -277,104 +147,78 @@ export function BoardClient({ projetosIniciais }: BoardClientProps) {
         return { ok: false, mensagem: atualizado?.erro?.mensagem ?? "Não foi possível salvar a data prevista." };
       }
       setProjetos((atual) => atual.map((p) => (p.idProjeto === id ? { ...p, ...atualizado } : p)));
-      setProjetoSelecionado((atual) => (atual && atual.idProjeto === id ? { ...atual, ...atualizado } : atual));
       return { ok: true };
     } catch {
       return { ok: false, mensagem: "Falha de rede ao salvar a data prevista." };
     }
   }
 
-  function handleDrawerOpenChange(open: boolean) {
-    setDrawerAberto(open);
-    if (!open) setProjetoSelecionado(null);
-  }
-
-  async function handleExcluirProjeto(id: string): Promise<ResultadoMover> {
-    try {
-      const resposta = await fetch(`/api/projetos/${id}`, { method: "DELETE" });
-      if (!resposta.ok) {
-        const dados = await resposta.json();
-        return { ok: false, mensagem: dados?.erro?.mensagem ?? "Não foi possível excluir o projeto." };
-      }
-      setProjetos((atual) => atual.filter((p) => p.idProjeto !== id));
-      setDrawerAberto(false);
-      setProjetoSelecionado(null);
-      return { ok: true };
-    } catch {
-      return { ok: false, mensagem: "Falha de rede ao excluir o projeto." };
-    }
-  }
-
-  async function handleExportarRelatorio() {
-    if (!projetoSelecionado) return;
-    setExportando(true);
-    setErroExportacao(null);
-    try {
-      const resposta = await fetch(`/api/projetos/${projetoSelecionado.idProjeto}/relatorio/exportar`, {
-        method: "POST",
-      });
-      const dados = await resposta.json();
-      if (!resposta.ok) {
-        setErroExportacao(dados?.erro?.mensagem ?? "Não foi possível exportar o relatório.");
-        return;
-      }
-      const link = document.createElement("a");
-      link.href = dados.urlDownload;
-      link.download = `relatorio-${projetoSelecionado.numero.replace(/\s+/g, "-").toLowerCase()}.md`;
-      link.click();
-    } catch {
-      setErroExportacao("Falha de rede ao exportar o relatório.");
-    } finally {
-      setExportando(false);
-    }
-  }
-
   return (
-    <LayoutContainer
-      numeroAtivo={projetoSelecionado?.numero ?? null}
-      onExportarRelatorio={handleExportarRelatorio}
-      exportando={exportando}
-      erroExportacao={erroExportacao}
-      busca={busca}
-      onBuscaChange={setBusca}
-      onCriarProjeto={handleCriarProjeto}
-    >
+    <>
+      <Topbar titulo="Board" busca={busca} onBuscaChange={setBusca} onNovoProjeto={() => setNovoProjetoAberto(true)} />
+
       {erroMovimento && (
-        <div className="mx-4 mt-2 flex items-center justify-between rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          <span>{erroMovimento}</span>
-          <button type="button" onClick={() => setErroMovimento(null)} className="ml-2 font-medium">
+        <div className="mx-5 mt-3 flex items-center justify-between gap-3 rounded-lg border border-destructive/35 bg-destructive/8 px-3.5 py-2.5">
+          <span className="text-[13px] text-destructive-foreground">{erroMovimento}</span>
+          <button
+            type="button"
+            aria-label="Fechar aviso"
+            onClick={() => setErroMovimento(null)}
+            className="shrink-0 rounded px-1.5 py-0.5 text-base leading-none text-destructive-foreground hover:bg-destructive/15"
+          >
             ×
           </button>
         </div>
       )}
-      <KanbanBoard
-        projetos={projetosFiltrados}
-        itensOffline={itensOffline}
-        itensOnline={itensOnline}
-        onSelectProjeto={handleSelectProjeto}
-        onMoverProjeto={handleMoverProjeto}
-        onReordenarProjeto={handleReordenarProjeto}
-      />
+
+      {erroCarregamento && projetos.length === 0 ? (
+        <EstadoErro
+          titulo="Não foi possível carregar os projetos"
+          descricao="Falha de rede ao consultar a API. Verifique a conexão e tente novamente."
+          onTentarNovamente={() => router.refresh()}
+        />
+      ) : projetos.length === 0 ? (
+        <EstadoVazio
+          titulo="Nenhum projeto cadastrado"
+          descricao="Crie o primeiro projeto para acompanhar o fluxo de comissionamento, do esquema elétrico à entrega."
+          rotuloAcao="Criar projeto"
+          onAcao={() => setNovoProjetoAberto(true)}
+        />
+      ) : (
+        <KanbanBoard
+          projetos={projetosFiltrados}
+          itensOffline={itensOffline}
+          itensOnline={itensOnline}
+          onSelectProjeto={drawer.abrirProjeto}
+          onMoverProjeto={handleMoverProjeto}
+          onReordenarProjeto={handleReordenarProjeto}
+        />
+      )}
+
       <DetailsDrawer
-        projeto={projetoSelecionado}
-        metricas={metricas}
-        relatorio={relatorio}
-        open={drawerAberto}
-        onOpenChange={handleDrawerOpenChange}
-        onChecklistAtualizado={handleChecklistAtualizado}
-        onObservacoesAtualizadas={handleObservacoesAtualizadas}
-        onPercentualMontagemAtualizado={handlePercentualMontagemAtualizado}
-        onChecklistOnlineAtualizado={handleChecklistOnlineAtualizado}
-        onPendenciaAdicionada={handlePendenciaAdicionada}
-        onPendenciaAtualizada={handlePendenciaAtualizada}
-        onEditarProjeto={handleEditarProjeto}
-        onExcluirProjeto={handleExcluirProjeto}
+        projeto={drawer.projetoSelecionado}
+        metricas={drawer.metricas}
+        relatorio={drawer.relatorio}
+        open={drawer.drawerAberto}
+        onOpenChange={drawer.handleDrawerOpenChange}
+        onChecklistAtualizado={drawer.handleChecklistAtualizado}
+        onObservacoesAtualizadas={drawer.handleObservacoesAtualizadas}
+        onPercentualMontagemAtualizado={drawer.handlePercentualMontagemAtualizado}
+        onChecklistOnlineAtualizado={drawer.handleChecklistOnlineAtualizado}
+        onPendenciaAdicionada={drawer.handlePendenciaAdicionada}
+        onPendenciaAtualizada={drawer.handlePendenciaAtualizada}
+        onEditarProjeto={drawer.handleEditarProjeto}
+        onExcluirProjeto={drawer.handleExcluirProjeto}
+        exportando={drawer.exportando}
+        erroExportacao={drawer.erroExportacao}
+        onExportarRelatorio={drawer.handleExportarRelatorio}
       />
+      <NovoProjetoDialog open={novoProjetoAberto} onOpenChange={setNovoProjetoAberto} onCriar={handleCriarProjeto} />
       <DataPrevistaDialog
         projeto={projetoParaDefinirPrazo}
         onSalvar={handleSalvarPrazo}
         onFechar={() => setProjetoParaDefinirPrazo(null)}
       />
-    </LayoutContainer>
+    </>
   );
 }

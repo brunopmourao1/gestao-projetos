@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Projeto } from "@/types/projeto";
 import { ResultadoMover } from "./ProjectCard";
@@ -43,21 +36,42 @@ export function ExcluirProjetoDialog({ projeto, onExcluir }: ExcluirProjetoDialo
         if (novoOpen) setErro(null);
       }}
     >
-      <DialogTrigger render={<Button variant="destructive" size="sm" />}>Excluir</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Excluir projeto {projeto.numero}?</DialogTitle>
+      <DialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            aria-label="Excluir projeto"
+            className="h-auto rounded-[5px] px-2.5 py-[5px] text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive-foreground"
+          />
+        }
+      >
+        Excluir
+      </DialogTrigger>
+      <DialogContent aria-label="Excluir projeto" className="gap-4 rounded-xl p-6 sm:max-w-[440px]">
+        <DialogHeader className="gap-1">
+          <DialogTitle className="text-base font-semibold tracking-[-0.01em]">
+            Excluir projeto {projeto.numero}?
+          </DialogTitle>
         </DialogHeader>
-        <div className="py-2 text-sm text-muted-foreground">
+        <div className="text-[13.5px] leading-[1.55] text-muted-foreground">
           <p>
-            Isso remove o projeto <strong>{projeto.numero}</strong>
-            {projeto.nomeMaquina ? ` (${projeto.nomeMaquina})` : ""} permanentemente, junto com
-            todo o histórico associado. Essa ação não pode ser desfeita.
+            Isso remove o projeto <strong className="text-foreground">{projeto.numero}</strong>
+            {projeto.nomeMaquina ? ` (${projeto.nomeMaquina})` : ""} permanentemente, junto com todo o
+            histórico associado. Essa ação não pode ser desfeita.
           </p>
-          {erro && <p className="mt-2 text-destructive">{erro}</p>}
+          {erro && <p className="mt-2 text-destructive-foreground">{erro}</p>}
         </div>
-        <DialogFooter>
-          <Button type="button" variant="destructive" disabled={excluindo} onClick={handleConfirmar}>
+        <DialogFooter className="mx-0 mb-0 gap-2 border-t-0 bg-transparent p-0 pt-1">
+          <Button type="button" variant="outline" className="h-[34px] px-3.5 text-[13px]" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={excluindo}
+            onClick={handleConfirmar}
+            className="h-[34px] px-4 text-[13px]"
+          >
             {excluindo ? "Excluindo..." : "Confirmar exclusão"}
           </Button>
         </DialogFooter>

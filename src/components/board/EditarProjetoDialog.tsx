@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ProjetoFormCampos } from "./ProjetoFormCampos";
 import { ResultadoMover } from "./ProjectCard";
@@ -82,11 +75,21 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
         }
       }}
     >
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>Editar</DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Editar Projeto</DialogTitle>
+      <DialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            aria-label="Editar projeto"
+            className="h-auto rounded-[5px] px-2.5 py-[5px] text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+          />
+        }
+      >
+        Editar
+      </DialogTrigger>
+      <DialogContent aria-label="Editar projeto" className="gap-4 rounded-xl p-6 sm:max-w-[440px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <DialogHeader className="gap-1">
+            <DialogTitle className="text-base font-semibold tracking-[-0.01em]">Editar projeto</DialogTitle>
           </DialogHeader>
           <ProjetoFormCampos
             numero={numero}
@@ -99,8 +102,11 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
             onDataPrevistaConclusaoChange={setDataPrevistaConclusao}
             erro={erro}
           />
-          <DialogFooter>
-            <Button type="submit" disabled={salvando}>
+          <DialogFooter className="mx-0 mb-0 gap-2 border-t-0 bg-transparent p-0 pt-1">
+            <Button type="button" variant="outline" className="h-[34px] px-3.5 text-[13px]" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={salvando} className="h-[34px] px-4 text-[13px]">
               {salvando ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>

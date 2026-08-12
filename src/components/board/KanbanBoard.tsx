@@ -95,7 +95,7 @@ export function KanbanBoard({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full gap-4 overflow-x-auto p-4">
+      <div className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto overflow-y-hidden px-5 py-4 max-md:snap-x max-md:snap-mandatory">
         {COLUNAS_FLUXO.map(({ status, titulo }) => (
           <KanbanColumn
             key={status}

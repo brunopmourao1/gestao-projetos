@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: oklch(0.982 0.003 240); color: oklch(0.21 0.012 250); font-family: 'Geist', system-ui, sans-serif; }
+  a { color: oklch(0.5 0.1 235); text-decoration: none; }
+  a:hover { color: oklch(0.42 0.1 235); text-decoration: underline; }
+</style>
+</helmet>
+<div style="max-width: 1120px; margin: 0 auto; padding: 56px 40px 96px;">
+
+  <header style="display: flex; align-items: center; gap: 20px; padding-bottom: 32px; border-bottom: 1px solid oklch(0.906 0.007 245);">
+    <img src="assets/logomarca-ls.jpg" alt="LS Control" style="height: 52px; border-radius: 6px;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.5 0.1 235);">Etapa 2 — Direção visual</div>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em;">Gestão de Projetos · LS Control</h1>
+      <p style="margin: 0; font-size: 14px; color: oklch(0.5 0.016 250);">Sistema de tokens para Tailwind v4 + shadcn/ui — sóbrio, denso e preciso. Aguardando aprovação antes da Etapa 3.</p>
+    </div>
+  </header>
+
+  <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px;">
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 600;">Neutros com temperatura</h3>
+      <p style="margin: 0; font-size: 13px; line-height: 1.55; color: oklch(0.5 0.016 250);">Cinzas frios (hue 240–250, chroma 0.003–0.012) no lugar do cinza puro do shadcn. Base fria porque a marca é azul/verde.</p>
+    </div>
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 600;">Um único acento</h3>
+      <p style="margin: 0; font-size: 13px; line-height: 1.55; color: oklch(0.5 0.016 250);">Azul-petróleo derivado do logo, reservado a ações primárias, foco e links. Os estágios do fluxo usam cores semânticas discretas, todas com a mesma luminância e chroma.</p>
+    </div>
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 600;">Densidade com respiro</h3>
+      <p style="margin: 0; font-size: 13px; line-height: 1.55; color: oklch(0.5 0.016 250);">Escala de 4px, raios contidos (4/6/8px), sombras curtas. Informação densa no board; hierarquia vem da tipografia, não de caixas.</p>
+    </div>
+  </section>
+
+  <section style="margin-top: 48px;">
+    <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 650; letter-spacing: -0.01em;">Paleta</h2>
+    <p style="margin: 0 0 20px; font-size: 13px; color: oklch(0.5 0.016 250);">Tema claro e escuro resolvidos com os mesmos papéis de token.</p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.982 0.003 240); border: 1px solid oklch(0.906 0.007 245);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">background</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.982 0.003 240</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">card</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.998 0.001 240</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.955 0.005 245); border: 1px solid oklch(0.906 0.007 245);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">muted / secondary</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.955 0.005 245</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.906 0.007 245);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">border / input</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.906 0.007 245</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.5 0.016 250);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">muted-foreground</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.50 0.016 250</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.21 0.012 250);"></div><div style="font-size: 12px; font-weight: 600; margin-top: 6px;">foreground</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.21 0.012 250</div></div>
+      <div style="width: 148px;"><div style="height: 64px; border-radius: 6px; background: oklch(0.5 0.1 235); display: flex; align-items: center; justify-content: center; color: oklch(0.985 0.005 235); font-size: 12px; font-weight: 600;">Aa</div><div style="font-size: 12px; font-weight: 600; margin-top: 6px; color: oklch(0.5 0.1 235);">primary (acento)</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">0.50 0.10 235</div></div>
+    </div>
+
+    <h3 style="margin: 28px 0 10px; font-size: 14px; font-weight: 600;">Cores semânticas de estágio</h3>
+    <p style="margin: 0 0 14px; font-size: 13px; color: oklch(0.5 0.016 250);">Substituem os <span style="font-family: 'Geist Mono', monospace; font-size: 12px;">border-t-red-500 / green-500…</span> atuais. Mesma luminância (0.55) e chroma (~0.09–0.10) — só o matiz varia. Usadas em badges e no ponto do cabeçalho da coluna, nunca em superfícies grandes.</p>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.016 250 / 0.1); color: oklch(0.42 0.016 250); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.016 250);"></span>Esquema Elétrico</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.09 235 / 0.1); color: oklch(0.42 0.09 235); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.09 235);"></span>Projeto Offline</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.58 0.1 65 / 0.12); color: oklch(0.45 0.1 65); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.58 0.1 65);"></span>Montagem</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.09 195 / 0.1); color: oklch(0.42 0.09 195); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.09 195);"></span>Online</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.09 300 / 0.1); color: oklch(0.44 0.09 300); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.09 300);"></span>Tryout</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.1 150 / 0.1); color: oklch(0.42 0.1 150); font-size: 12px; font-weight: 500;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.1 150);"></span>Entregue</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: oklch(0.55 0.19 25 / 0.1); color: oklch(0.46 0.19 25); font-size: 12px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 999px; background: oklch(0.55 0.19 25);"></span>Atrasado</span>
+    </div>
+  </section>
+
+  <section style="margin-top: 48px;">
+    <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 650; letter-spacing: -0.01em;">Tipografia</h2>
+    <p style="margin: 0 0 20px; font-size: 13px; color: oklch(0.5 0.016 250);">Geist + Geist Mono (já instaladas no projeto). Seis níveis, pesos intencionais, números tabulares em métricas e datas.</p>
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 8px 24px;">
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">display · 24/700/-0.02em</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em;">Visão geral dos projetos</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">título · 18/650/-0.01em</span><span style="font-size: 18px; font-weight: 650; letter-spacing: -0.01em;">Aguardando Montagem</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">subtítulo · 15/600</span><span style="font-size: 15px; font-weight: 600;">PRJ-2025-018 — Célula de solda robotizada</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">corpo · 14/400/1.5</span><span style="font-size: 14px; line-height: 1.5;">Painel elétrico liberado pelo cliente; comissionamento previsto para a próxima semana.</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">secundário · 13/400</span><span style="font-size: 13px; color: oklch(0.5 0.016 250);">Atualizado há 2 horas por Bruno Mourão</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid oklch(0.955 0.005 245);"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">rótulo · 11/600/caps</span><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.5 0.016 250);">Data prevista de conclusão</span></div>
+      <div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0;"><span style="width: 190px; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 11px; color: oklch(0.5 0.016 250);">métrica · tabular-nums</span><span style="font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 500;">87% · 12/09/2026 · 148 h em Montagem</span></div>
+    </div>
+  </section>
+
+  <section style="margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Espaçamento — base 4px</h3>
+      <div style="display: flex; align-items: flex-end; gap: 10px;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 4px; height: 4px; background: oklch(0.5 0.1 235); border-radius: 1px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">4</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 8px; height: 8px; background: oklch(0.5 0.1 235); border-radius: 1px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">8</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; background: oklch(0.5 0.1 235); border-radius: 2px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">12</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 16px; height: 16px; background: oklch(0.5 0.1 235); border-radius: 2px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">16</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 24px; height: 24px; background: oklch(0.5 0.1 235); border-radius: 3px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">24</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><div style="width: 32px; height: 32px; background: oklch(0.5 0.1 235); border-radius: 4px;"></div><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">32</span></div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; color: oklch(0.5 0.016 250);">Interno de card: 12–16 · entre cards: 8 · entre seções: 24–32</p>
+    </div>
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Raios — contidos</h3>
+      <div style="display: flex; gap: 10px;">
+        <div style="width: 56px; height: 40px; border: 1.5px solid oklch(0.5 0.1 235); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px;">4</div>
+        <div style="width: 56px; height: 40px; border: 1.5px solid oklch(0.5 0.1 235); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px;">6</div>
+        <div style="width: 56px; height: 40px; border: 1.5px solid oklch(0.5 0.1 235); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px;">8</div>
+        <div style="width: 56px; height: 40px; border: 1.5px solid oklch(0.5 0.1 235); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px;">12</div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; color: oklch(0.5 0.016 250);">badge 4 · botão/input 6 · card 8 · dialog/sheet 12. O <span style="font-family: 'Geist Mono', monospace; font-size: 11px;">--radius</span> atual de 10px cai para 6px.</p>
+    </div>
+    <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 22px;">
+      <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Elevação e microinterações</h3>
+      <div style="display: flex; gap: 12px;">
+        <div style="flex: 1; height: 44px; background: oklch(1 0 0); border: 1px solid oklch(0.906 0.007 245); border-radius: 6px; box-shadow: 0 1px 2px oklch(0.2 0.02 250 / 0.06); display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">xs</div>
+        <div style="flex: 1; height: 44px; background: oklch(1 0 0); border: 1px solid oklch(0.906 0.007 245); border-radius: 6px; box-shadow: 0 1px 3px oklch(0.2 0.02 250 / 0.08), 0 1px 2px oklch(0.2 0.02 250 / 0.05); display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">sm</div>
+        <div style="flex: 1; height: 44px; background: oklch(1 0 0); border: 1px solid oklch(0.906 0.007 245); border-radius: 6px; box-shadow: 0 4px 12px oklch(0.2 0.02 250 / 0.10), 0 1px 3px oklch(0.2 0.02 250 / 0.06); display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 10px; color: oklch(0.5 0.016 250);">md</div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; color: oklch(0.5 0.016 250);">Transições de 150ms em hover/focus/active; foco visível com anel de 2px no acento; card em repouso xs, arrastando md.</p>
+    </div>
+  </section>
+
+  <section style="margin-top: 48px;">
+    <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 650; letter-spacing: -0.01em;">Amostra aplicada — claro e escuro</h2>
+    <p style="margin: 0 0 20px; font-size: 13px; color: oklch(0.5 0.016 250);">Prévia dos componentes shadcn customizados com os tokens, incluindo o ProjectCard redesenhado.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+
+      <div style="background: oklch(0.982 0.003 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: oklch(0.5 0.1 235); color: oklch(0.985 0.005 235); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.44 0.1 235)">Novo projeto</button>
+          <button style="height: 32px; padding: 0 14px; border: 1px solid oklch(0.906 0.007 245); border-radius: 6px; background: oklch(0.998 0.001 240); color: oklch(0.21 0.012 250); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.955 0.005 245)">Exportar</button>
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: transparent; color: oklch(0.5 0.016 250); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.945 0.014 235); color: oklch(0.34 0.06 235)">Configurações</button>
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: oklch(0.5 0.1 235); color: oklch(0.985 0.005 235); font-family: inherit; font-size: 13px; font-weight: 500; outline: 2px solid oklch(0.5 0.1 235); outline-offset: 2px;">Foco visível</button>
+        </div>
+        <input placeholder="Buscar por número ou máquina…" style="height: 34px; padding: 0 12px; border: 1px solid oklch(0.906 0.007 245); border-radius: 6px; background: oklch(0.998 0.001 240); color: oklch(0.21 0.012 250); font-family: inherit; font-size: 13px; outline: none;" style-focus="border-color: oklch(0.5 0.1 235); box-shadow: 0 0 0 3px oklch(0.5 0.1 235 / 0.15)">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px oklch(0.2 0.02 250 / 0.06); cursor: grab; display: flex; flex-direction: column; gap: 8px;" style-hover="border-color: oklch(0.84 0.02 240); box-shadow: 0 1px 3px oklch(0.2 0.02 250 / 0.08), 0 1px 2px oklch(0.2 0.02 250 / 0.05)">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;">PRJ-2025-018</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; background: oklch(0.58 0.1 65 / 0.12); color: oklch(0.45 0.1 65); font-size: 11px; font-weight: 500;"><span style="width: 5px; height: 5px; border-radius: 999px; background: oklch(0.58 0.1 65);"></span>Montagem</span>
+            </div>
+            <div style="font-size: 12.5px; color: oklch(0.5 0.016 250);">Célula de solda robotizada — Aptiv</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="height: 4px; border-radius: 999px; background: oklch(0.925 0.005 245); overflow: hidden;"><div style="width: 62%; height: 100%; border-radius: 999px; background: oklch(0.5 0.1 235);"></div></div>
+              <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-variant-numeric: tabular-nums; color: oklch(0.5 0.016 250);"><span>62% · 5/8 itens</span><span>12/09/2026</span></div>
+            </div>
+          </div>
+          <div style="background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px oklch(0.2 0.02 250 / 0.06); display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;">PRJ-2025-011</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; background: oklch(0.55 0.19 25 / 0.1); color: oklch(0.46 0.19 25); font-size: 11px; font-weight: 600;"><span style="width: 5px; height: 5px; border-radius: 999px; background: oklch(0.55 0.19 25);"></span>Atrasado</span>
+            </div>
+            <div style="font-size: 12.5px; color: oklch(0.5 0.016 250);">Dispositivo de solda por placa quente</div>
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-variant-numeric: tabular-nums;"><span style="color: oklch(0.5 0.016 250);">Tryout com o cliente</span><span style="color: oklch(0.46 0.19 25); font-weight: 500;">28/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: oklch(0.165 0.009 250); border: 1px solid oklch(0.165 0.009 250); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: oklch(0.68 0.1 230); color: oklch(0.16 0.03 235); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.74 0.1 230)">Novo projeto</button>
+          <button style="height: 32px; padding: 0 14px; border: 1px solid oklch(1 0 0 / 0.12); border-radius: 6px; background: oklch(0.205 0.01 250); color: oklch(0.93 0.005 240); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.26 0.011 250)">Exportar</button>
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: transparent; color: oklch(0.67 0.012 245); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: oklch(0.28 0.03 235); color: oklch(0.86 0.05 230)">Configurações</button>
+          <button style="height: 32px; padding: 0 14px; border: none; border-radius: 6px; background: oklch(0.68 0.1 230); color: oklch(0.16 0.03 235); font-family: inherit; font-size: 13px; font-weight: 500; outline: 2px solid oklch(0.68 0.1 230); outline-offset: 2px;">Foco visível</button>
+        </div>
+        <input placeholder="Buscar por número ou máquina…" style="height: 34px; padding: 0 12px; border: 1px solid oklch(1 0 0 / 0.14); border-radius: 6px; background: oklch(0.205 0.01 250); color: oklch(0.93 0.005 240); font-family: inherit; font-size: 13px; outline: none;" style-focus="border-color: oklch(0.68 0.1 230); box-shadow: 0 0 0 3px oklch(0.68 0.1 230 / 0.2)">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: oklch(0.205 0.01 250); border: 1px solid oklch(1 0 0 / 0.1); border-radius: 8px; padding: 12px 14px; cursor: grab; display: flex; flex-direction: column; gap: 8px;" style-hover="border-color: oklch(1 0 0 / 0.2)">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: oklch(0.93 0.005 240);">PRJ-2025-018</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; background: oklch(0.72 0.1 70 / 0.14); color: oklch(0.78 0.1 70); font-size: 11px; font-weight: 500;"><span style="width: 5px; height: 5px; border-radius: 999px; background: oklch(0.72 0.1 70);"></span>Montagem</span>
+            </div>
+            <div style="font-size: 12.5px; color: oklch(0.67 0.012 245);">Célula de solda robotizada — Aptiv</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="height: 4px; border-radius: 999px; background: oklch(1 0 0 / 0.1); overflow: hidden;"><div style="width: 62%; height: 100%; border-radius: 999px; background: oklch(0.68 0.1 230);"></div></div>
+              <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-variant-numeric: tabular-nums; color: oklch(0.67 0.012 245);"><span>62% · 5/8 itens</span><span>12/09/2026</span></div>
+            </div>
+          </div>
+          <div style="background: oklch(0.205 0.01 250); border: 1px solid oklch(1 0 0 / 0.1); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: oklch(0.93 0.005 240);">PRJ-2025-011</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; background: oklch(0.65 0.16 25 / 0.15); color: oklch(0.74 0.14 25); font-size: 11px; font-weight: 600;"><span style="width: 5px; height: 5px; border-radius: 999px; background: oklch(0.65 0.16 25);"></span>Atrasado</span>
+            </div>
+            <div style="font-size: 12.5px; color: oklch(0.67 0.012 245);">Dispositivo de solda por placa quente</div>
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-variant-numeric: tabular-nums;"><span style="color: oklch(0.67 0.012 245);">Tryout com o cliente</span><span style="color: oklch(0.74 0.14 25); font-weight: 500;">28/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top: 48px; background: oklch(0.998 0.001 240); border: 1px solid oklch(0.906 0.007 245); border-radius: 8px; padding: 20px 24px;">
+    <h2 style="margin: 0 0 8px; font-size: 15px; font-weight: 600;">Tokens prontos para o projeto</h2>
+    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: oklch(0.5 0.016 250);">O arquivo <a href="tokens/globals.css" style="font-family: 'Geist Mono', monospace; font-size: 12px;">tokens/globals.css</a> substitui o <span style="font-family: 'Geist Mono', monospace; font-size: 12px;">src/app/globals.css</span> atual na íntegra — mesma estrutura Tailwind v4 / shadcn, com os novos papéis <span style="font-family: 'Geist Mono', monospace; font-size: 12px;">--status-*</span>, raios recalibrados, foco visível e transições de 150ms na camada base. Nenhuma rota, prop ou schema muda.</p>
+  </section>
+
+</div>
+
+</x-dc>
+</body>
+</html>

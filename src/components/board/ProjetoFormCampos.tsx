@@ -14,6 +14,9 @@ interface ProjetoFormCamposProps {
   erro: string | null;
 }
 
+const CLASSE_LABEL = "text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground";
+const CLASSE_INPUT = "h-[34px] rounded-md text-[13px]";
+
 // Campos compartilhados entre NovoProjetoDialog e EditarProjetoDialog.
 export function ProjetoFormCampos({
   numero,
@@ -27,45 +30,60 @@ export function ProjetoFormCampos({
   erro,
 }: ProjetoFormCamposProps) {
   return (
-    <div className="space-y-3 py-2">
-      <div className="space-y-1">
-        <Label htmlFor="numero">Número</Label>
-        <Input
-          id="numero"
-          value={numero}
-          onChange={(e) => onNumeroChange(e.target.value)}
-          placeholder="ex: OS 1800"
-          autoFocus
-        />
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="numero" className={CLASSE_LABEL}>
+            Número *
+          </Label>
+          <Input
+            id="numero"
+            value={numero}
+            onChange={(e) => onNumeroChange(e.target.value)}
+            placeholder="PRJ-2025-022"
+            className={CLASSE_INPUT}
+            autoFocus
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="data-prevista" className={CLASSE_LABEL}>
+            Data prevista
+          </Label>
+          <Input
+            id="data-prevista"
+            type="date"
+            value={dataPrevistaConclusao}
+            onChange={(e) => onDataPrevistaConclusaoChange(e.target.value)}
+            className={`${CLASSE_INPUT} tabular-nums`}
+          />
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="nome-maquina">Nome da Máquina (opcional)</Label>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="nome-maquina" className={CLASSE_LABEL}>
+          Nome da máquina
+        </Label>
         <Input
           id="nome-maquina"
           value={nomeMaquina}
           onChange={(e) => onNomeMaquinaChange(e.target.value)}
-          placeholder="ex: Solda US - TF - Furação e Solda US"
+          placeholder="Célula de solda por vibração"
+          className={CLASSE_INPUT}
         />
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="descricao">Descrição (opcional)</Label>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="descricao" className={CLASSE_LABEL}>
+          Descrição
+        </Label>
         <Textarea
           id="descricao"
           value={descricao}
           onChange={(e) => onDescricaoChange(e.target.value)}
           rows={3}
+          placeholder="Escopo, cliente, particularidades…"
+          className="rounded-md text-[13px]"
         />
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="data-prevista">Data Prevista de Conclusão (opcional)</Label>
-        <Input
-          id="data-prevista"
-          type="date"
-          value={dataPrevistaConclusao}
-          onChange={(e) => onDataPrevistaConclusaoChange(e.target.value)}
-        />
-      </div>
-      {erro && <p className="text-sm text-destructive">{erro}</p>}
+      {erro && <p className="text-sm text-destructive-foreground">{erro}</p>}
     </div>
   );
 }

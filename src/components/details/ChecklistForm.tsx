@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChecklistItemConfig, FaseChecklist, ProjetoDetalhado } from "@/types/projeto";
 import { percentualChecklist } from "@/lib/checklist";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChecklistFormProps {
   fase: FaseChecklist;
@@ -69,12 +70,20 @@ export function ChecklistForm({ fase, projeto, onChecklistAtualizado }: Checklis
   }
 
   if (itens === null) {
-    return <p className="text-sm text-muted-foreground">Carregando...</p>;
+    return (
+      <div className="flex flex-col gap-2.5">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="h-1.5 w-full" />
+        <Skeleton className="h-4 w-full" style={{ animationDelay: "0.1s" }} />
+        <Skeleton className="h-4 w-full" style={{ animationDelay: "0.2s" }} />
+        <Skeleton className="h-4 w-2/3" style={{ animationDelay: "0.3s" }} />
+      </div>
+    );
   }
 
   if (itens.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-[13px] text-muted-foreground">
         Nenhum item configurado pra fase {fase}. Adicione itens em Configurações.
       </p>
     );
@@ -83,38 +92,49 @@ export function ChecklistForm({ fase, projeto, onChecklistAtualizado }: Checklis
   const percentual = percentualChecklist(itens, checklist);
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Checklist da Fase {fase}</h3>
-          <span className="text-sm font-medium text-foreground">{percentual}%</span>
-        </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className={`h-full rounded-full ${percentual === 100 ? "bg-emerald-500" : "bg-primary"}`}
-            style={{ width: `${percentual}%` }}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Só é possível avançar para &quot;{PROXIMA_COLUNA[fase]}&quot; com os {itens.length} itens
-          concluídos.
-        </p>
+    <div className="flex flex-col gap-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[13px] font-semibold">Checklist da fase {fase}</span>
+        <span className="text-[13px] font-semibold tabular-nums text-primary">{percentual}%</span>
       </div>
-      <div className="space-y-2">
-        {itens.map((item) => (
-          <label key={item.idItem} className="flex items-center gap-2 text-sm text-foreground">
-            <input
-              type="checkbox"
-              checked={Boolean(checklist[item.chave])}
-              disabled={salvandoChave === item.chave}
-              onChange={(e) => handleToggle(item.chave, e.target.checked)}
-              className="h-4 w-4 rounded border-input"
-            />
-            {item.rotulo}
-          </label>
-        ))}
+      <div className="h-1.5 overflow-hidden rounded-full bg-track">
+        <div
+          className="h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
+          style={{ width: `${percentual}%` }}
+        />
       </div>
-      {erro && <p className="text-sm text-destructive">{erro}</p>}
+      <p className="text-xs text-muted-foreground">
+        Só é possível avançar para &quot;{PROXIMA_COLUNA[fase]}&quot; com os {itens.length} itens concluídos.
+      </p>
+      <div className="mt-1 flex flex-col">
+        {itens.map((item) => {
+          const concluido = Boolean(checklist[item.chave]);
+          return (
+            <label
+              key={item.idItem}
+              className="-mx-2 flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 hover:bg-muted has-disabled:cursor-not-allowed has-disabled:opacity-60"
+            >
+              <input
+                type="checkbox"
+                checked={concluido}
+                disabled={salvandoChave === item.chave}
+                onChange={(e) => handleToggle(item.chave, e.target.checked)}
+                className="peer sr-only"
+              />
+              <span
+                aria-hidden="true"
+                className="flex size-4 shrink-0 items-center justify-center rounded-[4px] border-[1.5px] border-input text-[11px] leading-none peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring"
+              >
+                {concluido ? "✓" : ""}
+              </span>
+              <span className={`text-[13.5px] ${concluido ? "text-muted-foreground" : "text-foreground"}`}>
+                {item.rotulo}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+      {erro && <p className="text-sm text-destructive-foreground">{erro}</p>}
     </div>
   );
 }

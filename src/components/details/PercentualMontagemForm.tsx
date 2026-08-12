@@ -38,28 +38,26 @@ export function PercentualMontagemForm({ projeto, onPercentualAtualizado }: Perc
   }
 
   return (
-    <div className="space-y-3">
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Progresso da Montagem</h3>
-          <span className="text-sm font-medium text-foreground">{projeto.percentualMontagem}%</span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          step={5}
-          value={projeto.percentualMontagem}
-          disabled={salvando}
-          onChange={(e) => handleChange(Number(e.target.value))}
-          className="w-full accent-primary"
-        />
-        <p className="text-xs text-muted-foreground">
-          Ajuste manual, sem checklist — preencha conforme for recebendo informação sobre o andamento
-          da montagem física.
-        </p>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <span className="text-[13px] font-semibold">Percentual de montagem</span>
+        <span className="text-[20px] font-bold tabular-nums text-primary">{projeto.percentualMontagem}%</span>
       </div>
-      {erro && <p className="text-sm text-destructive">{erro}</p>}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={5}
+        value={projeto.percentualMontagem}
+        disabled={salvando}
+        onChange={(e) => handleChange(Number(e.target.value))}
+        aria-label="Percentual de montagem"
+        className="w-full accent-primary disabled:opacity-60"
+      />
+      <p className="text-[12.5px] text-muted-foreground">
+        Atualizado manualmente conforme o avanço físico da montagem no chão de fábrica.
+      </p>
+      {erro && <p className="text-sm text-destructive-foreground">{erro}</p>}
     </div>
   );
 }

@@ -45,21 +45,29 @@ export function ObservacoesForm({ projeto, onSalvo }: ObservacoesFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <Label htmlFor="observacoes">Observações</Label>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-1.5">
+      <Label htmlFor="observacoes" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        Observações
+      </Label>
       <Textarea
         id="observacoes"
         value={texto}
         onChange={(e) => setTexto(e.target.value)}
-        rows={4}
-        placeholder="Pendências, definições em aberto, algo faltando..."
+        rows={3}
+        placeholder="Pendências, definições em aberto, algo faltando…"
+        className="rounded-md text-[13px] leading-[1.5]"
       />
-      <div className="space-y-1">
-        <Button type="submit" size="sm" disabled={salvando}>
-          {salvando ? "Salvando..." : "Salvar Observações"}
+      <div className="flex flex-col gap-1">
+        <Button
+          type="submit"
+          variant="outline"
+          disabled={salvando}
+          className="h-7 w-fit self-start px-3 text-[12.5px] font-medium"
+        >
+          {salvando ? "Salvando..." : "Salvar observações"}
         </Button>
-        {erro && <p className="text-sm text-destructive">{erro}</p>}
-        {sucesso && !erro && <p className="text-sm text-emerald-600">Salvo com sucesso.</p>}
+        {erro && <p className="text-sm text-destructive-foreground">{erro}</p>}
+        {sucesso && !erro && <p className="text-sm text-status-entregue-foreground">Salvo com sucesso.</p>}
       </div>
     </form>
   );

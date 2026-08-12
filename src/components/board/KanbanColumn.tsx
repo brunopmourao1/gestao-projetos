@@ -1,22 +1,11 @@
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { cn } from "@/lib/utils";
-import { ChecklistItemConfig, Projeto } from "@/types/projeto";
+import { ChecklistItemConfig, Projeto, StatusProjeto } from "@/types/projeto";
+import { STATUS_VISUAL } from "./statusVisual";
 import { ProjectCard } from "./ProjectCard";
 
-// Ver Docs/02-Tecnico/Matriz-Componentes.md, seção 2
-// Cor de destaque no cabeçalho indicando criticidade do estágio.
-export const CORES_CRITICIDADE: Record<string, string> = {
-  Esquema_Eletrico: "border-t-slate-400",
-  Offline: "border-t-blue-400",
-  Montagem: "border-t-red-500",
-  Online: "border-t-green-500",
-  Tryout: "border-t-amber-500",
-  Entregue: "border-t-emerald-600",
-};
-
 interface KanbanColumnProps {
-  status: string;
+  status: StatusProjeto;
   titulo: string;
   // Já ordenados por ordem ascendente (menor = mais crítico, topo da coluna).
   projetos: Projeto[];
@@ -39,14 +28,13 @@ export function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className={cn(
-        "flex w-72 shrink-0 flex-col gap-2 rounded-md border border-t-4 bg-muted/30 p-3",
-        CORES_CRITICIDADE[status] ?? "border-t-slate-400"
-      )}
+      className="flex w-[272px] shrink-0 flex-col gap-2 overflow-y-auto rounded-[10px] bg-col-bg p-2.5 max-md:snap-start"
     >
-      <h2 className="text-sm font-semibold">
-        {titulo} <span className="text-muted-foreground">({projetos.length})</span>
-      </h2>
+      <div className="flex items-center gap-2 px-1 py-0.5">
+        <span className={`size-2 shrink-0 rounded-full ${STATUS_VISUAL[status].cor}`} />
+        <span className="truncate text-[13px] font-semibold">{titulo}</span>
+        <span className="text-xs tabular-nums text-muted-foreground">{projetos.length}</span>
+      </div>
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <div className="flex min-h-8 flex-col gap-2">
           {projetos.map((projeto) => (
@@ -60,6 +48,11 @@ export function KanbanColumn({
           ))}
         </div>
       </SortableContext>
+      {projetos.length === 0 && (
+        <div className="rounded-lg border border-dashed border-border px-3 py-5 text-center text-xs text-muted-foreground">
+          Nenhum projeto neste estágio
+        </div>
+      )}
     </div>
   );
 }

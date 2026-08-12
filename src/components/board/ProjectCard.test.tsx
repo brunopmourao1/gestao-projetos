@@ -62,12 +62,12 @@ describe("ProjectCard", () => {
         itensOffline={itensOffline}
       />
     );
-    expect(screen.getByText("50% concluído (2/4)")).toBeInTheDocument();
+    expect(screen.getByText("50% · 2/4 itens")).toBeInTheDocument();
   });
 
   it("mostra o percentual manual de montagem quando o projeto está na fase Montagem", () => {
     render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem", percentualMontagem: 60 }} />);
-    expect(screen.getByText("60% concluído")).toBeInTheDocument();
+    expect(screen.getByText("60% montagem")).toBeInTheDocument();
   });
 
   it("mostra o percentual do checklist online quando o projeto está na fase Online", () => {
@@ -86,16 +86,16 @@ describe("ProjectCard", () => {
         itensOnline={itensOnline}
       />
     );
-    expect(screen.getByText("75% concluído (3/4)")).toBeInTheDocument();
+    expect(screen.getByText("75% · 3/4 itens")).toBeInTheDocument();
   });
 
   it("não mostra percentual quando o projeto não está em Offline, Montagem nem Online", () => {
     render(<ProjectCard projeto={{ ...projeto, statusAtual: "Esquema_Eletrico" }} />);
-    expect(screen.queryByText(/% concluído/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/%\s·|% montagem/)).not.toBeInTheDocument();
   });
 
   it("mostra 0% quando está em Offline mas nenhum item está configurado ainda", () => {
     render(<ProjectCard projeto={projeto} itensOffline={[]} />);
-    expect(screen.queryByText(/% concluído/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/%\s·|% montagem/)).not.toBeInTheDocument();
   });
 });

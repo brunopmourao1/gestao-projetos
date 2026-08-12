@@ -55,32 +55,40 @@ export function DataPrevistaDialog({ projeto, onSalvar, onFechar }: DataPrevista
 
   return (
     <Dialog open onOpenChange={(novoOpen) => { if (!novoOpen) onFechar(); }}>
-      <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Data prevista — {titulo}</DialogTitle>
+      <DialogContent aria-label={`Data prevista — ${titulo}`} className="gap-4 rounded-xl p-6 sm:max-w-[440px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <DialogHeader className="gap-1">
+            <DialogTitle className="text-base font-semibold tracking-[-0.01em]">
+              Data prevista — {titulo}
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 py-2">
-            <p className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-3">
+            <p className="text-[13px] text-muted-foreground">
               {projeto.numero}: quando essa etapa deve estar concluída? (opcional)
             </p>
-            <div className="space-y-1">
-              <Label htmlFor="data-prevista-etapa">Data Prevista de Conclusão</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label
+                htmlFor="data-prevista-etapa"
+                className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+              >
+                Data prevista de conclusão
+              </Label>
               <Input
                 id="data-prevista-etapa"
                 type="date"
                 value={data}
                 onChange={(e) => setData(e.target.value)}
+                className="h-[34px] rounded-md text-[13px] tabular-nums"
                 autoFocus
               />
             </div>
-            {erro && <p className="text-sm text-destructive">{erro}</p>}
+            {erro && <p className="text-sm text-destructive-foreground">{erro}</p>}
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onFechar}>
+          <DialogFooter className="mx-0 mb-0 gap-2 border-t-0 bg-transparent p-0 pt-1">
+            <Button type="button" variant="outline" className="h-[34px] px-3.5 text-[13px]" onClick={onFechar}>
               Pular
             </Button>
-            <Button type="submit" disabled={salvando}>
+            <Button type="submit" disabled={salvando} className="h-[34px] px-4 text-[13px]">
               {salvando ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>

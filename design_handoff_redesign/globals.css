@@ -2,13 +2,6 @@
    LS Control — Gestão de Projetos · Tokens de design (Etapa 2)
    Substitui :root e .dark do src/app/globals.css atual.
    Tailwind v4 + shadcn — mesma estrutura de variáveis.
-
-   Tokens extras (--overlay, --col-bg, --track, --status-*-foreground)
-   foram adicionados aqui além do pacote de handoff: eles são usados no
-   HTML de referência (Etapa 3 - Telas.dc.html) e citados em prosa no
-   README, mas não vieram com valor definido no globals.css do pacote.
-   Valores extraídos 1:1 do HTML de referência (--overlay, --col-bg,
-   --track, --st-*-t), sem inventar nenhuma cor nova.
    ============================================================ */
 
 @import "tailwindcss";
@@ -26,7 +19,6 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -40,7 +32,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* Cores semânticas de estágio (novas) — usar via bg-status-* e text-status-* */
+  /* Cores semânticas de estágio (novas) — usar via bg-status-*/text-status-* */
   --color-status-esquema: var(--status-esquema);
   --color-status-offline: var(--status-offline);
   --color-status-montagem: var(--status-montagem);
@@ -48,21 +40,6 @@
   --color-status-tryout: var(--status-tryout);
   --color-status-entregue: var(--status-entregue);
   --color-status-atrasado: var(--destructive);
-
-  /* Variantes de texto dos badges de estágio (contraste sobre fundo
-     tintado a 10-12%) — equivalentes ao --st-*-t do HTML de referência. */
-  --color-status-esquema-foreground: var(--status-esquema-foreground);
-  --color-status-offline-foreground: var(--status-offline-foreground);
-  --color-status-montagem-foreground: var(--status-montagem-foreground);
-  --color-status-online-foreground: var(--status-online-foreground);
-  --color-status-tryout-foreground: var(--status-tryout-foreground);
-  --color-status-entregue-foreground: var(--status-entregue-foreground);
-
-  /* Overlay de dialog/drawer, fundo de coluna do board e trilho de barras
-     de progresso — ver seções "Interações" e "Board" do README. */
-  --color-overlay: var(--overlay);
-  --color-col-bg: var(--col-bg);
-  --color-track: var(--track);
 
   /* Raios — base 6px, contidos */
   --radius-sm: calc(var(--radius) - 2px);  /* 4px — badges, chips   */
@@ -97,7 +74,6 @@
   --accent: oklch(0.945 0.014 235);
   --accent-foreground: oklch(0.34 0.06 235);
   --destructive: oklch(0.55 0.19 25);
-  --destructive-foreground: oklch(0.46 0.19 25);
   --border: oklch(0.906 0.007 245);
   --input: oklch(0.906 0.007 245);
   --ring: oklch(0.5 0.1 235);
@@ -110,17 +86,6 @@
   --status-online: oklch(0.55 0.09 195);
   --status-tryout: oklch(0.55 0.09 300);
   --status-entregue: oklch(0.55 0.1 150);
-
-  --status-esquema-foreground: oklch(0.42 0.016 250);
-  --status-offline-foreground: oklch(0.42 0.09 235);
-  --status-montagem-foreground: oklch(0.45 0.1 65);
-  --status-online-foreground: oklch(0.42 0.09 195);
-  --status-tryout-foreground: oklch(0.44 0.09 300);
-  --status-entregue-foreground: oklch(0.42 0.1 150);
-
-  --overlay: oklch(0.15 0.01 250 / 0.4);
-  --col-bg: oklch(0.955 0.005 245 / 0.5);
-  --track: oklch(0.925 0.005 245);
 }
 
 /* ---------- TEMA ESCURO ---------- */
@@ -142,7 +107,6 @@
   --accent: oklch(0.28 0.03 235);
   --accent-foreground: oklch(0.86 0.05 230);
   --destructive: oklch(0.65 0.16 25);
-  --destructive-foreground: oklch(0.74 0.14 25);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.68 0.1 230);
@@ -153,17 +117,6 @@
   --status-online: oklch(0.7 0.09 195);
   --status-tryout: oklch(0.68 0.09 300);
   --status-entregue: oklch(0.7 0.11 150);
-
-  --status-esquema-foreground: oklch(0.75 0.014 250);
-  --status-offline-foreground: oklch(0.78 0.09 235);
-  --status-montagem-foreground: oklch(0.78 0.1 70);
-  --status-online-foreground: oklch(0.78 0.09 195);
-  --status-tryout-foreground: oklch(0.76 0.09 300);
-  --status-entregue-foreground: oklch(0.78 0.11 150);
-
-  --overlay: oklch(0 0 0 / 0.55);
-  --col-bg: oklch(1 0 0 / 0.03);
-  --track: oklch(1 0 0 / 0.1);
 }
 
 @layer base {
@@ -187,9 +140,5 @@
   /* Números tabulares em tabelas, métricas e datas */
   table, [data-metric], time {
     font-variant-numeric: tabular-nums;
-  }
-  @keyframes pulso {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
   }
 }

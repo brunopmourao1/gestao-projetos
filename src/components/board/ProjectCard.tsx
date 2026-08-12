@@ -1,8 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { ChecklistItemConfig, Projeto } from "@/types/projeto";
 import { estaAtrasado, formatarData } from "@/lib/prazo";
 import { percentualChecklist } from "@/lib/checklist";
@@ -14,19 +12,10 @@ interface ProjectCardProps {
   projeto: Projeto;
   itensOffline?: ChecklistItemConfig[];
   itensOnline?: ChecklistItemConfig[];
-  responsavel?: string;
-  tecnologias?: string[];
   onClick?: (projeto: Projeto) => void;
 }
 
-export function ProjectCard({
-  projeto,
-  itensOffline = [],
-  itensOnline = [],
-  responsavel,
-  tecnologias = [],
-  onClick,
-}: ProjectCardProps) {
+export function ProjectCard({ projeto, itensOffline = [], itensOnline = [], onClick }: ProjectCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: projeto.idProjeto,
   });
@@ -54,61 +43,55 @@ export function ProjectCard({
       : projeto.statusAtual === "Montagem"
         ? projeto.percentualMontagem
         : null;
-  const concluidos =
-    itensChecklist?.filter((item) => checklistDaFase![item.chave]).length ?? null;
+  const concluidos = itensChecklist?.filter((item) => checklistDaFase![item.chave]).length ?? null;
+  const rotuloProgresso =
+    itensChecklist !== null ? `${percentualFase}% · ${concluidos}/${itensChecklist.length} itens` : `${percentualFase}% montagem`;
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      onClick={() => onClick?.(projeto)}
-      className="cursor-grab active:cursor-grabbing"
-    >
-      <Card className={`transition-shadow hover:shadow-md ${atrasado ? "border-destructive" : ""}`}>
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">{projeto.numero}</CardTitle>
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={() => onClick?.(projeto)} className="cursor-grab active:cursor-grabbing">
+      <Card
+        className="gap-0 rounded-lg border-border bg-card p-0 shadow-xs ring-0 transition-[border-color,box-shadow] duration-150 hover:border-[color-mix(in_oklch,var(--foreground)_20%,var(--border))] hover:shadow-sm"
+      >
+        <div className="flex flex-col gap-2 px-3.5 py-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[13px] font-semibold tabular-nums">{projeto.numero}</span>
+            {atrasado && (
+              <span className="inline-flex items-center gap-[5px] rounded-full bg-destructive/10 py-0.5 pr-2 pl-[7px] text-[11px] font-semibold text-destructive-foreground">
+                <span className="size-[5px] shrink-0 rounded-full bg-destructive" />
+                Atrasado
+              </span>
+            )}
+          </div>
           {projeto.nomeMaquina && (
-            <p className="text-xs text-muted-foreground">{projeto.nomeMaquina}</p>
+            <p className="text-[12.5px] leading-[1.4] text-muted-foreground">{projeto.nomeMaquina}</p>
           )}
-          {projeto.dataPrevistaConclusao && (
-            <p className={`text-xs ${atrasado ? "font-medium text-destructive" : "text-muted-foreground"}`}>
-              Prazo: {formatarData(projeto.dataPrevistaConclusao)}
-            </p>
-          )}
-          {percentualFase !== null && (
-            <div className="space-y-0.5 pt-1">
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          {percentualFase !== null ? (
+            <div className="flex flex-col gap-1">
+              <div className="h-1 overflow-hidden rounded-full bg-track">
                 <div
-                  className={`h-full rounded-full ${percentualFase === 100 ? "bg-emerald-500" : "bg-primary"}`}
+                  className="h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
                   style={{ width: `${percentualFase}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">
-                {itensChecklist !== null
-                  ? `${percentualFase}% concluído (${concluidos}/${itensChecklist.length})`
-                  : `${percentualFase}% concluído`}
-              </p>
+              <div className="flex justify-between text-[11.5px] tabular-nums text-muted-foreground">
+                <span>{rotuloProgresso}</span>
+                {projeto.dataPrevistaConclusao && (
+                  <span className={atrasado ? "font-medium text-destructive-foreground" : undefined}>
+                    {formatarData(projeto.dataPrevistaConclusao)}
+                  </span>
+                )}
+              </div>
             </div>
+          ) : (
+            projeto.dataPrevistaConclusao && (
+              <div className="flex justify-end text-[11.5px] tabular-nums">
+                <span className={atrasado ? "font-medium text-destructive-foreground" : "text-muted-foreground"}>
+                  {formatarData(projeto.dataPrevistaConclusao)}
+                </span>
+              </div>
+            )
           )}
-        </CardHeader>
-        <CardContent className="flex items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1">
-            {tecnologias.map((tag) => (
-              <Badge key={tag} variant="secondary">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          {responsavel && (
-            <Avatar className="h-6 w-6">
-              <AvatarFallback className="text-xs">
-                {responsavel.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </CardContent>
+        </div>
       </Card>
     </div>
   );
