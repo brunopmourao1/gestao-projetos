@@ -1,20 +1,10 @@
 import type { NextConfig } from "next";
 
-// CSP sem 'unsafe-inline'/'unsafe-eval' em script-src: next/font auto-hospeda
-// as fontes (sem <link> externo) e os componentes shadcn/ui usam só classes
-// Tailwind, nada de estilo/script inline necessário em produção.
-const CSP = [
-  "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-].join("; ");
-
+// A Content-Security-Policy não fica aqui: o App Router injeta os dados de
+// RSC via <script> inline (self.__next_f.push(...)) a cada página, então
+// script-src precisa de um nonce novo por request — só dá pra gerar isso em
+// src/proxy.ts (código estático aqui não tem acesso à request). Headers
+// abaixo são estáticos e não dependem de nonce.
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -25,7 +15,6 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-          { key: "Content-Security-Policy", value: CSP },
         ],
       },
     ];
