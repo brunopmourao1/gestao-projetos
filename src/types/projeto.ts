@@ -27,6 +27,7 @@ export interface Projeto {
   idProjeto: string;
   numero: string;
   nomeMaquina: string | null;
+  nomeCliente: string | null;
   descricao: string | null;
   ordem: number;
   dataPrevistaConclusao: string | null;

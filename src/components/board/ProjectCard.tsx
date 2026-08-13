@@ -70,8 +70,14 @@ export function ProjectCard({
       >
         <div className="flex flex-col gap-2 px-3.5 py-3">
           <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5">
-              <span className="text-[13px] font-semibold tabular-nums">{projeto.numero}</span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              {projeto.nomeCliente && (
+                <>
+                  <span className="truncate text-[12.5px] text-muted-foreground">{projeto.nomeCliente}</span>
+                  <span className="shrink-0 text-muted-foreground">·</span>
+                </>
+              )}
+              <span className="shrink-0 text-[13px] font-semibold tabular-nums">{projeto.numero}</span>
               {temObservacao && (
                 <span role="img" aria-label="Possui observação" title="Possui observação">
                   <StickyNote className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />

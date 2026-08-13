@@ -9,6 +9,7 @@ import { ResultadoMover } from "./ProjectCard";
 export interface DadosNovoProjeto {
   numero: string;
   nomeMaquina: string;
+  nomeCliente: string;
   descricao: string;
   dataPrevistaConclusao: string;
 }
@@ -24,20 +25,29 @@ interface NovoProjetoDialogProps {
 export function NovoProjetoDialog({ open, onOpenChange, onCriar }: NovoProjetoDialogProps) {
   const [numero, setNumero] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
+  const [nomeCliente, setNomeCliente] = useState("");
   const [descricao, setDescricao] = useState("");
   const [dataPrevistaConclusao, setDataPrevistaConclusao] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [openAnterior, setOpenAnterior] = useState(open);
 
-  function handleOpenChange(novoOpen: boolean) {
-    if (novoOpen) {
+  // O diálogo nunca desmonta (fica sempre no DOM entre aberturas) e o
+  // gatilho "Novo projeto" da Topbar seta `open=true` diretamente por fora,
+  // sem passar pelo onOpenChange do Radix — por isso o reset precisa reagir
+  // à prop `open`, não a um handler interno, senão o formulário reabre sujo.
+  // Ajuste de estado durante a renderização (não em efeito) para evitar o
+  // re-render em cascata de um useEffect com setState síncrono.
+  if (open !== openAnterior) {
+    setOpenAnterior(open);
+    if (open) {
       setNumero("");
       setNomeMaquina("");
+      setNomeCliente("");
       setDescricao("");
       setDataPrevistaConclusao("");
       setErro(null);
     }
-    onOpenChange(novoOpen);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,6 +62,7 @@ export function NovoProjetoDialog({ open, onOpenChange, onCriar }: NovoProjetoDi
     const resultado = await onCriar({
       numero: numeroLimpo,
       nomeMaquina: nomeMaquina.trim(),
+      nomeCliente: nomeCliente.trim(),
       descricao: descricao.trim(),
       dataPrevistaConclusao,
     });
@@ -64,7 +75,7 @@ export function NovoProjetoDialog({ open, onOpenChange, onCriar }: NovoProjetoDi
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent aria-label="Novo projeto" className="gap-4 rounded-xl p-6 sm:max-w-[440px]">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <DialogHeader className="gap-1">
@@ -76,6 +87,8 @@ export function NovoProjetoDialog({ open, onOpenChange, onCriar }: NovoProjetoDi
             onNumeroChange={setNumero}
             nomeMaquina={nomeMaquina}
             onNomeMaquinaChange={setNomeMaquina}
+            nomeCliente={nomeCliente}
+            onNomeClienteChange={setNomeCliente}
             descricao={descricao}
             onDescricaoChange={setDescricao}
             dataPrevistaConclusao={dataPrevistaConclusao}

@@ -26,6 +26,7 @@ export async function GET() {
     idProjeto: p.idProjeto,
     numero: p.numero,
     nomeMaquina: p.nomeMaquina,
+    nomeCliente: p.nomeCliente,
     descricao: p.descricao,
     ordem: p.ordem,
     dataPrevistaConclusao: p.dataPrevistaConclusao?.toISOString() ?? null,

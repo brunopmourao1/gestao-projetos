@@ -18,9 +18,10 @@ const ITENS_NAV = [
   { href: "/configuracoes/checklist", label: "Configurações", Icon: Settings },
 ];
 
-// Navegação principal — substitui a TopNavbar antiga. Largura 216px em
-// desktop (≥1024); colapsa pra rail de ícones em telas menores (ver README,
-// seção Responsivo).
+// Navegação principal — substitui a TopNavbar antiga. Largura 188px em
+// desktop (≥1024, reduzida de 216px pra sobrar mais espaço horizontal pro
+// board sem scroll); colapsa pra rail de ícones em telas menores (ver
+// README, seção Responsivo).
 export function Sidebar({ temaInicial }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -37,9 +38,9 @@ export function Sidebar({ temaInicial }: SidebarProps) {
   }
 
   return (
-    <aside className="flex w-14 shrink-0 flex-col gap-1 border-r border-border px-2 py-4 lg:w-[216px] lg:px-3">
+    <aside className="flex w-14 shrink-0 flex-col gap-1 border-r border-border px-2 py-4 lg:w-[188px] lg:px-2.5">
       <div className="flex flex-col items-center gap-1.5 px-1 pb-4">
-        <div className="hidden h-11 w-full max-w-[160px] lg:block">
+        <div className="hidden h-11 w-full max-w-[140px] lg:block">
           <Image
             src="/logomarca-ls.png"
             alt="LS Control"

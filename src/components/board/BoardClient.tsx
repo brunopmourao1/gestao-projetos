@@ -60,7 +60,8 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
     const buscaNormalizada = busca.trim().toLowerCase();
     return (
       p.numero.toLowerCase().includes(buscaNormalizada) ||
-      (p.nomeMaquina?.toLowerCase().includes(buscaNormalizada) ?? false)
+      (p.nomeMaquina?.toLowerCase().includes(buscaNormalizada) ?? false) ||
+      (p.nomeCliente?.toLowerCase().includes(buscaNormalizada) ?? false)
     );
   });
 
@@ -130,6 +131,7 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
         body: JSON.stringify({
           numero: dadosNovo.numero,
           nome_maquina: dadosNovo.nomeMaquina || undefined,
+          nome_cliente: dadosNovo.nomeCliente || undefined,
           descricao: dadosNovo.descricao || undefined,
           data_prevista_conclusao: dadosNovo.dataPrevistaConclusao || undefined,
         }),
@@ -218,6 +220,7 @@ export function BoardClient({ projetosIniciais, erroCarregamento }: BoardClientP
         onChecklistOnlineAtualizado={drawer.handleChecklistOnlineAtualizado}
         onPendenciaAdicionada={drawer.handlePendenciaAdicionada}
         onPendenciaAtualizada={drawer.handlePendenciaAtualizada}
+        onPendenciaExcluida={drawer.handlePendenciaExcluida}
         onEditarProjeto={drawer.handleEditarProjeto}
         onExcluirProjeto={drawer.handleExcluirProjeto}
         exportando={drawer.exportando}

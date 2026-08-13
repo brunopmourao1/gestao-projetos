@@ -7,6 +7,7 @@ const projeto: Projeto = {
   idProjeto: "1",
   numero: "OS 1800",
   nomeMaquina: "Máquina de Teste",
+  nomeCliente: null,
   descricao: null,
   ordem: 1000,
   dataPrevistaConclusao: null,

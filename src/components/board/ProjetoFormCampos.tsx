@@ -7,6 +7,8 @@ interface ProjetoFormCamposProps {
   onNumeroChange: (valor: string) => void;
   nomeMaquina: string;
   onNomeMaquinaChange: (valor: string) => void;
+  nomeCliente: string;
+  onNomeClienteChange: (valor: string) => void;
   descricao: string;
   onDescricaoChange: (valor: string) => void;
   dataPrevistaConclusao: string;
@@ -23,6 +25,8 @@ export function ProjetoFormCampos({
   onNumeroChange,
   nomeMaquina,
   onNomeMaquinaChange,
+  nomeCliente,
+  onNomeClienteChange,
   descricao,
   onDescricaoChange,
   dataPrevistaConclusao,
@@ -40,7 +44,7 @@ export function ProjetoFormCampos({
             id="numero"
             value={numero}
             onChange={(e) => onNumeroChange(e.target.value)}
-            placeholder="PRJ-2025-022"
+            placeholder="OS 1234"
             className={CLASSE_INPUT}
             autoFocus
           />
@@ -57,6 +61,18 @@ export function ProjetoFormCampos({
             className={`${CLASSE_INPUT} tabular-nums`}
           />
         </div>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="nome-cliente" className={CLASSE_LABEL}>
+          Cliente
+        </Label>
+        <Input
+          id="nome-cliente"
+          value={nomeCliente}
+          onChange={(e) => onNomeClienteChange(e.target.value)}
+          placeholder="Nome do cliente"
+          className={CLASSE_INPUT}
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="nome-maquina" className={CLASSE_LABEL}>

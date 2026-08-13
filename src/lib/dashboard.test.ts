@@ -13,6 +13,7 @@ function criarProjeto(overrides: Partial<Projeto>): Projeto {
     idProjeto: overrides.idProjeto ?? "p1",
     numero: overrides.numero ?? "OS 1",
     nomeMaquina: null,
+    nomeCliente: null,
     descricao: null,
     ordem: 1000,
     dataPrevistaConclusao: null,

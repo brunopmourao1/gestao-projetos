@@ -10,6 +10,7 @@ import { Projeto } from "@/types/projeto";
 export interface DadosEditarProjeto {
   numero: string;
   nomeMaquina: string;
+  nomeCliente: string;
   descricao: string;
   dataPrevistaConclusao: string;
 }
@@ -27,6 +28,7 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
   const [open, setOpen] = useState(false);
   const [numero, setNumero] = useState(projeto.numero);
   const [nomeMaquina, setNomeMaquina] = useState(projeto.nomeMaquina ?? "");
+  const [nomeCliente, setNomeCliente] = useState(projeto.nomeCliente ?? "");
   const [descricao, setDescricao] = useState(projeto.descricao ?? "");
   const [dataPrevistaConclusao, setDataPrevistaConclusao] = useState(
     paraInputDate(projeto.dataPrevistaConclusao)
@@ -37,6 +39,7 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
   function restaurarValores() {
     setNumero(projeto.numero);
     setNomeMaquina(projeto.nomeMaquina ?? "");
+    setNomeCliente(projeto.nomeCliente ?? "");
     setDescricao(projeto.descricao ?? "");
     setDataPrevistaConclusao(paraInputDate(projeto.dataPrevistaConclusao));
   }
@@ -53,6 +56,7 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
     const resultado = await onEditar(projeto.idProjeto, {
       numero: numeroLimpo,
       nomeMaquina: nomeMaquina.trim(),
+      nomeCliente: nomeCliente.trim(),
       descricao: descricao.trim(),
       dataPrevistaConclusao,
     });
@@ -96,6 +100,8 @@ export function EditarProjetoDialog({ projeto, onEditar }: EditarProjetoDialogPr
             onNumeroChange={setNumero}
             nomeMaquina={nomeMaquina}
             onNomeMaquinaChange={setNomeMaquina}
+            nomeCliente={nomeCliente}
+            onNomeClienteChange={setNomeCliente}
             descricao={descricao}
             onDescricaoChange={setDescricao}
             dataPrevistaConclusao={dataPrevistaConclusao}

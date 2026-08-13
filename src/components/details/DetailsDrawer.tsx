@@ -28,6 +28,7 @@ interface DetailsDrawerProps {
   onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
   onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
   onPendenciaAtualizada: (pendencia: PendenciaVisita) => void;
+  onPendenciaExcluida: (idPendencia: string) => void;
   onEditarProjeto: (id: string, dados: DadosEditarProjeto) => Promise<ResultadoMover>;
   onExcluirProjeto: (id: string) => Promise<ResultadoMover>;
   exportando: boolean;
@@ -47,6 +48,7 @@ export function DetailsDrawer({
   onChecklistOnlineAtualizado,
   onPendenciaAdicionada,
   onPendenciaAtualizada,
+  onPendenciaExcluida,
   onEditarProjeto,
   onExcluirProjeto,
   exportando,
@@ -100,6 +102,7 @@ export function DetailsDrawer({
               onChecklistOnlineAtualizado={onChecklistOnlineAtualizado}
               onPendenciaAdicionada={onPendenciaAdicionada}
               onPendenciaAtualizada={onPendenciaAtualizada}
+              onPendenciaExcluida={onPendenciaExcluida}
             />
           </div>
         )}

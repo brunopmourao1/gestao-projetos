@@ -59,6 +59,7 @@ export function ChecklistConfigManager() {
         body: JSON.stringify({
           numero: dadosNovo.numero,
           nome_maquina: dadosNovo.nomeMaquina || undefined,
+          nome_cliente: dadosNovo.nomeCliente || undefined,
           descricao: dadosNovo.descricao || undefined,
           data_prevista_conclusao: dadosNovo.dataPrevistaConclusao || undefined,
         }),

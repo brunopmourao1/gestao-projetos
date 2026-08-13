@@ -6,6 +6,7 @@ const projetoBase: ProjetoDetalhado = {
   idProjeto: "1",
   numero: "OS 1800",
   nomeMaquina: "Torno CNC 01",
+  nomeCliente: null,
   descricao: null,
   ordem: 1000,
   dataPrevistaConclusao: null,

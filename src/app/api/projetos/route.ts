@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
   if (statusValido(status)) condicoes.push(eq(projetos.statusAtual, status));
   if (busca) {
     condicoes.push(
-      or(ilike(projetos.numero, `%${busca}%`), ilike(projetos.nomeMaquina, `%${busca}%`))
+      or(
+        ilike(projetos.numero, `%${busca}%`),
+        ilike(projetos.nomeMaquina, `%${busca}%`),
+        ilike(projetos.nomeCliente, `%${busca}%`)
+      )
     );
   }
 
@@ -52,6 +56,10 @@ export async function POST(request: NextRequest) {
   if (nomeMaquina !== undefined && nomeMaquina !== null && typeof nomeMaquina !== "string") {
     return erroResponse(400, "VALIDACAO_CAMPO", "Campo nome_maquina deve ser texto.");
   }
+  const nomeCliente = dados?.nome_cliente;
+  if (nomeCliente !== undefined && nomeCliente !== null && typeof nomeCliente !== "string") {
+    return erroResponse(400, "VALIDACAO_CAMPO", "Campo nome_cliente deve ser texto.");
+  }
   const descricao = dados?.descricao;
   if (descricao !== undefined && descricao !== null && typeof descricao !== "string") {
     return erroResponse(400, "VALIDACAO_CAMPO", "Campo descricao deve ser texto.");
@@ -78,6 +86,7 @@ export async function POST(request: NextRequest) {
       .values({
         numero: numero.trim(),
         nomeMaquina: (nomeMaquina as string | null | undefined)?.trim() || null,
+        nomeCliente: (nomeCliente as string | null | undefined)?.trim() || null,
         descricao: (descricao as string | null | undefined)?.trim() || null,
         dataPrevistaConclusao: dataPrevistaConclusao ? new Date(dataPrevistaConclusao as string) : null,
         ordem,

@@ -23,6 +23,7 @@ function paraDetalhado(projeto: ProjetoParaAbrir): ProjetoDetalhado {
     idProjeto: projeto.idProjeto,
     numero: projeto.numero,
     nomeMaquina: projeto.nomeMaquina ?? null,
+    nomeCliente: projeto.nomeCliente ?? null,
     descricao: projeto.descricao ?? null,
     ordem: projeto.ordem ?? 0,
     dataPrevistaConclusao: projeto.dataPrevistaConclusao ?? null,
@@ -165,6 +166,15 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
     onPendenciasAlteradas?.();
   }
 
+  function handlePendenciaExcluida(idPendencia: string) {
+    setProjetoSelecionado((atual) =>
+      atual
+        ? { ...atual, pendenciasVisitas: atual.pendenciasVisitas.filter((p) => p.idPendencia !== idPendencia) }
+        : atual
+    );
+    onPendenciasAlteradas?.();
+  }
+
   async function handleEditarProjeto(id: string, dados: DadosEditarProjeto): Promise<ResultadoMover> {
     try {
       const resposta = await fetch(`/api/projetos/${id}`, {
@@ -173,6 +183,7 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
         body: JSON.stringify({
           numero: dados.numero,
           nome_maquina: dados.nomeMaquina || undefined,
+          nome_cliente: dados.nomeCliente || undefined,
           descricao: dados.descricao || undefined,
           data_prevista_conclusao: dados.dataPrevistaConclusao || null,
         }),
@@ -249,6 +260,7 @@ export function useProjetoDrawer(options: UseProjetoDrawerOptions = {}) {
     handleObservacoesAtualizadas,
     handlePendenciaAdicionada,
     handlePendenciaAtualizada,
+    handlePendenciaExcluida,
     handleEditarProjeto,
     handleExcluirProjeto,
     handleExportarRelatorio,

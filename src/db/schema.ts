@@ -21,6 +21,7 @@ export const projetos = pgTable("projetos", {
   idProjeto: uuid("id_projeto").primaryKey().defaultRandom(),
   numero: varchar("numero", { length: 50 }).notNull().unique(),
   nomeMaquina: varchar("nome_maquina", { length: 255 }),
+  nomeCliente: varchar("nome_cliente", { length: 255 }),
   descricao: text("descricao"),
   ordem: doublePrecision("ordem").notNull(),
   dataPrevistaConclusao: timestamp("data_prevista_conclusao"),

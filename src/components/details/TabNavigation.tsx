@@ -33,6 +33,7 @@ interface TabNavigationProps {
   onChecklistOnlineAtualizado: (checklist: ChecklistOnline) => void;
   onPendenciaAdicionada: (pendencia: PendenciaVisita) => void;
   onPendenciaAtualizada: (pendencia: PendenciaVisita) => void;
+  onPendenciaExcluida: (idPendencia: string) => void;
 }
 
 const CLASSE_ABA = "flex-none after:bg-primary rounded-none px-3 py-[9px] text-[13px] font-medium";
@@ -52,6 +53,7 @@ export function TabNavigation({
   onChecklistOnlineAtualizado,
   onPendenciaAdicionada,
   onPendenciaAtualizada,
+  onPendenciaExcluida,
 }: TabNavigationProps) {
   const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
 
@@ -164,6 +166,7 @@ export function TabNavigation({
             projeto={projeto}
             onPendenciaAdicionada={onPendenciaAdicionada}
             onPendenciaAtualizada={onPendenciaAtualizada}
+            onPendenciaExcluida={onPendenciaExcluida}
           />
         ) : (
           <div className={CLASSE_EMPTY}>

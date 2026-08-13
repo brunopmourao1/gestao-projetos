@@ -45,6 +45,7 @@ export function DashboardClient({ dadosIniciais, erroCarregamento }: DashboardCl
         body: JSON.stringify({
           numero: dadosNovo.numero,
           nome_maquina: dadosNovo.nomeMaquina || undefined,
+          nome_cliente: dadosNovo.nomeCliente || undefined,
           descricao: dadosNovo.descricao || undefined,
           data_prevista_conclusao: dadosNovo.dataPrevistaConclusao || undefined,
         }),
@@ -195,6 +196,7 @@ export function DashboardClient({ dadosIniciais, erroCarregamento }: DashboardCl
         onChecklistOnlineAtualizado={drawer.handleChecklistOnlineAtualizado}
         onPendenciaAdicionada={drawer.handlePendenciaAdicionada}
         onPendenciaAtualizada={drawer.handlePendenciaAtualizada}
+        onPendenciaExcluida={drawer.handlePendenciaExcluida}
         onEditarProjeto={drawer.handleEditarProjeto}
         onExcluirProjeto={drawer.handleExcluirProjeto}
         exportando={drawer.exportando}
