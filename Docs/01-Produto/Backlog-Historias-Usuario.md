@@ -161,6 +161,21 @@ Como **Gestor/Tech Lead**, quero gerar um relatório/apresentação visual conso
 * O preview do relatório é visível na aba Relatório do `DetailsDrawer` antes da exportação.
 * Exportação é acionada pelo botão primário na `TopNavbar`.
 
+## Épico 5 — Segurança e Confiabilidade do Login (não-funcional)
+> História registrada retroativamente: pedido do usuário foi "auditoria de segurança completa" seguido de "implemente todas as correções ... nível profissional", não uma HU escrita antes de codar. Documentada aqui pelo mesmo motivo de HU-10 — "vale checar se a documentação cobre o que já foi construído".
+
+### HU-23 — Endurecer login e sessão contra abuso
+Como **Gestor/Tech Lead**, quero que o login com senha única não possa ser atacado por força bruta e que uma sessão vazada possa ser revogada sem afetar o resto do time, para que o sistema (que guarda dados reais de clientes/projetos) tenha um nível de proteção adequado ao que ele guarda.
+**Critérios de aceite:**
+* `POST /api/login` bloqueia um IP após 5 tentativas erradas em 15 minutos (`429 MUITAS_TENTATIVAS`), em vez de aceitar tentativas ilimitadas.
+* Cada login bem-sucedido gera um token de sessão aleatório (256 bits), não mais um hash fixo derivado da própria senha — permite revogar uma sessão específica (`POST /api/logout` apaga só aquele token no banco) sem exigir trocar `APP_PASSWORD` pra todo o time.
+* Comparação da senha informada com `APP_PASSWORD` é constant-time (não vaza informação por tempo de resposta).
+* Toda resposta HTTP inclui cabeçalhos de segurança padrão (CSP com nonce por request, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) — sem quebrar a hidratação do React (ver nota técnica abaixo).
+* O redirecionamento pós-login (`?redirect=`) só aceita caminhos internos, nunca uma URL externa.
+* Rotas aninhadas (ex: pendência dentro de projeto) validam que o recurso realmente pertence ao pai indicado na URL.
+
+**Nota técnica importante:** a primeira versão da CSP (`script-src 'self'` sem nonce) passava em todo teste feito só com `curl`, mas quebrava a hidratação do React em produção — o App Router do Next.js transporta o payload de RSC via `<script>` inline a cada página, e sem nonce o navegador bloqueia esse script silenciosamente (aparece só como `Minified React error #412: Connection closed` no console, não como uma violação de CSP óbvia). Corrigido gerando um nonce novo por request em `src/proxy.ts`, seguindo o padrão oficial documentado em `node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md`. **Lição para qualquer mudança futura de CSP/headers: testar sempre no navegador de verdade (console + interatividade), nunca só com `curl`.**
+
 ## Priorização sugerida (para o Board-Tarefas)
 1. HU-01, HU-02 (board funcional básico)
 2. HU-04, HU-05 (histórico e métricas)

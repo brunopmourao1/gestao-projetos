@@ -14,6 +14,12 @@ O sistema é dividido em rotinas e sub-rotinas focadas em responsabilidade únic
 
 > **Nota histórica:** existia uma sub-rotina `ValidacaoParametrosFisicos` (dados de motores/sensores/esquema elétrico, tabela `Especificacoes_Tecnicas`) que bloqueava a transição pra "Operação Concluída" — **removida por completo** numa sessão posterior a pedido do usuário, junto com a própria coluna "Operação Concluída" (substituída por "Tryout com o Cliente"/"Máquina Entregue", ver HU-19). Ver `Backlog-Historias-Usuario.md` (HU-06/07/08, marcadas como removidas) e `Board-Tarefas.md`.
 
+### 1.3. Segurança (HU-21/HU-23)
+* **Autenticação:** senha única compartilhada (`APP_PASSWORD`), sem contas individuais. `src/proxy.ts` (renomeação de `middleware.ts` no Next.js 16) intercepta toda rota exceto `/login`/`/api/login`, valida a sessão contra a tabela `Sessoes` no banco e redireciona (páginas) ou responde `401` (API) quando inválida.
+* **Sessão:** token aleatório de 256 bits por login (não derivado da senha), com expiração e revogação individual via `POST /api/logout` — ver tabela `Sessoes` em `Modelo-Dados-ER.md`.
+* **Rate limiting:** `POST /api/login` bloqueia um IP após 5 tentativas erradas em 15 minutos, persistido na tabela `Tentativas_Login` (Postgres, não memória — sobrevive a cold start em ambiente serverless).
+* **Cabeçalhos de segurança:** `src/proxy.ts` gera uma Content-Security-Policy com nonce novo a cada request (exigência do Next.js pra não bloquear o script inline de streaming de RSC — ver nota técnica em HU-23) e define `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` estáticos em `next.config.ts`.
+
 ## 2. Modelagem de Dados
 Estrutura relacional pensada para operar em bancos de dados serverless modernos. Ver `Modelo-Dados-ER.md` para o diagrama completo e atualizado — resumo:
 
@@ -43,3 +49,12 @@ Estrutura relacional pensada para operar em bancos de dados serverless modernos.
 * `coluna_origem` (String)
 * `coluna_destino` (String)
 * `data_movimentacao` (Timestamp)
+
+**Tabela: `Sessoes`** (autenticação, sem FK — ver seção 1.3)
+* `token` (String, PK — 256 bits aleatórios)
+* `criada_em` / `expira_em` (Timestamp)
+
+**Tabela: `Tentativas_Login`** (rate limiting do login, sem FK — ver seção 1.3)
+* `id` (UUID)
+* `ip` (String)
+* `criada_em` (Timestamp)

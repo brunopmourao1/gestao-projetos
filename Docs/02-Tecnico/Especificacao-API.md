@@ -109,11 +109,16 @@ Adiciona uma entrada ao log de pendências de visitas técnicas (fases Tryout/En
 **Resposta 400** (`VALIDACAO_CAMPO`): quando `texto` está ausente ou vazio.
 
 ### `PATCH /api/projetos/:id/pendencias/:idPendencia`
-Marca ou desmarca uma pendência específica como concluída (ver HU-22). É só um controle de acompanhamento — não bloqueia nem exige nada pra mover o card entre colunas.
-**Body:** `{ "concluida": "boolean" }`
+Marca/desmarca uma pendência específica como concluída e/ou corrige o texto (ex: erro de digitação). Ver HU-22. `concluida` é só um controle de acompanhamento — não bloqueia nem exige nada pra mover o card entre colunas. Exige ao menos um dos dois campos.
+**Body:** `{ "concluida": "boolean (opcional)", "texto": "string (opcional)" }`
 **Resposta 200:** `{ "id_pendencia": "uuid", "id_projeto": "uuid", "data": "timestamp", "texto": "string", "concluida": "boolean" }`
-**Resposta 400** (`VALIDACAO_CAMPO`): quando `concluida` está ausente ou não é booleano.
-**Resposta 404** (`PENDENCIA_NAO_ENCONTRADA`): quando `idPendencia` não existe.
+**Resposta 400** (`VALIDACAO_CAMPO`): quando nenhum dos dois campos foi informado, ou algum tem tipo inválido.
+**Resposta 404** (`PENDENCIA_NAO_ENCONTRADA`): quando `idPendencia` não existe **para o `id` de projeto informado na URL** (a busca exige os dois juntos).
+
+### `DELETE /api/projetos/:id/pendencias/:idPendencia`
+Remove uma entrada do log de pendências (ex: registrada por engano).
+**Resposta 200:** `{ "ok": true }`
+**Resposta 404** (`PENDENCIA_NAO_ENCONTRADA`): quando `idPendencia` não existe para o `id` de projeto informado na URL.
 
 ## Configurações
 
@@ -173,16 +178,19 @@ Gera o arquivo de exportação (PDF/apresentação) a partir do payload de `GET 
 
 ## Autenticação
 
-Ver HU-21. Login simples de senha única compartilhada (`APP_PASSWORD`, sem contas individuais), aplicado por `src/proxy.ts` a todas as rotas exceto `/login` e `/api/login`.
+Ver HU-21/HU-23. Login simples de senha única compartilhada (`APP_PASSWORD`, sem contas individuais), aplicado por `src/proxy.ts` a todas as rotas exceto `/login` e `/api/login`. `src/proxy.ts` também gera, a cada request, um nonce novo pra Content-Security-Policy e define os demais cabeçalhos de segurança (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) presentes em toda resposta.
+
+O cookie de sessão (`sessao`) guarda um **token aleatório de 256 bits** gerado a cada login (tabela `Sessoes`, ver `Modelo-Dados-ER.md`) — não é mais derivado da senha, então uma sessão pode ser revogada individualmente sem afetar as demais. `POST /api/login` também aplica rate limiting por IP (tabela `Tentativas_Login`): 5 tentativas erradas em 15 minutos bloqueiam novas tentativas com `429`.
 
 ### `POST /api/login`
-Valida a senha e, se correta, seta o cookie de sessão `sessao` (httpOnly).
+Valida a senha (comparação constant-time) e, se correta, cria uma sessão nova e seta o cookie `sessao` (httpOnly, `secure` em produção, `sameSite: lax`, 30 dias).
 **Body:** `{ "senha": "string" }`
 **Resposta 200:** `{ "ok": true }`
 **Resposta 401** (`SENHA_INCORRETA`): senha incorreta ou `APP_PASSWORD` não configurada no servidor.
+**Resposta 429** (`MUITAS_TENTATIVAS`): mais de 5 tentativas erradas do mesmo IP nos últimos 15 minutos.
 
 ### `POST /api/logout`
-Limpa o cookie de sessão.
+Revoga a sessão no banco (apaga a linha correspondente em `Sessoes`, não só limpa o cookie do client) — o mesmo token não pode ser reaproveitado depois.
 **Resposta 200:** `{ "ok": true }`
 
 ## Códigos de erro comuns
@@ -194,5 +202,6 @@ Limpa o cookie de sessão.
 | `CHECKLIST_ONLINE_INCOMPLETO` | falha em `validarChecklistOnline` (transição Online → Tryout) |
 | `ITEM_CHECKLIST_NAO_ENCONTRADO` | `id_item` não existe (rotas de Configurações) |
 | `SENHA_INCORRETA` | `POST /api/login` com senha errada |
+| `MUITAS_TENTATIVAS` | `POST /api/login` bloqueado por rate limiting (5 tentativas erradas / IP / 15 min) |
 | `NAO_AUTENTICADO` | requisição de API sem cookie de sessão válido (retornado pelo proxy, não por uma rota) |
 | `VALIDACAO_CAMPO` | campo obrigatório ausente ou com tipo inválido no body |

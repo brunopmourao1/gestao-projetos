@@ -46,12 +46,25 @@ erDiagram
         string rotulo
         int ordem
     }
+
+    SESSOES {
+        string token PK "64 chars hex, 256 bits aleatórios — sem relação matemática com APP_PASSWORD"
+        timestamp criada_em "default now"
+        timestamp expira_em "criada_em + 30 dias"
+    }
+
+    TENTATIVAS_LOGIN {
+        uuid id PK
+        string ip "x-forwarded-for do request; usado pro rate limit de POST /api/login"
+        timestamp criada_em "default now"
+    }
 ```
 
 ## Cardinalidades
 * **Projetos → Historico_Transicoes**: 1:N — um projeto acumula um registro de histórico a cada movimentação de coluna.
 * **Projetos → Pendencias_Visitas**: 1:N — log de pendências anotadas em visitas técnicas (fases Tryout/Entregue), cada visita vira uma entrada nova (nunca sobrescrita). Ver HU-19.
 * **Checklist_Itens** não tem FK pra `Projetos` — é configuração global compartilhada por todos os projetos (a tela de Configurações edita essa tabela; o JSON `checklist_offline`/`checklist_online` de cada projeto guarda só os valores booleanos, referenciando os itens pela `chave`). Ver HU-20.
+* **Sessoes** e **Tentativas_Login** não têm FK pra nenhuma outra tabela — suportam a autenticação de senha única (HU-21/HU-23) e não têm relação com projetos. Ver seção "Autenticação" em `Especificacao-API.md`.
 
 > **Nota histórica:** a entidade `Especificacoes_Tecnicas` (dados de motores/sensores/esquema elétrico) e a regra `ValidacaoParametrosFisicos` existiram até esta sessão e foram **removidas por completo** a pedido do usuário (não fazem mais parte do produto) — ver HU-06/HU-07/HU-08 em `Backlog-Historias-Usuario.md`, marcadas como removidas.
 
