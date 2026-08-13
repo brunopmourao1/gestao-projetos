@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { pendenciasVisitas } from "@/db/schema";
 import { getDb } from "@/db";
 import { erroResponse } from "@/lib/api-error";
@@ -12,7 +12,7 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string; idPendencia: string }> }
 ) {
-  const { idPendencia } = await params;
+  const { id, idPendencia } = await params;
   const db = getDb();
 
   let body: unknown;
@@ -43,7 +43,7 @@ export async function PATCH(
   const [atualizada] = await db
     .update(pendenciasVisitas)
     .set(valores)
-    .where(eq(pendenciasVisitas.idPendencia, idPendencia))
+    .where(and(eq(pendenciasVisitas.idPendencia, idPendencia), eq(pendenciasVisitas.idProjeto, id)))
     .returning();
 
   if (!atualizada) {
@@ -59,12 +59,12 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string; idPendencia: string }> }
 ) {
-  const { idPendencia } = await params;
+  const { id, idPendencia } = await params;
   const db = getDb();
 
   const [excluida] = await db
     .delete(pendenciasVisitas)
-    .where(eq(pendenciasVisitas.idPendencia, idPendencia))
+    .where(and(eq(pendenciasVisitas.idPendencia, idPendencia), eq(pendenciasVisitas.idProjeto, id)))
     .returning();
 
   if (!excluida) {

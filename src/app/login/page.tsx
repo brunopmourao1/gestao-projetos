@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+// Só aceita caminhos internos (começando com "/", mas não "//" — que o
+// navegador trata como protocol-relative e pode apontar pra outro domínio).
+function redirectSeguro(valor: string | null): string {
+  if (valor && valor.startsWith("/") && !valor.startsWith("//")) return valor;
+  return "/";
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +36,7 @@ function LoginForm() {
         setErro(dados?.erro?.mensagem ?? "Não foi possível entrar.");
         return;
       }
-      router.push(searchParams.get("redirect") || "/");
+      router.push(redirectSeguro(searchParams.get("redirect")));
       router.refresh();
     } catch {
       setErro("Falha de rede ao entrar.");

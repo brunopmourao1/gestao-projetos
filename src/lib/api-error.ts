@@ -9,6 +9,7 @@ export type CodigoErro =
   | "PENDENCIA_NAO_ENCONTRADA"
   | "SENHA_INCORRETA"
   | "NAO_AUTENTICADO"
+  | "MUITAS_TENTATIVAS"
   | "VALIDACAO_CAMPO";
 
 // Formato de erro conforme Docs/02-Tecnico/Especificacao-API.md.

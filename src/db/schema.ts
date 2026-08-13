@@ -78,3 +78,19 @@ export const checklistItens = pgTable("checklist_itens", {
   rotulo: varchar("rotulo", { length: 255 }).notNull(),
   ordem: integer("ordem").notNull(),
 });
+
+// Sessões de login — token aleatório por sessão (nunca derivado da senha),
+// para permitir revogação individual e expiração real. Ver src/lib/auth.ts.
+export const sessoes = pgTable("sessoes", {
+  token: varchar("token", { length: 64 }).primaryKey(),
+  criadaEm: timestamp("criada_em").notNull().defaultNow(),
+  expiraEm: timestamp("expira_em").notNull(),
+});
+
+// Registro de tentativas de login malsucedidas, usado para rate limiting
+// por IP em /api/login. Ver src/lib/auth.ts.
+export const tentativasLogin = pgTable("tentativas_login", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ip: varchar("ip", { length: 64 }).notNull(),
+  criadaEm: timestamp("criada_em").notNull().defaultNow(),
+});
