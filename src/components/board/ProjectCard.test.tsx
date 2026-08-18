@@ -120,6 +120,31 @@ describe("ProjectCard", () => {
     expect(screen.queryByText(/pendência/)).not.toBeInTheDocument();
   });
 
+  it("não mostra Atrasado em projeto Entregue sem pendências, mesmo com data prevista no passado", () => {
+    render(
+      <ProjectCard
+        projeto={{ ...projeto, statusAtual: "Entregue", dataPrevistaConclusao: "2020-01-01" }}
+        pendenciasAbertas={0}
+      />
+    );
+    expect(screen.queryByText("Atrasado")).not.toBeInTheDocument();
+  });
+
+  it("mostra Atrasado em projeto Entregue com pendência em aberto e data prevista no passado", () => {
+    render(
+      <ProjectCard
+        projeto={{ ...projeto, statusAtual: "Entregue", dataPrevistaConclusao: "2020-01-01" }}
+        pendenciasAbertas={1}
+      />
+    );
+    expect(screen.getByText("Atrasado")).toBeInTheDocument();
+  });
+
+  it("mostra Atrasado em projeto não entregue com data prevista no passado", () => {
+    render(<ProjectCard projeto={{ ...projeto, statusAtual: "Montagem", dataPrevistaConclusao: "2020-01-01" }} />);
+    expect(screen.getByText("Atrasado")).toBeInTheDocument();
+  });
+
   it("mostra o indicador de observação quando o projeto tem observações preenchidas", () => {
     render(<ProjectCard projeto={{ ...projeto, observacoes: "Cliente pediu ajuste no prazo." }} />);
     expect(screen.getByRole("img", { name: "Possui observação" })).toBeInTheDocument();

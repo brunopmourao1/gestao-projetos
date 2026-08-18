@@ -37,7 +37,13 @@ export function ProjectCard({
     opacity: isDragging ? 0.4 : 1,
   };
 
-  const atrasado = estaAtrasado(projeto.dataPrevistaConclusao);
+  const totalPendenciasAbertas = pendenciasAbertas ?? 0;
+  const temPendenciasAbertas = totalPendenciasAbertas > 0;
+  // Máquina entregue e sem pendências em aberto: o prazo já foi cumprido
+  // (a visita aconteceu), então não faz sentido continuar marcando atraso.
+  const atrasado =
+    estaAtrasado(projeto.dataPrevistaConclusao) &&
+    !(projeto.statusAtual === "Entregue" && !temPendenciasAbertas);
   const checklistDaFase =
     projeto.statusAtual === "Offline"
       ? projeto.checklistOffline
@@ -60,8 +66,6 @@ export function ProjectCard({
 
   const temObservacao = Boolean(projeto.observacoes?.trim());
   const acompanhaPendencias = projeto.statusAtual === "Tryout" || projeto.statusAtual === "Entregue";
-  const totalPendenciasAbertas = pendenciasAbertas ?? 0;
-  const temPendenciasAbertas = totalPendenciasAbertas > 0;
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={() => onClick?.(projeto)} className="cursor-grab active:cursor-grabbing">
